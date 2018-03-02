@@ -60,15 +60,15 @@ trayListen(){
     return
 }
 mouseOverTray(wParam,lParam){
-    if (lParam=0x201) {         ; Single click
-    } else if (lParam=0x203) {    ; Double click
-    } else if (lParam=0x205) {    ; Right click
+    if(lParam=0x201) {         ; Single click
+    } else if(lParam=0x203) {    ; Double click
+    } else if(lParam=0x205) {    ; Right click
     } else updateTray()
     return
 }
 updateTray(mx0:="",my0:=""){
     static mx, my, timer:=0
-    if (mx0="" or my0="") {
+    if(mx0="" or my0="") {
         if A_TickCount-timer>1000
             MouseGetPos, mx, my
             timer:=A_TickCount
@@ -80,7 +80,7 @@ updateTray(mx0:="",my0:=""){
     tip.="ToggleKeys: " (obj.n?"N":"") (obj.c?"C":"") (obj.s?"S":"") (obj.i?"I":"") "`n"
 
     obj:=netNotify(False,False)
-    if (obj.status!="") {
+    if(obj.status!="") {
         tip.="Internet: " (["No Connection","Connected, no Internet","Internet access (no VPN)","Internet access through VPN"][obj.status+2]) "`n"
         if obj.status>=0
             tip.="Public IP: " obj.ipInfo.ip (obj.ipInfo.loc?" (" obj.ipInfo.loc ")":"") "`nLocal IP: [ " obj.ipInfo.ipl " ]" "`n"

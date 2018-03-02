@@ -12,11 +12,11 @@ class microWindow{
         local h:=w*this.win_height/this.win_width
         h:=(h>0?h:64)
         this.height:=h
-        if (pos="")
+        if(pos="")
             pos:=[ A_ScreenWidth-w-64 , A_ScreenHeight-h-64 ]
-        if (!this.pos1)
+        if(!this.pos1)
             this.pos1:=[0,0]
-        if (!this.pos2)
+        if(!this.pos2)
             this.pos2:=[ww,wh]
 
         local GUIhwnd, act
@@ -39,7 +39,7 @@ class microWindow{
 
     dllLoad(){
         static dll:={}
-        if (this.id!=0)
+        if(this.id!=0)
             return dll
         dwmapi      := DllCall("LoadLibrary", "Str", "dwmapi.dll", Ptr)
 
@@ -109,7 +109,7 @@ class microWindow{
         return
     }
     onClick(wParam, lParam, msg, hwnd){
-        if (hwnd!=this.hwnd)
+        if(hwnd!=this.hwnd)
             return
 
         ; CoordMode, Mouse, Client
@@ -135,7 +135,7 @@ class microWindow{
         }
         WinGetPos, X,,W,, % "ahk_id " this.hwnd
 
-        if (w>A_ScreenWidth//2 || GetKeyState("Control","P") || GetKeyState("LButton","P") || GetKeyState("RButton","P") || GetKeyState("MButton","P") || WinActive("ahk_id" this.hwnd))
+        if(w>A_ScreenWidth//2 || GetKeyState("Control","P") || GetKeyState("LButton","P") || GetKeyState("RButton","P") || GetKeyState("MButton","P") || WinActive("ahk_id" this.hwnd))
             this.mouse_allowed:=True
 
         if this.mouse_allowed {

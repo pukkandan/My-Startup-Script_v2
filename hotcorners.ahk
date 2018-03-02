@@ -10,15 +10,15 @@ hotcorners(){
 
 	/* How to use counter:
 	counterTemp:=counter+1
-	if (counterTemp>DELAY){
+	if(counterTemp>DELAY){
 		DO THIS
 		counterTemp:=0
 	}
 	*/
 
-	if (xpos<2) {
-		if (ypos<2){
-			if (!trigger){
+	if(xpos<2) {
+		if(ypos<2){
+			if(!trigger){
 				trigger:=True
 				if(!buttonsPressed){
 					; 										Top Left
@@ -27,8 +27,8 @@ hotcorners(){
 				}
 			}
 		}
-		else if (ypos+2>=A_ScreenHeight){
-			if (!trigger){
+		else if(ypos+2>=A_ScreenHeight){
+			if(!trigger){
 				trigger:=True
 				if(!buttonsPressed){
 					; 										Bottom Left
@@ -38,12 +38,12 @@ hotcorners(){
 			}
 		}
 		else {
-			if (!trigger){
+			if(!trigger){
 				; trigger:=True
 				if(!buttonsPressed){
 					; 										Left
 					; counterTemp:=counter+1
-					; if (counterTemp>=delay){
+					; if(counterTemp>=delay){
 					; 	Send, #^{Left}
 					; 	counterTemp:=0
 					; }
@@ -52,9 +52,9 @@ hotcorners(){
 			}
 		}
 	}
-	else if (xpos+2>=A_ScreenWidth) {
-		if (ypos<2) {
-			if (!trigger){
+	else if(xpos+2>=A_ScreenWidth) {
+		if(ypos<2) {
+			if(!trigger){
 				trigger:=True
 				if(!buttonsPressed){
 					; 										Top Right
@@ -64,8 +64,8 @@ hotcorners(){
 			}
 			lastYedge:="Top"
 		}
-		else if (ypos+2>=A_ScreenHeight){
-			if (!trigger){
+		else if(ypos+2>=A_ScreenHeight){
+			if(!trigger){
 				trigger:=True
 				if(!buttonsPressed){
 					; 										Bottom Right
@@ -76,12 +76,12 @@ hotcorners(){
 		}
 		else {
 			lastcorner:="None"
-			if (!trigger){
+			if(!trigger){
 				; trigger:=True
 				if(!buttonsPressed){
 					; 										Right
 					; counterTemp:=counter+1
-					; if (counterTemp>delay){
+					; if(counterTemp>delay){
 					; 	Send, #^{Right}
 					; 	counterTemp:=0
 					; }
@@ -91,8 +91,8 @@ hotcorners(){
 		}
 		lastXedge:="Right"
 	}
-	else if (ypos<2){
-		if (!trigger){
+	else if(ypos<2){
+		if(!trigger){
 			trigger:=True
 			if(!buttonsPressed){
 				; 											Top
@@ -101,13 +101,13 @@ hotcorners(){
 			}
 		}
 	}
-	else if (ypos+2>=A_ScreenHeight){
-		if (!trigger){
+	else if(ypos+2>=A_ScreenHeight){
+		if(!trigger){
 			; trigger:=True
 			if(!buttonsPressed){
 				; 											Bottom
 				; counterTemp:=counter+1
-				; 	if (counterTemp>delay){
+				; 	if(counterTemp>delay){
 				; 		send, #{Tab}
 				; 		trigger:=True
 				; 		counterTemp:=0

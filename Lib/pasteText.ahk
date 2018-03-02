@@ -6,7 +6,7 @@ pasteText(text:="",window:="",controll:="") {
         Clipboard:=text
         loop {
         sleep, 100
-        if (Clipboard=text)
+        if(Clipboard=text)
             break
         }
     }

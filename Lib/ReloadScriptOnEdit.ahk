@@ -1,5 +1,5 @@
 _ScriptEdited(files:="",option:="RF",clean:=0){
-	if (files="")
+	if(files="")
 		files:=A_ScriptFullPath
 
 	Loop, Files, % files, % option
@@ -26,7 +26,7 @@ ReloadScriptOnEdit(files,clean:=0){	;clean=2 reloads also
 	if clean {
 		for _,f in files
 			_ScriptEdited(f,,True)
-		if (clean=2)
+		if(clean=2)
 			Reload
 		return 1
 	}

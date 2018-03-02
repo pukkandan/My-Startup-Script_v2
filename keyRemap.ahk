@@ -34,9 +34,9 @@ WheelDown::
 if getKeyState("MButton","P")                       ; Move window b/w desktops
     (A_ThisHotkey=="WheelUp") ? taskView.MoveToDesktopPrev(WinExist("A"),True) : taskView.MoveToDesktopNext(WinExist("A"),False)
 else if isPressed("RButton"){
-    ; if (A_ThisHotkey="WheelUp" AND taskView.GetCurrentDesktopNumber()=1)  ;Wrap
+    ; if(A_ThisHotkey="WheelUp" AND taskView.GetCurrentDesktopNumber()=1)  ;Wrap
     ;     taskView.GoToDesktopNumber(0)
-    ; else if (A_ThisHotkey="WheelDown" AND taskView.GetCurrentDesktopNumber()=taskView.GetDesktopCount())
+    ; else if(A_ThisHotkey="WheelDown" AND taskView.GetCurrentDesktopNumber()=taskView.GetDesktopCount())
     ;     taskView.GoToDesktopNumber(1)
     ; else
         send, % "#^{" (A_ThisHotkey="WheelUp" ? "Left":"Right") "}"
@@ -158,7 +158,7 @@ return
 RETURN
 CapsLock::
 keywait, Capslock, T0.2
-if (ErrorLevel){
+if(ErrorLevel){
     ^CapsLock::
     caseMenu.show()
     return

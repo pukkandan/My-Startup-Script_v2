@@ -55,7 +55,7 @@ class winProbe {
         ControlGetFocus, ac,  ahk_id %w%
         this.tip:="Mouse: S:(" x "," y ") W:(" xw "," yw ") C:(" xc "," yc ")`nTitle: """ substr(strReplace(t,"`n"," "),1,100) """`nID: " w "`nProcess: " pn "`nClass: " cl "`nPosition: (" win_x "," win_y ") Size: (" win_w "," win_h ") C: (" win_w+xc-xw "," win_h+yc-yw ")`nStyle: " s "`nExStyle: " es "`nControl: " c "`nActive Control: " ac "`n"
 
-        if (this.showOther) {
+        if(this.showOther) {
             winget, l, List, ahk_exe %pn% ahk_class %cl%
             this.extended_tip:="Windows with same Class and Process`n"
             loop, % l {

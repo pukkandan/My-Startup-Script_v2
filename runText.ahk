@@ -72,7 +72,7 @@ class runText{
     putIcon(i,obj){
         global
         local px, py, name, iconSize:=this.iconSize
-        if (i=1)
+        if(i=1)
             px:=2, py:=2
         else if !mod(i-1,this.GUImaxWidth)
             py:="+2", px:=2
@@ -120,13 +120,13 @@ class runText{
         sect:=RunTextObj.SectList[substr(A_GuiControl,9)]
         f:=sect.get("Folder")
         static menu:=[]
-        if (f){
-            if (A_GuiEvent="DoubleClick") {
+        if(f){
+            if(A_GuiEvent="DoubleClick") {
                 Run, % f,, UseErrorLevel
                 this.GUIhide()
                 return
             }
-            if (!menu[sect.id]){
+            if(!menu[sect.id]){
                 menuName:="runTextMenu_" sect.id
                 menu[sect.id]:=menuName
                 Menu, % menuName, UseErrorLevel
@@ -159,7 +159,7 @@ class runText{
                            if substr(icon,1,2)=".\"
                                icon:=A_LoopFileFullPath . substr(icon,2)
                            iconNo:=RegExReplace(iconNo,"[^0-9]")
-                        } else if (substr(A_LoopFullPath,-3)=".lnk")
+                        } else if(substr(A_LoopFullPath,-3)=".lnk")
                             FileGetShortcut, A_LoopFileFullPath,,,,, Icon, IconNo
                         Menu, % menuName, Icon, % A_LoopFileName, % icon, % iconNo
                     }
@@ -169,8 +169,8 @@ class runText{
             return
         }
         m:=sect.get("Menu")
-        if (m){
-            if (!menu[sect.id]){
+        if(m){
+            if(!menu[sect.id]){
                 menuName:="runTextMenu_" sect.id
                 menu[sect.id]:=menuName
                 Menu,  % menuName, UseErrorLevel
@@ -211,21 +211,21 @@ class runText{
             s:=sect.get(mod "Send" A_Index)
             if(!r && !w && !s)
                 break
-            if (r){
+            if(r){
                 Tooltip("Running """ r """")
                 Run, % r,, UseErrorLevel
             }
-            if (w){
+            if(w){
                 Tooltip("Waiting for """ w """")
                 Winwait, % w,, % RunTextObj.waitTimeout
-                if (ErrorLevel){
+                if(ErrorLevel){
                     Tooltip("TIMEOUT: Wait for """ w """")
                     Sleep, 500
                     ToolTip,
                     return
                 }
                 sleep, 100
-                if (s){
+                if(s){
                     Tooltip("Sending """ s """ to """ w """")
                     WinActivate, % w
                     if sect.get(mod "SendRaw" A_Index)=1
@@ -234,7 +234,7 @@ class runText{
                         pasteText(s,w)
                     else ControlSend,, % s, % w
                 }
-            } else if (s){
+            } else if(s){
                 Tooltip("Sending """ s """")
                 if sect.get(mod "SendRaw" A_Index)
                     sendRaw, % s
@@ -264,9 +264,9 @@ class runText{
                 global RunText_Edit
                 GuiControlGet, text,, RunText_Edit
                 enc:=this.get("Encoding","None")
-                if (enc="URIDecode")
+                if(enc="URIDecode")
                     text:=URI_Decode(text)
-                if (enc="URIEncode")
+                if(enc="URIEncode")
                     text:=URI_Encode(text)
                 return text
            }
@@ -292,7 +292,7 @@ class runText{
                     ifExist, % substr(val,1,-4) ".ico"
                         return this.icon:=substr(val,1,-4) ".ico"
 
-                ;~ if (ext){
+                ;~ if(ext){
                 ;~     icon_ext:=extensionIcon(ext)
                 ;~     ifExist, icon_ext
                 ;~         return this.icon:=icon_ext

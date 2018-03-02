@@ -14,7 +14,7 @@ Tooltip(tip:="", p:=""){
 
     if p.life
         Tooltip_Remove(p.life,p.no)
-    ; if (p.reset!=false){
+    ; if(p.reset!=false){
     ;     ToolTip_Font ("Default")
     ;     Tooltip_color("Default","Default")
     ; }
@@ -42,7 +42,7 @@ _TTremove(no:=1){
 ;lexikos: https://autohotkey.com/boards/viewtopic.php?t=4777
 ToolTip_Font(Options := "", Name := "", hwnd := "") {
     static hfont := 0
-    if (hwnd = ""){
+    if(hwnd = ""){
         hfont := Options="Default" ? 0 : _TTG("Font", Options, Name)
         _TTHook()
     } else
@@ -50,19 +50,19 @@ ToolTip_Font(Options := "", Name := "", hwnd := "") {
 }
 ToolTip_Color(Background := "", Text := "", hwnd := "") {
     static bc := "", tc := ""
-    if (hwnd = "") {
-        if (Background != "")
+    if(hwnd = "") {
+        if(Background != "")
             bc := Background="Default" ? "" : _TTG("Color", Background)
-        if (Text != "")
+        if(Text != "")
             tc := Text="Default" ? "" : _TTG("Color", Text)
         _TTHook()
     } else {
         VarSetCapacity(empty, 2, 0)
         DllCall("UxTheme.dll\SetWindowTheme", "ptr", hwnd, "ptr", 0
             , "ptr", (bc != "" && tc != "") ? &empty : 0)
-        if (bc != "")
+        if(bc != "")
             DllCall("SendMessage", "ptr", hwnd, "uint", 1043, "ptr", bc, "ptr", 0)
-        if (tc != "")
+        if(tc != "")
             DllCall("SendMessage", "ptr", hwnd, "uint", 1044, "ptr", tc, "ptr", 0)
     }
 }
@@ -79,10 +79,10 @@ _TTWndProc(nCode, _wp, _lp) {
    ;wParam  := NumGet(_lp+1*A_PtrSize)
     uMsg    := NumGet(_lp+2*A_PtrSize, "uint")
     hwnd    := NumGet(_lp+3*A_PtrSize)
-    if (nCode >= 0 && (uMsg = 1081 || uMsg = 1036)) {
+    if(nCode >= 0 && (uMsg = 1081 || uMsg = 1036)) {
         _hack_ = ahk_id %hwnd%
         WinGetClass wclass, %_hack_%
-        if (wclass = "tooltips_class32") {
+        if(wclass = "tooltips_class32") {
             ToolTip_Color(,, hwnd)
             ToolTip_Font(,, hwnd)
         }
@@ -96,12 +96,12 @@ _TTG(Cmd, Arg1, Arg2:="") {
         Gui _TTG: +hwndhgui +0x40000000
     }
     Gui _TTG: %Cmd%, %Arg1%, %Arg2%
-    if (Cmd = "Font") {
+    if(Cmd = "Font") {
         GuiControl _TTG: Font, %htext%
         SendMessage 0x31, 0, 0,, ahk_id %htext%
         return ErrorLevel
     }
-    if (Cmd = "Color") {
+    if(Cmd = "Color") {
         hdc := DllCall("GetDC", "ptr", htext, "ptr")
         SendMessage 0x138, hdc, htext,, ahk_id %hgui%
         clr := DllCall("GetBkColor", "ptr", hdc, "uint")

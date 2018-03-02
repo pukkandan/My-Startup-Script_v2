@@ -81,7 +81,7 @@ class Toast{
         return
     }
     close(wparam:="",lParam:="",msg:="",hwnd:=""){
-        if (hwnd and hwnd!=this.hwnd)
+        if(hwnd and hwnd!=this.hwnd)
             return
 
         this.exist:=False, GUI_handle:="Toast_GUI" this.id

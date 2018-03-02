@@ -32,7 +32,7 @@ _Transparent_windows_EXIT(tr){
             IfWinExist, ahk_group noTransGroup ahk_id %wid%
                 continue
             winget, trans, Transparent, ahk_id %wid%
-            if (trans=tr)
+            if(trans=tr)
                 winset, Transparent, Off, ahk_id %wid%
         }
         return

@@ -43,17 +43,17 @@ class winAction{
         loop, Parse, submenus, `n
         {
             submenu:=A_LoopField
-            if (substr(submenu,1,1)="-")
+            if(substr(submenu,1,1)="-")
                 Menu, winAction, Add
             else {
                 IniRead, lines, % txt, % submenu
                 loop, parse, lines, `n
                 {
                     it:=new this.item(this,A_LoopField,submenu="winAction"?"winAction":"winAction " submenu)
-                    if (it.exist)
+                    if(it.exist)
                         this.itemList.Push(it)
                 }
-                if (submenu!="winAction")
+                if(submenu!="winAction")
                     Menu, winAction, Add, % submenu, :winAction %submenu%
             }
         }
@@ -75,7 +75,7 @@ class winAction{
     PIP_remove(){
         if PIP.list.haskey(this.win_) {  ; Cannot remove windows that arent set by winAction
             s:=PIP.list[this.win].set
-            if (PIP.topListOld.s.id=this.win_hwnd)
+            if(PIP.topListOld.s.id=this.win_hwnd)
                 PIP.unPIP(s)
             PIP.list.Delete(this.win)
             return s
@@ -99,7 +99,7 @@ class winAction{
     }
     PIP_add_remove(set){
         s:=this.PIP_remove()
-        if (s!=0 and s=set)
+        if(s!=0 and s=set)
             return
         return this.PIP_TypeMenu(set)
     }
@@ -111,7 +111,7 @@ class winAction{
             Menu, winAction PIP list, Add, % name, % act
             set:=PIP.list[this.win].set
             Menu, winAction PIP list, % (set=A_Index)?"Check":"UnCheck", % name
-            if (A_Index=1)
+            if(A_Index=1)
                 Menu, winAction, % (set=A_Index)?"Check":"UnCheck", Add to Main PIP [&V]
         }
         return
@@ -206,7 +206,7 @@ class winAction{
     class item{
         __new(parent,line,menu){
             this.menu:=menu, rep:=1, this.exist:=True, this.parent:=parent
-            if (substr(line,1,1)="-"){
+            if(substr(line,1,1)="-"){
                 this.exist:=False
                 Menu, % this.menu, Add
                 return
@@ -219,13 +219,13 @@ class winAction{
             line:=StrReplace(line, "_", " ")
 
             lineArr:=StrSplit(line, A_Tab)
-            if (substr(lineArr[1],1,1)="E")
+            if(substr(lineArr[1],1,1)="E")
                 this.exstyle:=True
             else this.exstyle:=False
             this.style:=substr(lineArr[1],this.exstyle?2:1)
             this.name:=lineArr[2]
 
-            if (this.name="" OR this.style=""){
+            if(this.name="" OR this.style=""){
                 this.exist:=False
                 msgbox, Insufficient data!!`n"%line%"
             } else{
@@ -235,7 +235,7 @@ class winAction{
             ; Msgbox, % this.name " " this.style
         }
         action(){
-            if (this.exstyle)
+            if(this.exstyle)
                 winset, exstyle, % "^" this.style, % this.parent.win
             else
                 winset, style, % "^" this.style, % this.parent.win
@@ -247,7 +247,7 @@ class winAction{
             return
         }
         checkMenu(){
-            if (this.exstyle)
+            if(this.exstyle)
                 winget, s, exstyle, % this.parent.win
             else
                 winget, s, style, % this.parent.win
@@ -263,7 +263,7 @@ class winAction{
         ; t0:=A_TickCount
         this.win:="ahk_id " this.win_hwnd
         WinGetClass, winclass, % this.win
-        if (winclass="WorkerW" OR winclass="Shell_TrayWnd" OR !winexist(this.win)){
+        if(winclass="WorkerW" OR winclass="Shell_TrayWnd" OR !winexist(this.win)){
             Toast.show("No Window")
             return
         }

@@ -10,7 +10,7 @@ isOver_coord(win,pos){
     WinGetPos, x, y, w, h, % win
     ; msgbox, %x%, %y%, %w%, %h%
     ; msgbox, % mpos[1] "|" mpos[2]
-    if ((pos[1]>=x) and (pos[1]<=x+w) and (pos[2]>=y) and (pos[2]<=y+h))
+    if((pos[1]>=x) and (pos[1]<=x+w) and (pos[2]>=y) and (pos[2]<=y+h))
         return True
     return false
 }

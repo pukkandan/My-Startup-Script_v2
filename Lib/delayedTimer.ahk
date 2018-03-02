@@ -1,4 +1,4 @@
-class delayedTimer {
+class DelayedTimer {
     set(f0,t0,runatStart:=False){
         if !isObject(this.obj)
             this.obj:=[]

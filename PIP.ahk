@@ -34,13 +34,13 @@ class PIP {
                     N = None of the above
 
              */
-            if (!p.type)
+            if(!p.type)
                 p.type:=this.def.type
-            if (p.set!="") {
+            if(p.set!="") {
                 set:=p.set
                 if set is not number
                     p.set:=this.sets+1   ;new set
-                else if (set=0)
+                else if(set=0)
                     p.set:=this.sets+1   ;new set
             }
             this.unPIP(this.list[t].set)
@@ -84,14 +84,14 @@ class PIP {
                 continue
             WinGetPos,,, w, h, ahk_id %n%
             ; msgbox, %w% %h%
-            if (h>item.maxHeight || w>item.maxWidth || h<32)    ;Too small
+            if(h>item.maxHeight || w>item.maxWidth || h<32)    ;Too small
                 continue
             if inStr(item.type,"C"){   ;Chrome-like
                 WinGetTitle, title, ahk_id %n%
-                if (title="Page Unresponsive" OR title="Pages Unresponsive")
+                if(title="Page Unresponsive" OR title="Pages Unresponsive")
                     continue
                 WinGet, s, Style, ahk_id %n%
-                if (s&0x80000000){  ;Chrome Notification
+                if(s&0x80000000){  ;Chrome Notification
                     ;~ WinSet, AlwaysOnTop, On, ahk_id %n%   ;Make Chrome notification come on top
                     continue
                 }
@@ -112,11 +112,11 @@ class PIP {
 
             ifWinActive, ahk_id %n%
                 this_winPref:=3
-            else if (this.topListOld[i.set].id=n)
+            else if(this.topListOld[i.set].id=n)
                 this_winPref:=2
             else this_winPref:=1
 
-            if ( this_winPref > (winPref.haskey(i.set)?winPref[i.set]:0) )
+            if( this_winPref > (winPref.haskey(i.set)?winPref[i.set]:0) )
                 winPref[i.set]:=this_winPref
             else continue
             this.topList[i.set]:={id:Format("{1:#x}",n),type:i.type}
@@ -134,9 +134,9 @@ class PIP {
     }
     unPIPOld(){
         for set,old in this.topListOld {
-            if (this.mouseAllowed[set]="")
+            if(this.mouseAllowed[set]="")
                 this.mouseAllowed[set]:=True
-            if (this.topList[set].id!=old.id)
+            if(this.topList[set].id!=old.id)
                 this.unPIP(set)
         }
         return
@@ -150,10 +150,10 @@ class PIP {
 
         ;Avoid mouseover
         if isOver_mouse(n){
-            if (GetKeyState("Control","P") || GetKeyState("LButton","P") || GetKeyState("RButton","P") || GetKeyState("MButton","P") || WinActive("ahk_id" n))
+            if(GetKeyState("Control","P") || GetKeyState("LButton","P") || GetKeyState("RButton","P") || GetKeyState("MButton","P") || WinActive("ahk_id" n))
                 this.mouseAllowed[set]:=True
 
-            if (!this.mouseAllowed[set]){
+            if(!this.mouseAllowed[set]){
                 if inStr(this.topList[set].type,"J") {
                     WinGetPos, onTopX,,onTopW,, ahk_id %n%
                     WinMove, ahk_id %n%,, % 2*onTopX>A_ScreenWidth-onTopW ? +64 : A_ScreenWidth-onTopW-16
@@ -162,16 +162,16 @@ class PIP {
                 WinSet, Style, +0xC00000, ahk_id %n%
         } else this.mouseAllowed[set]:=False
 
-        if (!this.mouseAllowed[set]) AND inStr(this.topList[set].type,"T") {
+        if(!this.mouseAllowed[set]) AND inStr(this.topList[set].type,"T") {
             if inStr(this.topList[set].type,"V")
                 WinSet, Style, -0x400000, ahk_id %n%
-            else if (!this.mouseAllowed[set])
+            else if(!this.mouseAllowed[set])
                 WinSet, Style, -0xC00000, ahk_id %n%
         }
         return
     }
     setPIP(){
-        if (this.mouseAllowed[set]="")
+        if(this.mouseAllowed[set]="")
             this.mouseAllowed[set]:=False
         for set in this.topList
             this.PIP(set)

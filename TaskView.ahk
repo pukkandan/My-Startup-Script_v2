@@ -11,12 +11,12 @@ class TaskView
             this.Proc[func]:= DllCall("GetProcAddress", Ptr, hVirtualDesktopAccessor, AStr, func, "Ptr")
 
         this.Toast:=new toast({life:1000})
-        DllCall(this.Proc["RegisterPostMessageHook"], Int, SCR_hwnd, Int, 0x1400 + 30)
+        DllCall(this.Proc["RegisterPostMessageHook"], Int, SCR_hwnd+(0x1000<<32), Int, 0x1400 + 30)
         message_func:=ObjBindMethod(this,"VWMessage")
         OnMessage(0x1400 + 30, message_func)
     }
 
-    VWMessage(wParam, lParam, msg, SCR_hwnd) {
+    VWMessage(wParam, lParam, msg, hwnd) {
         return this.OnDesktopSwitch(lParam + 1)
     }
     OnDesktopSwitch(x){
@@ -55,14 +55,14 @@ class TaskView
 
     GetFixedWindowsNumber(n,wrap:=True){
         max:=this.GetDesktopCount()
-        if (wrap){
+        if(wrap){
             while n<=0
                 n+=max
             n:= mod(n-1, max) +1
         } else {
-            if (n<=0)
+            if(n<=0)
                 n:=1
-            else if (n>max) {
+            else if(n>max) {
                 loop, % n-max
                     send, #^d       ; Create extra desktops
                 sleep, 100

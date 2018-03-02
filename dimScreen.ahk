@@ -9,7 +9,7 @@ dimScreen(p:=0){
         Gui, DimScreenGUI:Color, 0x000000
         Gui, DimScreenGUI:Show, % "NoActivate X0 Y0 W" . A_ScreenWidth "H" . A_ScreenHeight
     }
-    if (e) {
+    if(e) {
         WinSet, Transparent, % t, ahk_id %hwnd%
         Toast.show("Dimscreen " t "/255")
         Gui, DimScreenGUI:Show, NoActivate

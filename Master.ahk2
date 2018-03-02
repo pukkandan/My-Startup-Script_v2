@@ -1,1 +1,0 @@
-Run(A_AhkPath " `"" substr(A_ScriptFullPath,1,-1) "`"")

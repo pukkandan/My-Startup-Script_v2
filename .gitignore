@@ -1,0 +1,6 @@
+*.sublime-project
+hotStrings.ahk
+*.sublime-workspace
+backup\*
+temp\*
+*.bak

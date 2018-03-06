@@ -1,13 +1,13 @@
 class DelayedTimer {
     set(f0,t0,runatStart:=False){
-        if !isObject(this.obj)
+        if !(this.obj is "object")
             this.obj:=[]
         return this.obj.push({f:f0,t:t0,r:runatStart})
     }
     start(r:=False){
         for _,item in this.obj {
             f:=item.f
-            setTimer, % f, % item.t
+            setTimer(f, item.t)
         }
         return r? this.firstRun() :0
     }

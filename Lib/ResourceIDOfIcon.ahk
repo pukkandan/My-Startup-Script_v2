@@ -24,9 +24,9 @@ ResourceIdOfIcon(Filename, IconIndex)
 _EnumIconResources(hModule, lpszType, lpszName, lParam)
 {
     index := NumGet(lParam+4)
-    if(index = NumGet(lParam+0))
+    if index = NumGet(lParam+0)
     {   ; for named resources, lpszName might not be valid once we return (?)
-        ; if(lpszName >> 16 == 0), lpszName is an integer resource ID.
+        ; if lpszName >> 16 == 0 , lpszName is an integer resource ID.
         NumPut(lpszName, lParam+4)
         NumPut(1, lParam+8)
         return false    ; break

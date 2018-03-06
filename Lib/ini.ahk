@@ -3,28 +3,12 @@ class ini{
 		this.file:=file
 	}
 	get(sect:="",key:="",def:=0){
-		if(sect="")
-			iniRead, val, % this.file
-		else if(key="")
-			iniRead, val, % this.file, % sect
-		else
-			iniRead, val, % this.file, % sect, % key, % def
-		return val
+		return sect=""? iniRead(this.file): key=""? iniRead(this.file, sect): iniRead(this.file, sect, key, def)
 	}
 	set(sect,key:="",val:=""){
-		if(key="")
-			iniWrite, % val, % this.file, % sect
-		else
-			iniWrite, % val, % this.file, % sect, % key
-		return
+		return key=""? iniWrite(val, this.file, sect): iniWrite(val, this.file, sect, key)
 	}
 	delete(sect:="",key:=""){
-		if(sect="")
-			FileDelete, % this.file
-		else if(key="")
-			iniDelete, % this.file, % sect
-		else
-			iniDelete, % this.file, % sect, % key
-		return
+		return sect=""? fileDelete(this.file): key=""? iniDelete(this.file, sect): iniRead(this.file, sect, key)
 	}
 }

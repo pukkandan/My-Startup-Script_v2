@@ -1,40 +1,39 @@
-_ScriptEdited(files:="",option:="RF",clean:=0){
-	if(files="")
+_ScriptEdited(files:="",option:="RF",clean:=0) {
+	if files=""
 		files:=A_ScriptFullPath
 
-	Loop, Files, % files, % option
-	{
-		if A_LoopFileAttrib contains H,S
+	Loop Files, files, option {
+		if inStr(A_LoopFileAttrib,"H") OR inStr(A_LoopFileAttrib,"S")
 			continue
 		else if clean
-			FileSetAttrib, -A, % A_LoopFileLongPath, % inStr(option,"D")?(inStr(option,"F")?2:1):0, % InStr(option,"R")?1:0
-		else if A_LoopFileAttrib contains A
-		{
-			FileSetAttrib, -A, % A_LoopFileLongPath
-			return A_LoopFileLongPath
+			FileSetAttrib("-A", A_LoopFileFullPath, option)
+		else if inStr(A_LoopFileAttrib, "A") {
+			FileSetAttrib("-A", A_LoopFileFullPath)
+			return A_LoopFileFullPath
 		}
 	}
 	return 0
 }
 
-ReloadScriptOnEdit(files,clean:=0){	;clean=2 reloads also
-	static fName
+ReloadScriptOnEdit(files,clean:=0) {	;clean=2 reloads also
+	static fName, fPath
 	if !fName {
-		SplitPath, A_ScriptFullPath, , , , fName, ;fName = Name of file without extension
+		fName:=SplitFilePath(A_ScriptFullPath).NameNoExt
+		fPath:=(strlen(A_ScriptFullPath)>50?"...":"") substr(A_ScriptFullPath,-50)
 		clean:=1 ;Clean on first run
 	}
 	if clean {
 		for _,f in files
 			_ScriptEdited(f,,True)
-		if(clean=2)
+		if clean=2
 			Reload
 		return 1
 	}
 
 	for _,f in files
 		if changed:=_ScriptEdited(f) {
-			MsgBox, 0x24, % fName, A file related to the script %fName% has changed:`n`nScript file:%A_ScriptFullPath%`nChanged file:%changed%`n`nReload this script?
-			IfMsgBox, Yes
+			changed:=(strlen(changed)>50?"...":"") substr(changed,-50)
+			if MsgBox("A file related to the script " fName " has changed:`n`nScript file:`n" fPath "`nChanged file:`n" changed "`n`nReload this script?",, 0x24)="Yes"
 				ReloadScriptOnEdit(files,2)
 			else
 				ReloadScriptOnEdit(files,1)

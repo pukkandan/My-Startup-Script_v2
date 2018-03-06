@@ -1,121 +1,59 @@
-hotcorners(){
-	CoordMode, Mouse, Screen
-	static counter:=0, trigger:=False, delay:=6
-	counterTemp:=0
-	MouseGetPos, xpos, ypos
-	buttonsPressed:= GetKeyState("LButton") OR GetKeyState("RButton")
-	; tooltip, % "X:" xpos "+" A_ScreenWidth-xpos "=" A_ScreenWidth "`nY:"  ypos "+" A_ScreenHeight-ypos "=" A_ScreenHeight "`nTrigger=" trigger "`nCounter=" counter
+/* ; Sample
+A_CoordModeMouse:= "Screen"
+HotCorners.register( "R",Func("send").bind("#^{Right}"	),10	)
+HotCorners.register( "L",Func("send").bind("#^{Left}"	),10	)
+HotCorners.register("TL",Func("send").bind("#{Tab}"		)		)
+HotCorners.register("BL",Func("send").bind("#x"			)		)
+HotCorners.register("BR",Func("send").bind("#a"			)		)
+setTimer(HotCorners.timer,100)
+*/
 
-	; Edges not containing trigger:=True will fire contineously. Counter can be used to controll the frequency of firing. Corners must always contain trigger:=True. Otherwise, edge to corner transitions will fire the corresponding edge.
-
-	/* How to use counter:
-	counterTemp:=counter+1
-	if(counterTemp>DELAY){
-		DO THIS
-		counterTemp:=0
+class HotCorners {
+	register(position, f, delay_count:=0){ ;Position: T,B,L,R,TL,TR,BL,BR
+	; The registered function can take position of mouse as parameters
+	; If delay_count<=0, the function is triggered only once. Else, it is triggered everytime the timer runs "delay_count" times
+	; The same edge/corner can have a function registered with delay_count<=0 and another with delay_count>0
+		if !this.f {
+			this.f:={}
+			for _,p in ["L","R","T","B","TL","TR","BL","BR"]
+				this.f[p]:={0:{}, 1:{}} ;0=False, 1=True
+		}
+		; Alternative to if !(position in ["L","R","T","B","TL","TR","BL","BR"])
+		if !{"L":0,"R":0,"T":0,"B":0,"TL":0,"TR":0,"BL":0,"BR":0}.haskey(position)
+			return False
+		return this.f[position][delay_count>0?False:True]:={f:f,t:delay_count}
 	}
-	*/
 
-	if(xpos<2) {
-		if(ypos<2){
-			if(!trigger){
-				trigger:=True
-				if(!buttonsPressed){
-					; 										Top Left
-					send, #{tab}
-					;---------------------------------------------------------
-				}
-			}
-		}
-		else if(ypos+2>=A_ScreenHeight){
-			if(!trigger){
-				trigger:=True
-				if(!buttonsPressed){
-					; 										Bottom Left
-					Send, #x
-					;---------------------------------------------------------
-				}
-			}
-		}
-		else {
-			if(!trigger){
-				; trigger:=True
-				if(!buttonsPressed){
-					; 										Left
-					; counterTemp:=counter+1
-					; if(counterTemp>=delay){
-					; 	Send, #^{Left}
-					; 	counterTemp:=0
-					; }
-					;---------------------------------------------------------
-				}
-			}
+	timer[] {
+		get {
+			return ObjBindMethod(this, "_run")
 		}
 	}
-	else if(xpos+2>=A_ScreenWidth) {
-		if(ypos<2) {
-			if(!trigger){
-				trigger:=True
-				if(!buttonsPressed){
-					; 										Top Right
 
-					;---------------------------------------------------------
-				}
-			}
-			lastYedge:="Top"
+	_run(){
+		static margin:=2, counter:=0, trigger:=False, lastpos:=""
+		MouseGetPos(mx, my)
+		position:=(my<margin?"T":(my+margin>=A_ScreenHeight?"B":"")) (mx<margin?"L":(mx+margin>=A_ScreenWidth?"R":""))
+		if !position {
+			counter:=0, lastpos:=""
+			return trigger:=False
 		}
-		else if(ypos+2>=A_ScreenHeight){
-			if(!trigger){
-				trigger:=True
-				if(!buttonsPressed){
-					; 										Bottom Right
-					send, #a
-					;---------------------------------------------------------
-				}
-			}
-		}
-		else {
-			lastcorner:="None"
-			if(!trigger){
-				; trigger:=True
-				if(!buttonsPressed){
-					; 										Right
-					; counterTemp:=counter+1
-					; if(counterTemp>delay){
-					; 	Send, #^{Right}
-					; 	counterTemp:=0
-					; }
-					;---------------------------------------------------------
-				}
-			}
-		}
-		lastXedge:="Right"
-	}
-	else if(ypos<2){
-		if(!trigger){
-			trigger:=True
-			if(!buttonsPressed){
-				; 											Top
 
-				;-------------------------------------------------------------
-			}
+		buttonsPressed:= GetKeyState("LButton") OR GetKeyState("RButton"), counter++
+		if !buttonsPressed {
+			if (!trigger OR !lastpos OR lastpos=position) AND counter>=this.f[position][False].t
+				try {
+					f:=this.f[position][False].f
+					%f%(mx, my)
+					counter:=0, lastpos:=position
+				}
+			if !trigger
+				try {
+					f:=this.f[position][True].f
+			 		%f%(mx, my)
+			 		lastpos:=position
+			 	}
 		}
+		return trigger:=True
 	}
-	else if(ypos+2>=A_ScreenHeight){
-		if(!trigger){
-			; trigger:=True
-			if(!buttonsPressed){
-				; 											Bottom
-				; counterTemp:=counter+1
-				; 	if(counterTemp>delay){
-				; 		send, #{Tab}
-				; 		trigger:=True
-				; 		counterTemp:=0
-				; 	}
-				;-------------------------------------------------------------
-			}
-		}
-	}
-	else trigger:=False
-	counter:=counterTemp
 }

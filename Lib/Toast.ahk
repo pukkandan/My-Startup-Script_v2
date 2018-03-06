@@ -1,12 +1,15 @@
-; d:={ title:{color:"0x0000FF"} , margin:[100,100]}
-; t:=new toast(d)
-; p:={ title:{text:"hi",color:"0x0000FF"} , margin:[100,50] ,message:{ text:["hello","2","3"], def_size:18, size:[9,10], color:["0xFF00FF","0x00FF00"], offset:["",1] },life:0 }
-; t.show(p)
-; sleep, 1000
-; t.show({ title:{text:"whatever"},message:{text:["hello"]} }) ;Replaces previous instance of same obj
-; sleep, 200
-; Toast.show("hi") ;Show with all default settings
-; Toast.show(p) ;Show without creating a dedicated object. Will replace other instances without object, but not other object
+/* ; Examples
+d:={ title:{color:"0x0000FF"} , margin:[100,100]}
+t:=new toast(d)
+p:={ title:{text:"hi",color:"0x0000FF"} , margin:[100,50] ,message:{ text:["hello","2","3"], def_size:18, size:[9,10], color:["0xFF00FF","0x00FF00"], offset:["",1] }, life:0 }
+t.show(p)
+sleep 1000
+t.show({ title:{text:"whatever"},message:{text:["hello"]}, life:0 }) ;Replaces previous instance of same obj
+sleep 200
+Toast.show("hi") ;Show with all default settings
+sleep 200
+Toast.show(p) ;Show without creating a dedicated object. Will replace other instances without object, but not other objects
+*/
 
 class Toast{
     __new(byRef p:=""){
@@ -21,7 +24,7 @@ class Toast{
 
         if p
             for i,x in p {
-                if IsObject(x)
+                if isObject(x)
                     for j,y in x
                         this.def[i][j]:= p[i][j]
                 else this.def[i]:=p[i]
@@ -32,11 +35,11 @@ class Toast{
         if !IsObject(p) ;If not object, assume only title is given
             p:={title:{text:p}}
         for i,x in this.def {
-            if IsObject(x) {
+            if isObject(x) {
                 this[i]:={}
                 for j,y in x
-                    this[i][j]:= (p[i][j]="")? this.def[i][j] : p[i][j]
-            } else this[i]:= (p[i]="")? this.def[i] : p[i]
+                    this[i][j]:= (p.haskey(i) AND p[i].haskey(j))? p[i][j]:this.def[i][j]
+            } else this[i]:= p.haskey(i)?p[i]:this.def[i]
         }
         this.x:=this.pos.x, this.y:=this.pos.y, this.pos:="", this.closekeys:=this.closekeys[1]
         return
@@ -48,17 +51,13 @@ class Toast{
             this.__new()
         this.setParam(param)
 
-        GUI_handle:="Toast_GUI" this.id
-        Gui, %GUI_handle%: New, -Caption +ToolWindow +AlwaysOnTop +hwndHWND
-        this.hwnd:=hwnd
-        Gui, %GUI_handle%: Color, % this.bgColor
-        GUI, %GUI_handle%:+LastFoundExist
-        WinSet, Trans, % this.trans
-        Gui, %GUI_handle%:Margin, % this.marginX, % this.marginY
+        GUIOld:=this.GUIObj
+        this.GUIObj:=GUICreate("-Caption +ToolWindow +AlwaysOnTop")
+        this.GUIObj.title:="Toast" this.id, this.GUIObj.backColor:=this.bgColor, this.GUIObj.marginX:=this.margin.x, this.GUIObj.marginY:=this.margin.y
+        WinSetTransparent(this.trans, this.GUIObj.hwnd)
 
-        t:=this.title.text, s:=this.title.size, c:=this.title.color, o:=this.title.opt, f:=this.title.Font
-        Gui, %GUI_handle%: Font, norm s%s% c%c% %o%, %f%
-        Gui, %GUI_handle%: Add, Text,, %t%
+        this.GUIObj.setFont("norm s" this.title.size " c" this.title.color " " this.title.opt, this.title.Font)
+        this.GUIObj.AddText("xm ym",this.title.text)
 
         for i,t in this.message.text {
              s:= this.message.size  [i] = "" ? this.message.def_size    : this.message.size  [i]
@@ -66,28 +65,30 @@ class Toast{
             ,o:= this.message.opt   [i] = "" ? this.message.def_opt     : this.message.opt   [i]
             ,f:= this.message.Font  [i] = "" ? this.message.def_font    : this.message.Font  [i]
             ,m:= this.message.offset[i] = "" ? this.message.def_offset  : this.message.offset[i]
-            Gui, %GUI_handle%: Font, norm s%s% c%c% %o%, %f%
-            Gui, %GUI_handle%: Add, Text, xp y+%m%, %t%
+            this.GUIObj.setFont("norm s" s " c" c o, f)
+            this.GUIObj.AddText("xp y+" m, t)
         }
-        OnMessage(0x202, closeObj:=this.closeObj)
+        OnMessage(0x202, this.closeObj)
         this.exist:=True
         if this.sound
-            SoundPlay, *-1
-        GUI, %GUI_handle%: Show, % (this.activate?"":"NoActivate ") "autosize x" this.x " y" this.y, % "Toast" this.id
+            SoundPlay("*-1")
+        this.GUIObj.show((this.activate?"":"NoActivate ") "AutoSize x" this.x " y" this.y)
+
+        try GUIOld.destroy()
         if this.life
-            setTimer, % closeObj , % "-" this.life
+            setTimer(this.closeObj, -this.life)
+        else try setTimer(this.closeObj, "Off")
         for _,k in this.closekeys
-            Hotkey, % k , % closeObj, On B0 T1
+            Hotkey(k, this.closeObj, "On B0 T1")
         return
     }
     close(wparam:="",lParam:="",msg:="",hwnd:=""){
-        if(hwnd and hwnd!=this.hwnd)
+        if hwnd AND !(this.exist AND hwnd=this.GUIObj.hwnd)
             return
 
-        this.exist:=False, GUI_handle:="Toast_GUI" this.id
         for _,k in this.closekeys
-            Hotkey % k, Off
-        GUI, %GUI_handle%: Destroy
-        return
+            Hotkey(k, "Off")
+        try this.GUIObj.Destroy()
+        return this.exist:=False
     }
 }

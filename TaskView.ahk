@@ -1,126 +1,122 @@
-class TaskView
-{
-    __new(){
+class TaskView { ; There should only be one object for this
+    __new(){ ; new SHOULD be called by "TaskView.__new()", not by "new Taskview"
         hVirtualDesktopAccessor := DllCall("LoadLibrary", "Str", A_ScriptDir . "\Lib\virtual-desktop-accessor.dll", "Ptr")
         fList:=[ "GetCurrentDesktopNumber","GetDesktopCount","GoToDesktopNumber"
                 ,"IsWindowOnDesktopNumber","MoveWindowToDesktopNumber"
                 ,"IsPinnedWindow","PinWindow","UnPinWindow","IsPinnedApp","PinApp","UnPinApp"
                 ,"RegisterPostMessageHook","UnregisterPostMessageHook" ]
-        this.Proc:=[]
-        for _,func in fList
-            this.Proc[func]:= DllCall("GetProcAddress", Ptr, hVirtualDesktopAccessor, AStr, func, "Ptr")
+        this.proc:=[]
+        for _,fName in fList
+            this.proc[fName]:= DllCall("GetProcAddress", Ptr, hVirtualDesktopAccessor, AStr, fName, "Ptr")
 
-        this.Toast:=new toast({life:1000})
-        DllCall(this.Proc["RegisterPostMessageHook"], Int, SCR_hwnd+(0x1000<<32), Int, 0x1400 + 30)
-        message_func:=ObjBindMethod(this,"VWMessage")
-        OnMessage(0x1400 + 30, message_func)
-    }
-
-    VWMessage(wParam, lParam, msg, hwnd) {
-        return this.OnDesktopSwitch(lParam + 1)
-    }
-    OnDesktopSwitch(x){
-        return this.toast.show("Desktop " x)
+        this.toast:=new Toast({life:1000})
+        DllCall(this.proc["RegisterPostMessageHook"], Int, A_ScriptHwnd+(0x1000<<32), Int, 0x1400 + 30)
+        OnMessage(0x1400 + 30, ObjBindMethod(this,"_onDesktopSwitch"))
     }
 
-    ; __call(func,hwnd:=""){
-    ;     if hwnd
-    ;         return DllCall(this.Proc[func], UInt, hwnd)
-    ;     else return DllCall(this.Proc[func])
-    ; }
-    GetDesktopCount(){
-        return DllCall(this.Proc["GetDesktopCount"])
-    }
-    GetCurrentDesktopNumber(){
-        return DllCall(this.Proc["GetCurrentDesktopNumber"]) + 1
-    }
-    IsPinnedWindow(hwnd){
-        return DllCall(this.Proc["IsPinnedWindow"], UInt, hwnd)
-    }
-    IsPinnedApp(hwnd){
-        return DllCall(this.Proc["IsPinnedApp"], UInt, hwnd)
-    }
-    PinWindow(hwnd){
-        return DllCall(this.Proc["PinWindow"], UInt, hwnd)
-    }
-    UnPinWindow(hwnd){
-        return DllCall(this.Proc["UnPinWindow"], UInt, hwnd)
-    }
-    PinApp(hwnd){
-        return DllCall(this.Proc["PinApp"], UInt, hwnd)
-    }
-    UnPinApp(hwnd){
-        return DllCall(this.Proc["UnPinApp"], UInt, hwnd)
+    _onDesktopSwitch(wParam,lParam){
+        return this.toast.show("Desktop " lParam+1)
     }
 
-    GetFixedWindowsNumber(n,wrap:=True){
-        max:=this.GetDesktopCount()
-        if(wrap){
+    __Call(fname,hwnd:=""){
+        if hwnd
+             return DllCall(this.proc[fName], UInt, hwnd)
+        else return DllCall(this.proc[fName])
+    }
+    /* ; Same as
+    isPinnedWindow(hwnd){
+        return DllCall(this.proc["IsPinnedWindow"], UInt, hwnd)
+    }
+    isPinnedApp(hwnd){
+        return DllCall(this.proc["IsPinnedApp"], UInt, hwnd)
+    }
+    pinWindow(hwnd){
+        return DllCall(this.proc["PinWindow"], UInt, hwnd)
+    }
+    unPinWindow(hwnd){
+        return DllCall(this.proc["UnPinWindow"], UInt, hwnd)
+    }
+    pinApp(hwnd){
+        return DllCall(this.proc["PinApp"], UInt, hwnd)
+    }
+    unPinApp(hwnd){
+        return DllCall(this.proc["UnPinApp"], UInt, hwnd)
+    }
+    getDesktopCount(){
+        return DllCall(this.proc["GetDesktopCount"])
+    } */
+    getCurrentDesktopNumber(){
+        return DllCall(this.proc["GetCurrentDesktopNumber"]) + 1
+    }
+
+    _desktopNumber(n, wrap:=True){
+        max:=this.getDesktopCount()
+        if wrap {
             while n<=0
                 n+=max
-            n:= mod(n-1, max) +1
-        } else {
-            if(n<=0)
-                n:=1
-            else if(n>max) {
-                loop, % n-max
-                    send, #^d       ; Create extra desktops
-                sleep, 100
-            }
+            return mod(n-1, max) +1
+        }
+
+        if n<=0
+            return 1
+        if n>max {
+            loop n-max
+                send("#^d")       ; Create extra desktops
+            sleep(100)
         }
         return n
     }
-    GoToDesktopNumber(n,wrap:=True) {
-        if n is not number
+    goToDesktopNumber(n, wrap:=True) {
+        if (! n is "number")
             return 0
-        n:=this.GetFixedWindowsNumber(n,wrap)
-        DllCall(this.Proc["GoToDesktopNumber"], Int, n-1)
+        n:=this._desktopNumber(n, wrap)
+        DllCall(this.proc["GoToDesktopNumber"], Int, n-1)
         return n
     }
-    MoveWindowToDesktopNumber(n,win_hwnd,wrap:=True){
-        if n is not number
+    moveWindowToDesktopNumber(n, win_hwnd, wrap:=True){
+        if (! n is "number")
             return 0
-        n:=this.GetFixedWindowsNumber(n,wrap)
-        DllCall(this.Proc["MoveWindowToDesktopNumber"], UInt, win_hwnd, UInt, n-1)
+        n:=this._desktopNumber(n,wrap)
+        DllCall(this.proc["MoveWindowToDesktopNumber"], UInt, win_hwnd, UInt, n-1)
         return n
     }
 
-    GoToDesktopPrev(wrap:=True) {
-        max:=this.GetDesktopCount()
-        return this.GoToDesktopNumber(this.GetCurrentDesktopNumber()-1, win_hwnd, wrap)
+    goToDesktopPrev(wrap:=True) {
+        max:=this.getDesktopCount()
+        return this.goToDesktopNumber(this.getCurrentDesktopNumber()-1, wrap)
     }
-    GoToDesktopNext(wrap:=True) {
-        return this.GoToDesktopNumber(this.GetCurrentDesktopNumber()+1, win_hwnd, wrap)
+    goToDesktopNext(wrap:=True) {
+        return this.goToDesktopNumber(this.getCurrentDesktopNumber()+1, wrap)
     }
-    MoveToDesktopPrev(win_hwnd,wrap:=True) {
-        n:=this.GetCurrentDesktopNumber()-1
-        if this.MoveWindowToDesktopNumber(n, win_hwnd, wrap){
-            this.GoToDesktopNumber(n,wrap)
-            winactivate, ahk_id %win_hwnd%
+    moveToDesktopPrev(win_hwnd, wrap:=True) {
+        n:=this.getCurrentDesktopNumber()-1
+        if this.moveWindowToDesktopNumber(n, win_hwnd, wrap) {
+            this.goToDesktopNumber(n,wrap)
+            WinActivate("ahk_id " win_hwnd)
             return n
         } else return 0
     }
-    MoveToDesktopNext(win_hwnd,wrap:=True) {
-        n:=this.GetCurrentDesktopNumber()+1
-        if this.MoveWindowToDesktopNumber(n, win_hwnd, wrap){
-            this.GoToDesktopNumber(n,wrap)
-            winactivate, ahk_id %win_hwnd%
+    moveToDesktopNext(win_hwnd, wrap:=True) {
+        n:=this.getCurrentDesktopNumber()+1
+        if this.moveWindowToDesktopNumber(n, win_hwnd, wrap) {
+            this.goToDesktopNumber(n,wrap)
+            WinActivate("ahk_id " win_hwnd)
             return n
         } else return 0
     }
 
-    PinWindowToggle(hwnd){
+    pinWindowToggle(hwnd){
         if this.isPinnedWindow(hwnd)
-            this.UnPinWindow(hwnd)
+            this.unPinWindow(hwnd)
         else
-            this.PinWindow(hwnd)
+            this.pinWindow(hwnd)
         return this.isPinnedWindow(hwnd)
     }
-    PinAppToggle(hwnd){
+    pinAppToggle(hwnd){
         if this.isPinnedApp(hwnd)
-            this.UnPinApp(hwnd)
+            this.unPinApp(hwnd)
         else
-            this.PinApp(hwnd)
+            this.pinApp(hwnd)
         return this.isPinnedApp(hwnd)
     }
 }

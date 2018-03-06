@@ -1,66 +1,62 @@
 Transparent_windows(tr){
-    GroupAdd, TransGroup, ahk_class CabinetWClass ahk_exe explorer.exe
+    GroupAdd("TransGroup", "ahk_class CabinetWClass ahk_exe explorer.exe")
 
-    GroupAdd, noTransGroup, ahk_class SysShadow
-    GroupAdd, noTransGroup, ahk_class Dropdown
-    GroupAdd, noTransGroup, ahk_class SysDragImage
+    GroupAdd("noTransGroup", "ahk_class SysShadow")
+    GroupAdd("noTransGroup", "ahk_class Dropdown")
+    GroupAdd("noTransGroup", "ahk_class SysDragImage")
 
-    onExit(Func("_Transparent_windows_EXIT").bind(tr))
-
-    WinGet windows, List
-    Loop %windows%{
-        wid := windows%A_Index%
-
-        IfWinNotExist, ahk_group TransGroup ahk_id %wid%
+    for _,wid in WinGetList(windows) {
+        if !WinExist("ahk_group TransGroup ahk_id " wid)
             continue
-        IfWinExist, ahk_group noTransGroup ahk_id %wid%
+        if WinExist("ahk_group noTransGroup ahk_id " wid)
             continue
 
-        winget, trans, Transparent, ahk_id %wid%
-        if !trans
-            winset, Transparent, % tr, ahk_id %wid%
+        if winGetTransparent("ahk_id " wid)=255 {
+            winSetTransparent(tr, "ahk_id " wid)
+            onExit(Func("winsetTransparent").bind(255,"ahk_id " wid))
+        }
     }
     return
 }
 
-_Transparent_windows_EXIT(tr){
-    WinGet windows, List
-        Loop %windows% {
-            wid := windows%A_Index%
-            IfWinNotExist, ahk_group TransGroup ahk_id %wid%
-                continue
-            IfWinExist, ahk_group noTransGroup ahk_id %wid%
-                continue
-            winget, trans, Transparent, ahk_id %wid%
-            if(trans=tr)
-                winset, Transparent, Off, ahk_id %wid%
-        }
-        return
+;------------------------------------------------------------------------------------------------
+Transparent_MaxBG(title:="A",color:="F0F0F0"){
+    return WinGetMinMax(title)?WinSetTranscolor(color, title):WinSetTranscolor("Off", title)
 }
 
 ;------------------------------------------------------------------------------------------------
-Transparent_Taskbar(trans){
-    static DefaultGUIColor := DllCall("GetSysColor", "Int", COLOR_3DFACE, "UInt")  ;Get UI Color
+Transparent_TaskbarGlass(state:=-4, color:=0x40000000) { ;ABGR color
+; Note: Resets when Start menu is active. So set as timer. Even then, it won't work while startmenu/taskview is active
 
-    if isOver_mouse("ahk_class Shell_TrayWnd")   ;Mouse over taskbar
-        WinSet, Transparent, % trans, ahk_class Shell_TrayWnd   ;Make taskbar slightly transparent (Automatically removes transcolor)
-    else
-        WinSet, TransColor, DefaultGUIColor 160, ahk_class Shell_TrayWnd    ;Make taskbar transparent and remove UI Color
-    onExit("_Transparent_Taskbar_EXIT")
-    Return
-}
+/*  state
+    ------------
+    0   No color, Fully Transparent
+    1   Colored , Fully opaque
+    2   Colored , Translucent
+    3   No Color, Blurred (since it has no color, transparency can't be controlled)
+    4   Colored , Blurred
+   <0   0 when on desktop and |state| otherwise
+*/
+    static ACCENT_POLICY, WINCOMPATTRDATA, state_old, color_old
+    , pad := (A_PtrSize=8?4:0), WCA_ACCENT_POLICY := 19, ACCENT_SIZE := VarSetCapacity(ACCENT_POLICY, 16, 0)
+    , SWCA:= DllCall("GetProcAddress", "Ptr", DllCall("LoadLibrary", "Str", "user32.dll", "Ptr"), "AStr", "SetWindowCompositionAttribute", "Ptr")
 
-_Transparent_Taskbar_EXIT(){
-    WinShow,ahk_class Shell_TrayWnd ;Shows Taskbar incase it had been hidden
-    WinSet, Transparent, Off, ahk_class Shell_TrayWnd   ;and remove its transparency
-    return
-}
+    if state<0 {
+        GroupAdd("trans_desktop", "ahk_class Progman")
+        GroupAdd("trans_desktop", "ahk_class WorkerW")
+        GroupAdd("trans_desktop", "ahk_class Shell_TrayWnd")
+        state:=winexist("A ahk_group trans_desktop")?0:-state
+    }
 
-;------------------------------------------------------------------------------------------------
-Transparent_ImageGlass(){
-    WinGet, max , MinMax, ahk_exe ImageGlass.exe
-    if max
-        WinSet, Transcolor, 3C3C3C, ahk_exe ImageGlass.exe
-    else
-        WinSet, Transcolor, Off, ahk_exe ImageGlass.exe
+    if (state_old!=(state:=mod(state,5)) OR color_old!=color) {
+        state_old:=state, color_old:=color
+        NumPut(state, ACCENT_POLICY, 0, "int")
+        NumPut(color, ACCENT_POLICY, 8, "int")
+        VarSetCapacity(WINCOMPATTRDATA, 8 + 2*pad + A_PtrSize, 0)
+        NumPut(WCA_ACCENT_POLICY, WINCOMPATTRDATA, 0, "int")
+        NumPut(&ACCENT_POLICY, WINCOMPATTRDATA, 4 + pad, "ptr")
+        NumPut(ACCENT_SIZE, WINCOMPATTRDATA, 4 + pad + A_PtrSize, "uint")
+    }
+
+    return DllCall(SWCA, "ptr", WinExist("ahk_class Shell_TrayWnd"), "ptr", &WINCOMPATTRDATA)
 }

@@ -23,7 +23,7 @@ class winProbe {
         setTimer, % act, Off
         Hotkey, ^#w,, Off
         Hotkey, ^#o,, Off
-        Tooltip("",{no:2})
+        tip("",,{no:2})
         return this.active:=False
     }
     toggle(){
@@ -55,7 +55,7 @@ class winProbe {
         ControlGetFocus, ac,  ahk_id %w%
         this.tip:="Mouse: S:(" x "," y ") W:(" xw "," yw ") C:(" xc "," yc ")`nTitle: """ substr(strReplace(t,"`n"," "),1,100) """`nID: " w "`nProcess: " pn "`nClass: " cl "`nPosition: (" win_x "," win_y ") Size: (" win_w "," win_h ") C: (" win_w+xc-xw "," win_h+yc-yw ")`nStyle: " s "`nExStyle: " es "`nControl: " c "`nActive Control: " ac "`n"
 
-        if(this.showOther) {
+        if this.showOther {
             winget, l, List, ahk_exe %pn% ahk_class %cl%
             this.extended_tip:="Windows with same Class and Process`n"
             loop, % l {
@@ -66,7 +66,7 @@ class winProbe {
                 this.extended_tip.=i " | S:" s " | E:" es  " | """ substr(strReplace(t,"`n"," "),1,100) """`n"
             }
         } else this.extended_tip:=""
-        toolTip(this.tip "`nCTRL+WIN+W to Copy to Clipboard`nCTRL+WIN+O to " (this.showOther?"HIDE":"SHOW") " details of other windows with same class and process`n`n" this.extended_tip,{no:2})
+        tip(this.tip "`nCTRL+WIN+W to Copy to Clipboard`nCTRL+WIN+O to " (this.showOther?"HIDE":"SHOW") " details of other windows with same class and process`n`n" this.extended_tip, 0, {no:2})
         return
     }
 }

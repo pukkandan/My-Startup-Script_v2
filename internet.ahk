@@ -1,7 +1,7 @@
 getIPInfo(getLoc:=True){
 
     if getLoc {
-        webpage:=urlDownload("https://www.whatismybrowser.com/detect/ip-address-location")
+        webpage:=download_toVar("https://www.whatismybrowser.com/detect/ip-address-location")
         ; http://www.netikus.net/show_ip.html gives faster result, but no location
 
         start:=Instr(webpage, "<div class=""value"">")  ;Location
@@ -10,11 +10,11 @@ getIPInfo(getLoc:=True){
         start:=Instr(webpage, "<p>Your IP Address appears to be: <strong>",start) ;IP
         public_ip:=substr(webpage,start+42,Instr(webpage, "</",false,start+42)-start-42)
     } else
-        regexMatch(urlDownload("http://www.netikus.net/show_ip.html"),"^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$",public_ip)
+        regexMatch(download_toVar("http://www.netikus.net/show_ip.html"),"^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$",public_ip)
 
     adapter_count:=0, ipl:=""
     loop, 4 {
-        if(A_IPAddress%A_Index% != "0.0.0.0" and A_IPAddress%A_Index% != "127.0.0.1"){
+        if A_IPAddress%A_Index% != "0.0.0.0" and A_IPAddress%A_Index% != "127.0.0.1" {
             ipl.=A_IPAddress%A_Index% " | "
             adapter_count++
         }
@@ -33,14 +33,14 @@ netStatus(){
     ipInfo:=getIPInfo()
     if ipInfo.count=0
         status:= -1    ; No connection
-    else if(!ipInfo.ip)
+    else if !ipInfo.ip
         status:= 0    ; No internet
-    else if( substr(ipInfo.ip1,1,n)=VPN_prefix OR substr(ipInfo.ip2,1,n)=VPN_prefix OR substr(ipInfo.ip3,1,n)=VPN_prefix OR substr(ipInfo.ip4,1,n)=VPN_prefix )
+    else if substr(ipInfo.ip1,1,n)=VPN_prefix OR substr(ipInfo.ip2,1,n)=VPN_prefix OR substr(ipInfo.ip3,1,n)=VPN_prefix OR substr(ipInfo.ip4,1,n)=VPN_prefix
         status:= 2    ;VPN
     else status:= 1   ;Internet, no VPN
 
     time_current:=A_TickCount
-    if(status!=old_status)
+    if status!=old_status
         time_start:=time_current
     old_status:=status
 
@@ -57,14 +57,14 @@ netNotify(refresh:=True,show:=True,life:=0) {
     if refresh {
         net:=netStatus()
 
-        if(current.status=""){  ;first run
+        if current.status="" { ;first run
             current:=net, old:=net
             ; obj:=func("netNotify").bind(false,,1000)
             ; setTimer, % obj, -1
             return
         }
 
-        if(net.time<=0 or old.status=net.status)
+        if net.time<=0 or old.status=net.status
             return current:=net   ; Not enough time to show notification OR no change
 
         if net.status=0 and old.status>0
@@ -86,7 +86,7 @@ netNotify(refresh:=True,show:=True,life:=0) {
     }
     if !title
         title:="Internet Status"
-    if(current.status="")
+    if current.status=""
         msg:=["No Info"], color:=[False]
     else{
         msg:= ["Network = " (current.status=-1?"False":"True")

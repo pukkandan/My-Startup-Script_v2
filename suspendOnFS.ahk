@@ -1,20 +1,20 @@
 suspendOnFS(){
-    if(isFullScreen())
+    if isFullScreen()
     {
-        Suspend, On
-        setTimer, hotcorners, Off
-        setTimer,, Off
-        setTimer, resumeOnWin, 100
+        Suspend(True)
+        setTimer("hotcorners", "Off")
+        setTimer(, "Off")
+        setTimer("resumeOnWin", "100")
     }
     return
 }
 resumeOnWin(){
-    if(!isFullScreen())
+    if !isFullScreen()
     {
-        Suspend, Off
-        setTimer, hotcorners, On
-        setTimer,, Off
-        setTimer, suspendOnFS, On
+        Suspend(False)
+        setTimer("hotcorners", "On")
+        setTimer(, "Off")
+        setTimer("suspendOnFS", "On")
     }
     return
 }

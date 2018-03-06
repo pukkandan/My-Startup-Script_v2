@@ -8,7 +8,7 @@ class winSizer{
     start(){
         MouseGetPos, mx, my, Win
         WinGetClass, winclass, ahk_id %win%
-        if(winclass="WorkerW" OR winclass="Shell_TrayWnd" OR !winexist("ahk_id" win))
+        if winclass="WorkerW" OR winclass="Shell_TrayWnd" OR !winexist("ahk_id" win)
             return
         WinGetPos, wx, wy, w, h, ahk_id %win%
         ; Winget, isMax, MinMax, % win    ; Can't be minimized
@@ -32,12 +32,12 @@ class winSizer{
         MouseGetPos, x, y
         mode:=this.mode, dx0:=x-this.mx, dy0:=y-this.my, win:= "ahk_id " this.win
 
-        if( this.running OR abs(dx0)>64 OR abs(dy0)>64 OR getKeyState("Shift","P") ) {
+        if this.running OR abs(dx0)>64 OR abs(dy0)>64 OR getKeyState("Shift","P")  {
             this.running:=True, dx:=0, dy:=0
 
-            if(mode.x<0) OR (!mode.x and !mode.y)
+            if mode.x<0) OR (!mode.x and !mode.y
                 dx:=dx0
-            if(mode.y<0) OR (!mode.x and !mode.y)
+            if mode.y<0) OR (!mode.x and !mode.y
                 dy:=dy0
             WinRestore, % win ;Fixes problem of window being detected as maximized, but causes a slight flickering
             WinMove, % win,, % this.wx+dx, % this.wy+dy, % this.ww+dx0*mode.x, % this.wh+dy0*mode.y
@@ -53,7 +53,7 @@ class winSizer{
     show(mx,my,wx,wy,ww,wh,extra:=""){
         static pad:="    ", mxOld:=-100, myOld:=-100
 
-        if(abs(mxOld-mx)<4) AND (abs(myOld-my)<4) ;Minimize flickering
+        if abs(mxOld-mx)<4) AND (abs(myOld-my)<4 ;Minimize flickering
             return
         mxOld:=mx, myOld:=my
 

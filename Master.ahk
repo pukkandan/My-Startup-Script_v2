@@ -1,54 +1,54 @@
 Suspend(True)
 ;#include %A_ScriptDir%  ;Sets dir for includes. No longer needed in v2
 #include Directives.ahk
-;#include <ini>
-;#include <Toast>
-;#include <DelayedTimer>
-;#include <ReloadScriptOnEdit>
 
-;Tooltip("ReloadScriptOnEdit", {life:500})
-;DelayedTimer.set(func("ReloadScriptOnEdit").bind([A_ScriptDir "\*.ahk",A_ScriptDir "\*.ini"]), 2000, True)
-;DelayedTimer.start(True) ;Dont delay
+; These are called first so that they can do their cleanup operations
+;AutoUpdate()
+ReloadScriptOnEdit([A_ScriptDir "\*.ahk",A_ScriptDir "\*.ini"])
 
-;Tooltip("Tray", {life:500})
-;#include Tray.ahk
-;trayMenu()
+#include <ini>
+#include <Toast>
+#include <DelayedTimer>
+#include <ReloadScriptOnEdit>
 
-;Tooltip("SuspendOnFS", {life:500})
-;#include SuspendOnFS.ahk
-;DelayedTimer.set("SuspendOnFS", 100)
+tip("ReloadScriptOnEdit")
+DelayedTimer.set(func("ReloadScriptOnEdit").bind([A_ScriptDir "\*.ahk", A_ScriptDir "\*.ini"]), 2000)
 
-;Tooltip("WinProbe", {life:500})
-;#include WinProbe.ahk
-;; winProbe.activate()
+tip("Tray")
+#include Tray.ahk
+trayMenu()
 
-;Tooltip("DimScreen", {life:500})
-;#include DimScreen.ahk
-;; dimScreen(120)
+tip("SuspendOnFS")
+#include SuspendOnFS.ahk
+DelayedTimer.set("SuspendOnFS", 100)
 
-;Tooltip("TaskView", {life:500})
-;#include TaskView.ahk
-;TaskView.__new()
+tip("DimScreen")
+#include DimScreen.ahk
+; dimScreen(120)
 
-;Tooltip("HotCorners", {life:500})
-;#include HotCorners.ahk ; Refactor as a class
-;DelayedTimer.set("hotcorners", 100)
+tip("TaskView")
+#include TaskView.ahk
+TaskView.__new()
 
-;Tooltip("WinSizer", {life:500})
-;#include WinSizer.ahk
-;WinSizer.__new()
+tip("HotCorners")
+#include HotCorners.ahk
+HotCorners.register("TL",Func("send").bind("#{Tab}"))
+HotCorners.register("BL",Func("send").bind("#x"    ))
+HotCorners.register("BR",Func("send").bind("#a"    ))
+DelayedTimer.set(HotCorners.timer,100)
 
-;Tooltip("UnwantedPopupBlocker", {life:500})
-;#include UnwantedPopupBlocker.ahk
-;DelayedTimer.set("UnwantedPopupBlocker", 100)
+tip("UnwantedPopupBlocker")
+#include UnwantedPopupBlocker.ahk
+DelayedTimer.set("UnwantedPopupBlocker", 100)
 
-;; Tooltip("Transparent",{life:500})
-;; #include Transparent.ahk
-;; DelayedTimer.set(Func("Transparent_Taskbar").bind(240), 500)
-;; DelayedTimer.set(Func("Transparent_Windows").bind(250), 500)
-;; DelayedTimer.set("Transparent_ImageGlass", 500)
+tooltip("Transparent")
+#include Transparent.ahk
+DelayedTimer.set(Func("Transparent_TaskbarGlass").bind(4), 500)
+;DelayedTimer.set(Func("Transparent_Windows").bind(250), 500)
+;DelayedTimer.set(Func("Transparent_MaxBG").bind("ahk_exe ImageGlass.exe","3C3C3C"), 500)
+;DelayedTimer.set(Func("Transparent_MaxBG").bind("ahk_exe nomacs.exe"    ,"F0F0F0"), 500)
 
-;Tooltip("PIP", {life:500})
+;tip("PIP")
 ;#include PIP.ahk
 ;PIP.__new([  {title:"ahk_exe PotPlayerMini64.exe ahk_class PotPlayer64" ,type:"VJT"}
 ;            ,{title:"ahk_exe PotPlayer.exe ahk_class PotPlayer64"       ,type:"VJT"}
@@ -58,46 +58,68 @@ Suspend(True)
 ;            ,{title:"ahk_exe calc1.exe"   , set:3   , maxheight:500     ,type:  "N"}     ])
 ;DelayedTimer.set(ObjbindMethod(PIP,"run"), 100)
 
-;Tooltip("ToggleKeys", {life:500})
+;tip("ToggleKeys")
 ;#include ToggleKeys.ahk
 ;DelayedTimer.set(Func("CapsLockOffTimer").bind(60000), 1000)
 ;CaseMenu.__new()
 
-;Tooltip("MicroWindows", {life:500})
+;tip("MicroWindows")
 ;#include MicroWindows.ahk
 
-;Tooltip("WinAction", {life:500})
-;#include WinAction.ahk
+;tip("WinAction")
+;#include WinAction.ahk ; Refactor
 ;winAction.__new("winAction.ini")    ; Multiple winaction can be created by using obj1:=new winaction("iniName.ini"), ...
 
-;Tooltip("RunText", {life:500})
+;tip("WinSizer")
+;#include WinSizer.ahk
+;WinSizer.__new()
+
+;tip("WinProbe")
+;#include WinProbe.ahk
+;; winProbe.activate()
+
+;tip("RunText")
 ;#include RunText.ahk  ;Needs serious Refactoring!!
 ;global runTextObj:=new runText("Runtext.ini")
 
-;Tooltip("Internet", {life:500})
+;tip("Internet")
 ;#include Internet.ahk
 ;DelayedTimer.set("netNotify", 5000, True)
 
 
-;Tooltip("AutoUpdate", {life:500})
-;#include AutoUpdate.ahk
-;DelayedTimer.set("autoUpdate", 3600000, True)
+tip("AutoUpdate")
+#include AutoUpdate.ahk
+DelayedTimer.set("AutoUpdate", 3600000)
 
-;;Required for mouseRemap
-;GroupAdd(right_drag, "ahk_exe mspaint.exe"  )
-;GroupAdd(right_drag, "ahk_exe mspaint1.exe" )
-;GroupAdd(right_drag, "ahk_exe cmd.exe"      )
-;GroupAdd(right_drag, "ahk_exe vivaldi.exe"  )
+;Required for keyRemap
+GroupAdd("right_drag", "ahk_exe mspaint.exe"  )
+GroupAdd("right_drag", "ahk_exe mspaint1.exe" )
+GroupAdd("right_drag", "ahk_exe cmd.exe"      )
+GroupAdd("right_drag", "ahk_exe vivaldi.exe"  )
 
-;DelayedTimer.start()
+DelayedTimer.start()
 Suspend(False)
-;Toast.show("Script Loaded")
-;DelayedTimer.firstRun()
+Toast.show("Script Loaded")
+DelayedTimer.firstRun()
 ;;============================== End of auto-execute
-;#include KeyRemap.ahk
+#include KeyRemap.ahk
 #include *i HotStrings.ahk ;Has personal data in this file, so it is ignored from github
 
 ;RETURN
 ;Exit:
 ;ExitApp
 ;return
+
+;==================================================
+ToggleKeys_check(){
+    return {n:"",c:"",s:"",i:""}
+}
+netNotify(a:="",b:="",c:=""){
+    return {status:"", ipInfo:{ip:"", loc:"", ipl:""}}
+}
+class CaseMenu {
+}
+class RunText {
+}
+class WinProbe {
+}

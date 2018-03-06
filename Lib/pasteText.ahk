@@ -1,24 +1,12 @@
 ;Buggy!!
-pasteText(text:="",window:="",controll:="") {
-    Msgbox, Warning - Buggy!!
-    if text {
-        clipOld:=ClipboardAll
-        Clipboard:=text
-        loop {
-        sleep, 100
-        if(Clipboard=text)
-            break
-        }
-    }
+pasteText(text:="") {
+    if !text
+        return False
 
-    if window
-        ControlSend, % controll, ^v, % window
-    else
-        Send, ^v
-
-    if text
-        Clipboard:=clipOld
-
-    return
+    clipOld:=ClipboardAll, Clipboard:=text
+    clipWait()
+    Send("^v")
+    Clipboard:=clipOld
+    return True
 
 }

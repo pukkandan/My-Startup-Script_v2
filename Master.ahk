@@ -106,11 +106,6 @@ RETURN
 #include KeyRemap.ahk
 #include *i HotStrings.ahk ;Has personal data in this file, so it is ignored from github
 
-;RETURN
-;Exit:
-;ExitApp
-;return
-
 ;==================================================
 /*  To convert
     ------------

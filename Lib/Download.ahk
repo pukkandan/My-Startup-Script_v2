@@ -29,7 +29,7 @@ download_toVar(url,byref onDownloadvar:=False,interuptable:=True){
 _download_setVar(byRef var, req) {
     if req.readyState != 4 ; Not done yet.
         return
-    if req.status == 200 ; OK.
+    if req.status = 200 ; OK.
         var:=req.responseText
     else var:=False
     return

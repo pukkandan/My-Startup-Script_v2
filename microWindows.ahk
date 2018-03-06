@@ -7,7 +7,7 @@ class microWindow{
         local ww, wh
         wingetpos,,, ww, wh, % "ahk_id " wid
         this.id:=n, this.wid:=wid, this.pos1:=pos1, this.pos2:=pos2, this.mx:=16, this.my:=39
-        , this.M_over:=false, this.width:=w, this.win_width:=ww, this.win_height:=wh
+       ,this.M_over:=false, this.width:=w, this.win_width:=ww, this.win_height:=wh
 
         local h:=w*this.win_height/this.win_width
         h:=(h>0?h:64)
@@ -41,17 +41,17 @@ class microWindow{
         static dll:={}
         if this.id!=0
             return dll
-        dwmapi      := DllCall("LoadLibrary", "Str", "dwmapi.dll", Ptr)
+        dwmapi      := DllCall("LoadLibrary", "Str", "dwmapi.dll", "Ptr")
 
-        dll.DRT    := DllCall("GetProcAddress", Ptr, dwmapi, AStr, "DwmRegisterThumbnail"        , Ptr)
-        dll.DQTSS  := DllCall("GetProcAddress", Ptr, dwmapi, AStr, "DwmQueryThumbnailSourceSize" , Ptr)
-        dll.DUTP   := DllCall("GetProcAddress", Ptr, dwmapi, AStr, "DwmUpdateThumbnailProperties", Ptr)
-        dll.DUT    := DllCall("GetProcAddress", Ptr, dwmapi, AStr, "DwmUnregisterThumbnail"      , Ptr)
+        dll.DRT    := DllCall("GetProcAddress", "Ptr", dwmapi, "AStr", "DwmRegisterThumbnail"        , "Ptr")
+        dll.DQTSS  := DllCall("GetProcAddress", "Ptr", dwmapi, "AStr", "DwmQueryThumbnailSourceSize" , "Ptr")
+        dll.DUTP   := DllCall("GetProcAddress", "Ptr", dwmapi, "AStr", "DwmUpdateThumbnailProperties", "Ptr")
+        dll.DUT    := DllCall("GetProcAddress", "Ptr", dwmapi, "AStr", "DwmUnregisterThumbnail"      , "Ptr")
         return dll
     }
     prepare(){
         VarSetCapacity(thumbnail, 4, 0)
-        DllCall(this.dll.DRT , UInt, this.hwnd, UInt, this.wid, UInt, &thumbnail)
+        DllCall(this.dll.DRT , "UInt", this.hwnd, "UInt", this.wid, "UInt", &thumbnail)
         this.hThumb:=NumGet(thumbnail)
         return this.putThumb()
     }
@@ -66,29 +66,29 @@ class microWindow{
         NumPut(this.pos1[2], dskThumbProps, 24, "Int")
         NumPut(this.pos2[1], dskThumbProps, 28, "Int")
         NumPut(this.pos2[2], dskThumbProps, 32, "Int")
-        DllCall(this.dll.DUTP, UInt, this.hThumb, UInt, &dskThumbProps)
+        DllCall(this.dll.DUTP, "UInt", this.hThumb, "UInt", &dskThumbProps)
 
         VarSetCapacity(dskThumbProps, 45, 0)
         NumPut(8, dskThumbProps,  0, "UInt")
         NumPut(1, dskThumbProps, 37,  "Int")
-        return DllCall(this.dll.DUTP, UInt, this.hThumb, UInt, &dskThumbProps)
+        return DllCall(this.dll.DUTP, "UInt", this.hThumb, "UInt", &dskThumbProps)
     }
 
     delete(){
         GUI_handle:="microWindow" this.id
         GUI, %GUI_handle%: Destroy
-        DllCall(this.dll.DUT, UInt, this.hThumb)
+        DllCall(this.dll.DUT, "UInt", this.hThumb)
         this.SetCapacity(0)
         return this.base:=""
     }
 
     getWinSize(){
         VarSetCapacity(Size, 8, 0)
-        DllCall(this.dll.DQTSS, Uint, this.hThumb, Uint, &Size)
+        DllCall(this.dll.DQTSS, "Uint", this.hThumb, "Uint", &Size)
         ww:= NumGet(&Size, 0, "int"), wh:= NumGet(&Size, 4, "int")
-        , rw:=ww/this.win_width, rh:=wh/this.win_height
-        , this.pos1[1]*=rw, this.pos2[1]*=rw, this.pos1[2]*=rh, this.pos2[2]*=rh
-        , this.win_width := ww, this.win_height:= wh
+       ,rw:=ww/this.win_width, rh:=wh/this.win_height
+       ,this.pos1[1]*=rw, this.pos2[1]*=rw, this.pos1[2]*=rh, this.pos2[2]*=rh
+       ,this.win_width := ww, this.win_height:= wh
         return
     }
 
@@ -99,13 +99,13 @@ class microWindow{
             return this.delete()
         this.getWinSize()
         this.pos:=[x,y], this.width:=w-(M_wasOver?this.mx:0)
-        , h:=(this.win_height*this.width)/this.win_width, this.height:=h>0?h:16
+       ,h:=(this.win_height*this.width)/this.win_width, this.height:=h>0?h:16
         this.putThumb()
 
         GuiControl, Move, Pic%n%, % "X0 Y0 W" this.width " H" this.height
         mDir:=(!this.M_over AND M_wasOver)? 1 :(this.M_over AND !M_wasOver? -1 :0)
         WinMove, % "ahk_id " this.hwnd,, % x+mDir*this.mx/2, % y+mDir*(this.my-this.mx/2)
-            , % this.width+(this.M_over?this.mx:0), % this.height+(this.M_over?this.my:0)
+           , % this.width+(this.M_over?this.mx:0), % this.height+(this.M_over?this.my:0)
         return
     }
     onClick(wParam, lParam, msg, hwnd){

@@ -19,8 +19,8 @@ ReloadScriptOnEdit(files,clean:=0) {	;clean=2 reloads also
 	static fName, fPath
 	if !fName {
 		fName:=SplitFilePath(A_ScriptFullPath).NameNoExt
-		fPath:=(strlen(A_ScriptFullPath)>50?"...":"") substr(A_ScriptFullPath,-50)
-		clean:=1 ;Clean on first run
+		,fPath:=(strlen(A_ScriptFullPath)>50?"...":"") substr(A_ScriptFullPath,-50)
+		,clean:=1 ;Clean on first run
 	}
 	if clean {
 		for _,f in files

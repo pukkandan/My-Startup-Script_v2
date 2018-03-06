@@ -6,7 +6,7 @@ unwantedPopupBlocker(){
 
     if WinExist("Disable developer mode extensions ahk_exe chrome.exe") { ;Chrome dev mode
         winActivate()
-        send("{esc}")
+       ,send("{esc}")
     }
     return
 }

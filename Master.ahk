@@ -91,17 +91,18 @@ tip("AutoUpdate")
 #include AutoUpdate.ahk
 DelayedTimer.set("AutoUpdate", 3600000)
 
-;Required for keyRemap
-GroupAdd("right_drag", "ahk_exe mspaint.exe"  )
-GroupAdd("right_drag", "ahk_exe mspaint1.exe" )
-GroupAdd("right_drag", "ahk_exe cmd.exe"      )
-GroupAdd("right_drag", "ahk_exe vivaldi.exe"  )
 
 DelayedTimer.start()
 Suspend(False)
 Toast.show("Script Loaded")
 DelayedTimer.firstRun()
+
+GroupAdd("right_drag", "ahk_exe mspaint.exe"  )
+GroupAdd("right_drag", "ahk_exe mspaint1.exe" )
+GroupAdd("right_drag", "ahk_exe cmd.exe"      )
+GroupAdd("right_drag", "ahk_exe vivaldi.exe"  )
 ;;============================== End of auto-execute
+RETURN
 #include KeyRemap.ahk
 #include *i HotStrings.ahk ;Has personal data in this file, so it is ignored from github
 
@@ -111,6 +112,19 @@ DelayedTimer.firstRun()
 ;return
 
 ;==================================================
+/*  To convert
+    ------------
+    microWindows
+    toggleKeys
+    internet
+    pip
+    runText
+    winAction
+    winProbe
+    winSizer
+ */
+
+; Following are temporary lines designed to make the script run without errors till the rest is converted
 ToggleKeys_check(){
     return {n:"",c:"",s:"",i:""}
 }

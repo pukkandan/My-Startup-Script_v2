@@ -4,9 +4,9 @@ pasteText(text:="") {
         return False
 
     clipOld:=ClipboardAll, Clipboard:=text
-    clipWait()
-    Send("^v")
-    Clipboard:=clipOld
+   ,clipWait()
+   ,Send("^v")
+   ,Clipboard:=clipOld
     return True
 
 }

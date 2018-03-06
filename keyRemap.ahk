@@ -65,43 +65,43 @@ Keywait(A_ThisHotkey, "T0.5")
 if !ErrorLevel {
     if !ProcessExist("Ditto.exe") {
         Toast.show("Starting Ditto")
-        Run("D:\Program Files\Ditto\Ditto.exe")
-        A_DetectHiddenWindows:=True
-        WinWait("ahk_exe Ditto",,2)
+       ,Run("D:\Program Files\Ditto\Ditto.exe")
+       ,A_DetectHiddenWindows:=True
+       ,WinWait("ahk_exe Ditto",,2)
         if ErrorLevel
             return
     }
     Toast.show("Ditto")
-    Send("^``")
+   ,Send("^``")
 } else {
     !Space:: runListary()
 }
 return
 runListary(){
     Toast.show("Listary")
-    text:=getSelectedText()
-    text:=text?text:Clipboard
-    text:=RegExReplace(RegExReplace(text, "[``t``n]| +"," "), "^ | $|``r")
-    text:=strlen(text)<100?text:""
+   ,text:=getSelectedText()
+   ,text:=text?text:Clipboard
+   ,text:=RegExReplace(RegExReplace(text, "[``t``n]| +"," "), "^ | $|``r")
+   ,text:=strlen(text)<100?text:""
 
     if !ProcessExist("Listary.exe") {
         Toast.show("Starting Listary")
-        Run("D:\Program Files\Listary\Listary.exe")
-        A_DetectHiddenWindows:=True
-        Winwait("ahk_exe Listary.exe",, 2)
+       ,Run("D:\Program Files\Listary\Listary.exe")
+       ,A_DetectHiddenWindows:=True
+       ,Winwait("ahk_exe Listary.exe",, 2)
         if ErrorLevel
             return False
     }
     Toast.show("Listary")
-    send("^#``")
-    A_DetectHiddenWindows:=False
-    Winwait("ahk_exe Listary.exe",,2)
+   ,send("^#``")
+   ,A_DetectHiddenWindows:=False
+   ,Winwait("ahk_exe Listary.exe",,2)
     if ErrorLevel
         return False
     sleep(10)
-    WinActivate("ahk_exe Listary.exe")
-    pasteText(text)
-    send("^a")
+   ,WinActivate("ahk_exe Listary.exe")
+   ,pasteText(text)
+   ,send("^a")
     return True
 }
 
@@ -120,8 +120,8 @@ return
 RETURN
 ^#t::
 updateTray(0,A_ScreenHeight-200)
-sleep(300)
-A_TrayMenu.Show()
+,sleep(300)
+,A_TrayMenu.Show()
 return
 ;===================    Invert F1
 RETURN
@@ -131,7 +131,7 @@ return
 RETURN
 #v::
 Toast.Show("Starting PotPlayer")
-Run("D:\Program Files\Potplayer\PotplayerMini64.exe " Clipboard)
+,Run("D:\Program Files\Potplayer\PotplayerMini64.exe " Clipboard)
 return
 
 ;===================    Open MusicBee
@@ -140,14 +140,14 @@ RETURN
 A_DetectHiddenWindows:=True
 if !winExist("ahk_exe MusicBee.exe") {
     Toast.show("Starting MusicBee")
-    Run("D:\Program Files\MusicBee\MusicBee.exe")
-    WinWait("ahk_exe MusicBee.exe",,2)
+   ,Run("D:\Program Files\MusicBee\MusicBee.exe")
+   ,WinWait("ahk_exe MusicBee.exe",,2)
     if ErrorLevel
         return
     Sleep(100)
 }
 Toast.show("Play/Pause")
-Send("{Media_Play_Pause}")
+,Send("{Media_Play_Pause}")
 return
 
 ;===================    Listary launcher

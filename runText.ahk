@@ -18,9 +18,9 @@ class runText{
     }
     getGlobalSettings(){
         this.iconSize:=this.settings.get("Main","IconSize",32)
-        , this.waitTimeout:=this.settings.get("Main","WaitTimeout",5)
-        , this.GUIminWidth:=Floor(this.settings.get("Main","GUIMinWidth",10))
-        , this.GUImaxWidth:=Floor(this.settings.get("Main","GUIMaxWidth",10))
+       ,this.waitTimeout:=this.settings.get("Main","WaitTimeout",5)
+       ,this.GUIminWidth:=Floor(this.settings.get("Main","GUIMinWidth",10))
+       ,this.GUImaxWidth:=Floor(this.settings.get("Main","GUIMaxWidth",10))
 
         if this.GUIminWidth<1
             this.GUIminWidth:=1
@@ -78,9 +78,9 @@ class runText{
             py:="+2", px:=2
         else py:="p+0", px="+2"
         id:=obj.id
-        , iconNo:=ResourceIDofIcon(obj.icon,obj.iconNo)
+       ,iconNo:=ResourceIDofIcon(obj.icon,obj.iconNo)
         GUI, Add, Picture, x%px% y%py% W%iconSize% H%iconSize% +BackgroundTrans vRunText_%id% gRunTextIconClicked icon%iconNo%
-        , % obj.icon
+            , % obj.icon
     }
 
     showGUI(){

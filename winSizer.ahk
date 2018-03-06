@@ -1,7 +1,7 @@
 class winSizer{
     __new(){
         this.action:=objBindmethod(this,"run"), act:=this.action, this.running:=False
-        , this.toastObj:=new toast({life:0,margin:{x:1,y:1}, title:{size:10}, message:{def_size:8,offset:[4],def_offset:1}})
+       ,this.toastObj:=new toast({life:0,margin:{x:1,y:1}, title:{size:10}, message:{def_size:8,offset:[4],def_offset:1}})
         setTimer, % act, 100 ;, 10
         setTimer, % act, Off
     }
@@ -13,7 +13,7 @@ class winSizer{
         WinGetPos, wx, wy, w, h, ahk_id %win%
         ; Winget, isMax, MinMax, % win    ; Can't be minimized
         this.win:=win, this.mx:=mx, this.my:=my, this.wx:=wx, this.wy:=wy, this.ww:=w, this.wh:=h
-        , this.mode:={ x:3*(mx-wx)//w -1 , y:3*(my-wy)//h -1} ;, this.isMax:=isMax
+       ,this.mode:={ x:3*(mx-wx)//w -1 , y:3*(my-wy)//h -1} ;, this.isMax:=isMax
         ; | -1-1 dw dh dx dy |  0-1    dh dy    | +1-1 dw dh    dy |
         ; | -1 0 dw    dx    |  0 0       dx dy | +1 0 dw          |
         ; | -1+1 dw dh dx    |  0+1    dh       | +1+1 dw dh       |
@@ -58,7 +58,7 @@ class winSizer{
         mxOld:=mx, myOld:=my
 
         return this.toastObj.show({title:{text:extra}, pos:{x:mx,y:my}
-            ,message:{text:["Mouse : (" substr(pad mx,-4) "," substr(pad my,-4) ")"
-                ,"Window:(" substr(pad wx,-4) "," substr(pad wy,-4) ") " substr(pad ww,-4) " x" substr(pad wh,-4) ]} })
+           ,message:{text:["Mouse : (" substr(pad mx,-4) "," substr(pad my,-4) ")"
+               ,"Window:(" substr(pad wx,-4) "," substr(pad wy,-4) ") " substr(pad ww,-4) " x" substr(pad wh,-4) ]} })
     }
 }

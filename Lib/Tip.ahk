@@ -63,7 +63,7 @@ tip_Color(Background := "", Text := "", hwnd := "") {
     } else {
         VarSetCapacity(empty, 2, 0)
         DllCall("UxTheme.dll\SetWindowTheme", "ptr", hwnd, "ptr", 0
-            , "ptr", (bc != "" && tc != "") ? &empty : 0)
+           , "ptr", (bc != "" && tc != "") ? &empty : 0)
         if bc != ""
             DllCall("SendMessage", "ptr", hwnd, "uint", 1043, "ptr", bc, "ptr", 0)
         if tc != ""
@@ -74,8 +74,8 @@ _TTHook() {
     static hook := 0
     if !hook
         hook := DllCall("SetWindowsHookExW", "int", 4
-            , "ptr", RegisterCallback("_TTWndProc"), "ptr", 0
-            , "uint", DllCall("GetCurrentThreadId"), "ptr")
+           , "ptr", RegisterCallback("_TTWndProc"), "ptr", 0
+           , "uint", DllCall("GetCurrentThreadId"), "ptr")
 }
 _TTWndProc(nCode, _wp, _lp) {
     ; Critical 999

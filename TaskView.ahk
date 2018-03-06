@@ -1,17 +1,17 @@
 class TaskView { ; There should only be one object for this
     __new(){ ; new SHOULD be called by "TaskView.__new()", not by "new Taskview"
         hVirtualDesktopAccessor := DllCall("LoadLibrary", "Str", A_ScriptDir . "\Lib\virtual-desktop-accessor.dll", "Ptr")
-        fList:=[ "GetCurrentDesktopNumber","GetDesktopCount","GoToDesktopNumber"
-                ,"IsWindowOnDesktopNumber","MoveWindowToDesktopNumber"
-                ,"IsPinnedWindow","PinWindow","UnPinWindow","IsPinnedApp","PinApp","UnPinApp"
-                ,"RegisterPostMessageHook","UnregisterPostMessageHook" ]
-        this.proc:=[]
+       ,fList:=[ "GetCurrentDesktopNumber","GetDesktopCount","GoToDesktopNumber"
+               ,"IsWindowOnDesktopNumber","MoveWindowToDesktopNumber"
+               ,"IsPinnedWindow","PinWindow","UnPinWindow","IsPinnedApp","PinApp","UnPinApp"
+               ,"RegisterPostMessageHook","UnregisterPostMessageHook" ]
+       ,this.proc:=[]
         for _,fName in fList
-            this.proc[fName]:= DllCall("GetProcAddress", Ptr, hVirtualDesktopAccessor, AStr, fName, "Ptr")
+            this.proc[fName]:= DllCall("GetProcAddress", "Ptr", hVirtualDesktopAccessor, "AStr", fName, "Ptr")
 
         this.toast:=new Toast({life:1000})
-        DllCall(this.proc["RegisterPostMessageHook"], Int, A_ScriptHwnd+(0x1000<<32), Int, 0x1400 + 30)
-        OnMessage(0x1400 + 30, ObjBindMethod(this,"_onDesktopSwitch"))
+       ,DllCall(this.proc["RegisterPostMessageHook"], "Int", A_ScriptHwnd+(0x1000<<32), "Int", 0x1400 + 30)
+       ,OnMessage(0x1400 + 30, ObjBindMethod(this,"_onDesktopSwitch"))
     }
 
     _onDesktopSwitch(wParam,lParam){
@@ -20,27 +20,27 @@ class TaskView { ; There should only be one object for this
 
     __Call(fname,hwnd:=""){
         if hwnd
-             return DllCall(this.proc[fName], UInt, hwnd)
+             return DllCall(this.proc[fName], "UInt", hwnd)
         else return DllCall(this.proc[fName])
     }
     /* ; Same as
     isPinnedWindow(hwnd){
-        return DllCall(this.proc["IsPinnedWindow"], UInt, hwnd)
+        return DllCall(this.proc["IsPinnedWindow"], "UInt", hwnd)
     }
     isPinnedApp(hwnd){
-        return DllCall(this.proc["IsPinnedApp"], UInt, hwnd)
+        return DllCall(this.proc["IsPinnedApp"], "UInt", hwnd)
     }
     pinWindow(hwnd){
-        return DllCall(this.proc["PinWindow"], UInt, hwnd)
+        return DllCall(this.proc["PinWindow"], "UInt", hwnd)
     }
     unPinWindow(hwnd){
-        return DllCall(this.proc["UnPinWindow"], UInt, hwnd)
+        return DllCall(this.proc["UnPinWindow"], "UInt", hwnd)
     }
     pinApp(hwnd){
-        return DllCall(this.proc["PinApp"], UInt, hwnd)
+        return DllCall(this.proc["PinApp"], "UInt", hwnd)
     }
     unPinApp(hwnd){
-        return DllCall(this.proc["UnPinApp"], UInt, hwnd)
+        return DllCall(this.proc["UnPinApp"], "UInt", hwnd)
     }
     getDesktopCount(){
         return DllCall(this.proc["GetDesktopCount"])
@@ -70,14 +70,14 @@ class TaskView { ; There should only be one object for this
         if (! n is "number")
             return 0
         n:=this._desktopNumber(n, wrap)
-        DllCall(this.proc["GoToDesktopNumber"], Int, n-1)
+       ,DllCall(this.proc["GoToDesktopNumber"], "Int", n-1)
         return n
     }
     moveWindowToDesktopNumber(n, win_hwnd, wrap:=True){
         if (! n is "number")
             return 0
         n:=this._desktopNumber(n,wrap)
-        DllCall(this.proc["MoveWindowToDesktopNumber"], UInt, win_hwnd, UInt, n-1)
+       ,DllCall(this.proc["MoveWindowToDesktopNumber"], "UInt", win_hwnd, "UInt", n-1)
         return n
     }
 
@@ -92,7 +92,7 @@ class TaskView { ; There should only be one object for this
         n:=this.getCurrentDesktopNumber()-1
         if this.moveWindowToDesktopNumber(n, win_hwnd, wrap) {
             this.goToDesktopNumber(n,wrap)
-            WinActivate("ahk_id " win_hwnd)
+           ,WinActivate("ahk_id " win_hwnd)
             return n
         } else return 0
     }
@@ -100,7 +100,7 @@ class TaskView { ; There should only be one object for this
         n:=this.getCurrentDesktopNumber()+1
         if this.moveWindowToDesktopNumber(n, win_hwnd, wrap) {
             this.goToDesktopNumber(n,wrap)
-            WinActivate("ahk_id " win_hwnd)
+           ,WinActivate("ahk_id " win_hwnd)
             return n
         } else return 0
     }

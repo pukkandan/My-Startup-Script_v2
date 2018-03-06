@@ -22,7 +22,7 @@ getIPInfo(getLoc:=True){
 
     ; tooltip, location:%loc% count:%adapter_count% ip:%public_ip% ip1:%A_IPAddress1% ip2:%A_IPAddress2% ip3:%A_IPAddress3% ip4:%A_IPAddress4% ipl:%ipl%
     return { loc:loc, count:adapter_count, ip:public_ip
-           , ip1:A_IPAddress1, ip2:A_IPAddress2, ip3:A_IPAddress3, ip4:A_IPAddress4, ipl:substr(ipl,1,-3)}
+          , ip1:A_IPAddress1, ip2:A_IPAddress2, ip3:A_IPAddress3, ip4:A_IPAddress4, ipl:substr(ipl,1,-3)}
 }
 
 netStatus(){
@@ -90,11 +90,11 @@ netNotify(refresh:=True,show:=True,life:=0) {
         msg:=["No Info"], color:=[False]
     else{
         msg:= ["Network = " (current.status=-1?"False":"True")
-              , "Internet = " (current.status>0?"True":"False")
-              , "VPN = " (current.status=2?"True":"False")
-              , "Public IP = " current.ipInfo.ip
-              , "IP Location = " (current.ipInfo.loc?current.ipInfo.loc :"?")
-              , "Local IP = " current.ipInfo.ipl       ]
+             , "Internet = " (current.status>0?"True":"False")
+             , "VPN = " (current.status=2?"True":"False")
+             , "Public IP = " current.ipInfo.ip
+             , "IP Location = " (current.ipInfo.loc?current.ipInfo.loc :"?")
+             , "Local IP = " current.ipInfo.ipl       ]
 
         color:= [ current.status!=-1, current.status>0, current.status==2, current.ipInfo.ip, current.ipInfo.loc, current.ipInfo.ipl]
     }
@@ -103,7 +103,7 @@ netNotify(refresh:=True,show:=True,life:=0) {
 }
 netNotifyShow(title,msg,col,h,t,s){
     static netNotifyToast
-    , active_color:="0xffffff", inactive_color:="0x505050", active_hcolor:="0x107C10", inactive_hcolor:="0xFF1010"
+   ,active_color:="0xffffff", inactive_color:="0x505050", active_hcolor:="0x107C10", inactive_hcolor:="0xFF1010"
     if !netNotifyToast
         netNotifyToast:=new toast({ life:0, title:{size:14,opt:"bold underline"}, message:{size:12}, margin:{x:20,y:20} })
     c:=[], o:=[]

@@ -33,7 +33,7 @@ class HotCorners {
 	_run(){
 		static margin:=2, counter:=0, trigger:=False, lastpos:=""
 		MouseGetPos(mx, my)
-		position:=(my<margin?"T":(my+margin>=A_ScreenHeight?"B":"")) (mx<margin?"L":(mx+margin>=A_ScreenWidth?"R":""))
+		,position:=(my<margin?"T":(my+margin>=A_ScreenHeight?"B":"")) (mx<margin?"L":(mx+margin>=A_ScreenWidth?"R":""))
 		if !position {
 			counter:=0, lastpos:=""
 			return trigger:=False
@@ -44,14 +44,14 @@ class HotCorners {
 			if (!trigger OR !lastpos OR lastpos=position) AND counter>=this.f[position][False].t
 				try {
 					f:=this.f[position][False].f
-					%f%(mx, my)
-					counter:=0, lastpos:=position
+					,%f%(mx, my)
+					,counter:=0, lastpos:=position
 				}
 			if !trigger
 				try {
 					f:=this.f[position][True].f
-			 		%f%(mx, my)
-			 		lastpos:=position
+			 		,%f%(mx, my)
+			 		,lastpos:=position
 			 	}
 		}
 		return trigger:=True

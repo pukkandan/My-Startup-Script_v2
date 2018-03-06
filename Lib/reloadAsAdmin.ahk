@@ -22,14 +22,14 @@ reloadAsAdmin_Task() { ;  By SKAN,  http://goo.gl/yG6A1F,  CD:19/Aug/2014 | MD:2
 
     try {
         TaskSchd := ComObjCreate("Schedule.Service")
-        TaskSchd.Connect()
-        TaskRoot := TaskSchd.GetFolder("\")
+       ,TaskSchd.Connect()
+       ,TaskRoot := TaskSchd.GetFolder("\")
     }
     catch
     return 1
 
     CmdLine := (A_IsCompiled? "": "`""  A_AhkPath "`" ") "`"" A_ScriptFullpath "`""
-    TaskName:= "[RunAsTask] " A_ScriptName " @" SubStr("000000000"
+   ,TaskName:= "[RunAsTask] " A_ScriptName " @" SubStr("000000000"
         DllCall("NTDLL\RtlComputeCrc32", "Int",0, "WStr",CmdLine, "UInt",StrLen(CmdLine)*2, "UInt"), -9)
 
     try {
@@ -67,11 +67,11 @@ reloadAsAdmin_Task() { ;  By SKAN,  http://goo.gl/yG6A1F,  CD:19/Aug/2014 | MD:2
                 </Settings>
                 <Actions Context="Author"> <Exec> <Command>
             )"
-            ,XML.= (A_IsCompiled? A_ScriptFullpath: A_AhkPath) "</Command>"
-            ,XML.="<Arguments>" (!A_IsCompiled? "`"" A_ScriptFullpath "`"" :"") "</Arguments>"
-            ,XML.="<WorkingDirectory>" A_ScriptDir "</WorkingDirectory></Exec></Actions></Task>"
+           ,XML.= (A_IsCompiled? A_ScriptFullpath: A_AhkPath) "</Command>"
+           ,XML.="<Arguments>" (!A_IsCompiled? "`"" A_ScriptFullpath "`"" :"") "</Arguments>"
+           ,XML.="<WorkingDirectory>" A_ScriptDir "</WorkingDirectory></Exec></Actions></Task>"
 
-            TaskRoot.RegisterTask(TaskName, XML, TASK_CREATE, "", "", TASK_LOGON_INTERACTIVE_TOKEN)
+           ,TaskRoot.RegisterTask(TaskName, XML, TASK_CREATE, "", "", TASK_LOGON_INTERACTIVE_TOKEN)
         }
         else {
             Run("*RunAs " CmdLine, A_ScriptDir, "UseErrorLevel")

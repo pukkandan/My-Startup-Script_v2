@@ -7,7 +7,7 @@ class DelayedTimer {
     start(r:=False){
         for _,item in this.obj {
             f:=item.f
-            setTimer(f, item.t)
+           ,setTimer(f, item.t)
         }
         return r? this.firstRun() :0
     }

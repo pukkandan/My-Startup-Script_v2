@@ -11,12 +11,12 @@ URI_Decode(URI) {
     While(Pos:= RegExMatch(URI, "i)(%[\da-f]{2})+", code, Pos))
     {
         VarSetCapacity(v, StrLen(code) // 3, 0)
-        code:= SubStr(code.0,2)
+       ,code:= SubStr(code.0,2)
         Loop Parse, code, "%"
             NumPut("0x" A_LoopField, &v, A_Index-1, "UChar")
         Decoded:= StrGet(&v, "UTF-8")
-        URI:= SubStr(URI, 1, Pos-1) . Decoded . SubStr(URI, Pos+StrLen(code)+1)
-        Pos+= StrLen(Decoded)+1
+       ,URI:= SubStr(URI, 1, Pos-1) . Decoded . SubStr(URI, Pos+StrLen(code)+1)
+       ,Pos+= StrLen(Decoded)+1
     }
     return URI
 }

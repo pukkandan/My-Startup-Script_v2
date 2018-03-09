@@ -10,7 +10,7 @@ else if !{"MButton":0,"MButton Up":0,"WheelUp":0,"WheelDown":0}.haskey(A_PriorHo
 return
 #If
 
-#if isOver_mouse("ahk_class Shell_TrayWnd") AND winActive("ahk_class MultitaskingViewFrame") ; When Task Switching
+#if winActive("ahk_class MultitaskingViewFrame") AND isOver_mouse("ahk_class Shell_TrayWnd") ; When Task Switching
 LButton::send("{Enter}")
 #if
 
@@ -112,7 +112,7 @@ Keywait(A_ThisHotkey, "T0.25")
 if !ErrorLevel {
     #w:: winAction.show()
 } else {
-    !`:: runText.showGUI()
+    !``:: runText.showGUI()
 }
 return
 

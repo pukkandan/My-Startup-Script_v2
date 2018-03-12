@@ -1,62 +1,79 @@
-;===================    Right and Middle Buttons
+;===================    WinSizer
 RETURN
-#if !WinActive("ahk_group right_drag")
-*RButton up::
-if !isPressed("RButton",False)
-    send("{Blind}{RButton}")
-; alternative to if A_priorHotkey in ["MButton","MButton Up","WheelUp","WheelDown"]
-else if !{"MButton":0,"MButton Up":0,"WheelUp":0,"WheelDown":0}.haskey(A_PriorHotkey)
-    send("{Blind}{RButton}")
-return
-#If
-
-#if winActive("ahk_class MultitaskingViewFrame") AND isOver_mouse("ahk_class Shell_TrayWnd") ; When Task Switching
-LButton::send("{Enter}")
-#if
-
 #if !getkeyState("Ctrl","P")
-MButton::winSizer.start()                           ; winSizer
+MButton::winSizer.start(A_ThisHotkey)
 #if
 
-MButton Up::
-if winSizer.end()
-    return
-else if isPressed("RButton")
-    send("#{Tab}")
-else if isOver_mouse("ahk_class Shell_TrayWnd") ; Task manager
-    Send("+^{Esc}")
-else
-    send("{MButton}")
+*MButton Up::
+if !winSizer.running
+    send("{Blind}{MButton}")
 return
 
+;===================    TaskView
+RETURN
+#if getKeyState("RButton","P")
+MButton Up::
+isPressed("RButton")
+send("#{Tab}")
+return
+
+#if getKeyState("MButton","P")                      ; Move window b/w desktops
 WheelUp::
 WheelDown::
-if getKeyState("MButton","P") ; Move window b/w desktops
-    (A_ThisHotkey=="WheelUp") ? taskView.MoveToDesktopPrev(WinExist("A"),True) : taskView.MoveToDesktopNext(WinExist("A"),False)
-else if isPressed("RButton") {
-    ; if A_ThisHotkey="WheelUp" AND taskView.GetCurrentDesktopNumber()=1 ;Wrap
+(A_ThisHotkey="WheelUp")? taskView.MoveToDesktopPrev(WinExist("A"),True): taskView.MoveToDesktopNext(WinExist("A"),False)
+sleep(200)
+return
+
+#if getKeyState("RButton","P")                            ; Switch Windows
+WheelUp::
+WheelDown::
+isPressed("RButton")
+if A_ThisHotkey="WheelUp" {
+    ; if (taskView.GetCurrentDesktopNumber()=1)  ;Wrap
     ;     taskView.GoToDesktopNumber(0)
-    ; else(if A_ThisHotkey="WheelDown" AND taskView.GetCurrentDesktopNumber()=taskView.GetDesktopCount())
+    send("#^{Left}")
+} else {
+    ; if (taskView.GetCurrentDesktopNumber()=taskView.GetDesktopCount())
     ;     taskView.GoToDesktopNumber(1)
-    ; else
-        send("#^{" (A_ThisHotkey="WheelUp" ? "Left":"Right") "}")
-} else if isOver_mouse("ahk_class Shell_TrayWnd") ; Alt tab over taskbar
-    send(A_ThisHotkey="WheelUp" ? "^+!{Tab}" : "^!{Tab}")
-else {
-    send("{" A_ThisHotkey "}")
-    return
+    send("#^{Right}")
 }
 sleep(200)
 return
 
+#If !WinActive("ahk_group right_drag")
+*RButton up::
+Critical()
+; tooltip, % """" rbutton_pressed_as_modifier """" A_PriorHotkey
+if !wasPressed("RButton") OR !{"MButton":0,"MButton Up":0,"WheelUp":0,"WheelDown":0}.haskey(A_PriorHotkey)
+    send("{Blind}{RButton}")
+return
+#If
+
 isPressed(key,check:=True){
-; Checks if the key is pressed and stores that info
+    /*
+    Checks if the key is pressed and stores that info
+     */
     static pressed:={}
     if check
         pressed[key]:=getkeystate(key,"P")
     return pressed.haskey(key)?pressed[key]:False
 }
+wasPressed(key){
+    return isPressed(key,False)
+}
+
+;===================    Over Taskbar
+RETURN
+#if isOver_mouse("ahk_class Shell_TrayWnd")   ; Alt tab over taskbar
+WheelUp::
+WheelDown::
+send(A_ThisHotkey="WheelUp" ? "^+!{Tab}" : "^!{Tab}")
 return
+MButton Up:: Send("+^{Esc}")    ; Task manager
+
+#if winActive("ahk_class MultitaskingViewFrame") AND isOver_mouse("ahk_class Shell_TrayWnd")        ; When Task Switching
+LButton::send("{Enter}")
+#if
 
 ;===================    Ditto & Listary
 RETURN
@@ -78,30 +95,36 @@ if !ErrorLevel {
 }
 return
 runListary(){
+  static key:="^#``"
+        ,Win  :="ahk_class Listary_WidgetWin_0"
+        ,Cntrl:="ListarySearchBox1"
+        ,Path :="D:\Program Files\Listary"
+        ,exe  :="Listary.exe"
+        ,opt  :={activateWindow:True, hiddenWindows:False, sendToAll:True}
+
     Toast.show("Listary")
    ,text:=getSelectedText()
    ,text:=text?text:Clipboard
-   ,text:=RegExReplace(RegExReplace(text, "[``t``n]| +"," "), "^ | $|``r")
+   ,text:=RegExReplace(RegExReplace(text, "[`t`n]| +"," "), "^ | $|``r")
    ,text:=strlen(text)<100?text:""
 
-    if !ProcessExist("Listary.exe") {
+    if !ProcessExist(exe) {
         Toast.show("Starting Listary")
-       ,Run("D:\Program Files\Listary\Listary.exe")
+       ,Run(Path "\" exe)
        ,A_DetectHiddenWindows:=True
-       ,Winwait("ahk_exe Listary.exe",, 2)
+       ,Winwait("ahk_exe " exe,, 2)
         if ErrorLevel
             return False
     }
     Toast.show("Listary")
-   ,send("^#``")
+   ,send(key)
    ,A_DetectHiddenWindows:=False
-   ,Winwait("ahk_exe Listary.exe",,2)
+   ,Winwait("ahk_exe " exe,,2)
     if ErrorLevel
         return False
     sleep(10)
-   ,WinActivate("ahk_exe Listary.exe")
-   ,pasteText(text)
-   ,send("^a")
+   ,sendTo_pasteText(text, Win " ahk_exe " Prs, Cntrl, opt)
+   ,sendTo("^a", Win "ahk_exe " exe, Cntrl, opt)
     return True
 }
 
@@ -112,7 +135,7 @@ Keywait(A_ThisHotkey, "T0.25")
 if !ErrorLevel {
     #w:: winAction.show()
 } else {
-    !``:: runText.showGUI()
+    !`:: runText.showGUI()
 }
 return
 

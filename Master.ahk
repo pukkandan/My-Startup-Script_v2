@@ -97,10 +97,12 @@ Suspend(False)
 Toast.show("Script Loaded")
 DelayedTimer.firstRun()
 
+;Required for KeyRemap
 GroupAdd("right_drag", "ahk_exe mspaint.exe"  )
 GroupAdd("right_drag", "ahk_exe mspaint1.exe" )
 GroupAdd("right_drag", "ahk_exe cmd.exe"      )
 GroupAdd("right_drag", "ahk_exe vivaldi.exe"  )
+
 ;;============================== End of auto-execute
 RETURN
 #include KeyRemap.ahk

@@ -1,9 +1,7 @@
 tip(tip:="", life:=500, p:="", s:=""){
     ; static def:={ color:{bg:"0x222222",text:"0xFFFFFF"}, font:{size:8, opt:"",name:"Segoe UI"} }
-    static def:={ font:{size:8, opt:"",name:"Segoe UI"} }
-    if !IsObject(p)
-        p:={}
-    p.no:=p.haskey("no")?p.no:1
+    static def:={ font:{size:8, opt:"",name:"Segoe UI"}, no:1 }
+    p:=replaceList(def, p)
 
     if !tip
         _tip_remove(p.no)

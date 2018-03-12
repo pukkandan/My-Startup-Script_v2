@@ -12,44 +12,31 @@ Toast.show(p) ;Show without creating a dedicated object. Will replace other inst
 */
 
 class Toast{
-    __new(byRef p:=""){
+    __new(p:=""){
         static toastCount:=0
         toastCount++
         this.id:=toastCount, this.closeObj:=ObjBindMethod(this,"close")
        ,this.def:={ life:500, pos:{x:"center",y:"center"}, bgColor:"0x222222", trans:250, margin:{x:5,y:5}
-                   , closekeys:[["Space","Return","~LButton","Esc"]], sound:false, activate:False
-                   , title:{ text:"", color: "0xFFFFFF", size:14, opt:"bold", font:"Segoe UI" }
-                   , message:{ text:[], color: [], size:[], opt:[], name:[], offset:[20]
-                             , def_color: "0xFFFFFF", def_size:12, def_opt:"", def_name:"Segoe UI", def_offset:5 } }
+           , closekeys:[["Space","Return","~LButton","Esc"]], sound:false, activate:False
+           , title:{ text:"", color: "0xFFFFFF", size:14, opt:"bold", font:"Segoe UI" }
+           , message:{ text:[], color: [], size:[], opt:[], name:[], offset:[20]
+                , def_color: "0xFFFFFF", def_size:12, def_opt:"", def_name:"Segoe UI", def_offset:5 } }
 
-        if p
-            for i,x in p {
-                if isObject(x)
-                    for j,y in x
-                        this.def[i][j]:= p[i][j]
-                else this.def[i]:=p[i]
-            }
-
+        replaceList(this.def, p, 2, True)
     }
-    setParam(byRef p,def:=false){
-        if !IsObject(p) ;If not object, assume only title is given
-            p:={title:{text:p}}
-        for i,x in this.def {
-            if isObject(x) {
-                this[i]:={}
-                for j,y in x
-                    this[i][j]:= (p.haskey(i) AND p[i].haskey(j))? p[i][j]:this.def[i][j]
-            } else this[i]:= p.haskey(i)?p[i]:this.def[i]
-        }
-        this.x:=this.pos.x, this.y:=this.pos.y, this.pos:="", this.closekeys:=this.closekeys[1]
-        return
-    }
-    show(byRef param){
+    _setParam(p){
         if A_IsPaused
             return
         if !this.def
             this.__new()
-        this.setParam(param)
+
+        for i,x in replaceList(this.def, IsObject(p)?p: {title:{text:p}}, 2)
+            this[i]:=x
+        this.x:=this.pos.x, this.y:=this.pos.y, this.pos:="", this.closekeys:=this.closekeys[1]
+        return
+    }
+    show(param){
+        this._setParam(param)
 
         GUIOld:=this.GUIObj
        ,this.GUIObj:=GUICreate("-Caption +ToolWindow +AlwaysOnTop")
@@ -61,7 +48,7 @@ class Toast{
        ,this.GUIObj.AddText("xm ym",this.title.text)
 
         for i,t in this.message.text {
-             s:= this.message.size  [i] = "" ? this.message.def_size    : this.message.size  [i]
+            s:= this.message.size  [i] = "" ? this.message.def_size    : this.message.size  [i]
            ,c:= this.message.Color [i] = "" ? this.message.def_color   : this.message.color [i]
            ,o:= this.message.opt   [i] = "" ? this.message.def_opt     : this.message.opt   [i]
            ,f:= this.message.Font  [i] = "" ? this.message.def_font    : this.message.Font  [i]

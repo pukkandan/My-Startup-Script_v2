@@ -2,10 +2,12 @@ getSelectedText()
 {
  /* Returns selected text without disrupting the clipboard. However, if the clipboard contains a large amount of data, some of it may be lost
  */
-    clipOld:=ClipboardAll, Clipboard:=""
+    clipOld:=ClipboardAll
+   ,Clipboard:=""
    ,Send("^c")
    ,ClipWait(0.1, 1)
-   ,clipNew:=Clipboard, Clipboard:=clipOld
+   ,clipNew:=Clipboard
+   ,Clipboard:=clipOld
 
     ;Special for explorer
    ,GroupAdd("explorer","ahk_class Progman")

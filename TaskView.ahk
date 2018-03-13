@@ -1,5 +1,8 @@
 class TaskView { ; There should only be one object for this
-    __new(){ ; new SHOULD be called by "TaskView.__new()", not by "new Taskview"
+    init(){ ; SHOULD be called
+        return this.__new()
+    }
+    __new(){
         hVirtualDesktopAccessor := DllCall("LoadLibrary", "Str", A_ScriptDir . "\Lib\virtual-desktop-accessor.dll", "Ptr")
        ,fList:=[ "GetCurrentDesktopNumber","GetDesktopCount","GoToDesktopNumber"
                ,"IsWindowOnDesktopNumber","MoveWindowToDesktopNumber"

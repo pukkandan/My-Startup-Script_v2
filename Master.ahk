@@ -28,7 +28,7 @@ tip("DimScreen")
 
 tip("TaskView")
 #include TaskView.ahk
-TaskView.__new()
+TaskView.init()
 
 tip("HotCorners")
 #include HotCorners.ahk

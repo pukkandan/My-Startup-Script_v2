@@ -1,22 +1,14 @@
 ;===================    WinSizer
 RETURN
-#if !getkeyState("Ctrl","P")
-MButton::winSizer.start(A_ThisHotkey)
-#if
-
-*MButton Up::
-if !winSizer.running
-    send("{Blind}{MButton}")
+#if getKeyState("RButton","P")
+MButton::
+isPressed("RButton")
+winSizer.start("RButton")
 return
+#if
 
 ;===================    TaskView
 RETURN
-#if getKeyState("RButton","P")
-MButton Up::
-isPressed("RButton")
-send("#{Tab}")
-return
-
 #if getKeyState("MButton","P")                      ; Move window b/w desktops
 WheelUp::
 WheelDown::
@@ -25,6 +17,11 @@ sleep(200)
 return
 
 #if getKeyState("RButton","P")                            ; Switch Windows
+MButton Up::
+isPressed("RButton")
+if !winSizer.end()
+    send("#{Tab}")
+return
 WheelUp::
 WheelDown::
 isPressed("RButton")
@@ -40,7 +37,7 @@ if A_ThisHotkey="WheelUp" {
 sleep(200)
 return
 
-#If !WinActive("ahk_group right_drag")
+#if !WinActive("ahk_group right_drag")
 *RButton up::
 Critical()
 ; tooltip, % """" rbutton_pressed_as_modifier """" A_PriorHotkey

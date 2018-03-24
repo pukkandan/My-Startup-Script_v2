@@ -1,9 +1,8 @@
-;===================    Switch to next window
+;===================    R/M Button
 RETURN
 #if getKeyState("RButton","P")
-LButton::
-;Alt Tab is not used since it shows the TaskSwitcher Window
-sendWindowBack(){
+LButton::                   ; Switch to next window
+sendWindowBack(){ ;Alt Tab is not used since it shows the TaskSwitcher Window
     activeID:=WinGetID("A")
     loop WinGetList() {
         if activeID!=ids[A_Index]
@@ -17,30 +16,15 @@ sendWindowBack(){
     }
     return
 }
-
-;===================    WinSizer
-RETURN
-#if getKeyState("RButton","P")
-MButton::
-winSizer.start("RButton")
-return
-#if
-
-;===================    TaskView
-RETURN
-#if getKeyState("MButton","P")                      ; Move window b/w desktops
-WheelUp::
-WheelDown::
-(A_ThisHotkey="WheelUp")? taskView.MoveToDesktopPrev(WinExist("A"),True): taskView.MoveToDesktopNext(WinExist("A"),False)
-sleep(200)
 return
 
-#if getKeyState("RButton","P")                            ; Switch Windows
+MButton:: winSizer.start("RButton")   ; WinSizer
 MButton Up::
 if !winSizer.end()
     send("#{Tab}")
 return
-WheelUp::
+
+WheelUp::                   ; Switch Windows
 WheelDown::
 if A_ThisHotkey="WheelUp" {
     ; if (taskView.GetCurrentDesktopNumber()=1)  ;Wrap
@@ -53,6 +37,14 @@ if A_ThisHotkey="WheelUp" {
 }
 sleep(200)
 return
+
+#if getKeyState("MButton","P")                      ; Move window b/w desktops
+WheelUp::
+WheelDown::
+(A_ThisHotkey="WheelUp")? taskView.MoveToDesktopPrev(WinExist("A"),True): taskView.MoveToDesktopNext(WinExist("A"),False)
+sleep(200)
+return
+
 
 #if !winActive("ahk_group right_drag")
 *RButton up::
@@ -202,7 +194,22 @@ RETURN
 #F2:: dimScreen(+25)
 #F3:: dimScreen(-25)
 
-;===================    Calculator/Notepad
+;===================    Calc/cmd/Notepad
 RETURN
-#NumLock:: Run("calc1.exe")
-#CapsLock:: Run("notepad.exe")
+#+CapsLock:: Run("notepad.exe")
+#^CapsLock:: Run("calc1.exe")
+#CapsLock::  Run("cmd.exe")
+
+;===================    Groupy
+RETURN
+!CapsLock:: Send("#{F12}")
+!+CapsLock:: Send("#^{F12}")
+
+;===================    Fences Pages
+RETURN
+#if winActive("ahk_class WorkerW ahk_exe explorer.exe") AND getKeyState("LButton","P")
+WheelUp::
+WheelDown::
+send("{LButton Up}!{" (A_ThisHotkey="WheelUp"?"WheelDown":"WheelUp") "}")
+return
+#if

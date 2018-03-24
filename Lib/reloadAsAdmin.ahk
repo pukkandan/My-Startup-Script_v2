@@ -4,17 +4,12 @@ reloadAsAdmin(force:="True"){
     try{
         Run("*RunAs " (A_IsCompiled? "": "`""  A_AhkPath "`" ") "`"" A_ScriptFullPath "`"")
         ExitApp
-        } catch e {
-            if force {
-                MsgBox("Couldn't restart script!!`nError Code: " e, "FATAL ERROR!!", 0x1010)
-                ExitApp
-            }
-        }
-        return 1
+        } catch e
+            return _reloadAsAdmin_Error(e,force)
     }
 
 ;http://ahkscript.org/boards/viewtopic.php?t=4334
-reloadAsAdmin_Task() { ;  By SKAN,  http://goo.gl/yG6A1F,  CD:19/Aug/2014 | MD:22/Aug/2014
+reloadAsAdmin_Task(force:=True) { ;  By SKAN,  http://goo.gl/yG6A1F,  CD:19/Aug/2014 | MD:22/Aug/2014
     ; Asks for UAC only first time
 
     ;local CmdLine, TaskName, TaskExists, XML, TaskSchd, TaskRoot, RunAsTask
@@ -23,21 +18,19 @@ reloadAsAdmin_Task() { ;  By SKAN,  http://goo.gl/yG6A1F,  CD:19/Aug/2014 | MD:2
     try {
         TaskSchd := ComObjCreate("Schedule.Service")
        ,TaskSchd.Connect()
-       ,TaskRoot := TaskSchd.GetFolder("\")
     }
-    catch
-    return 1
+   catch e
+      return _reloadAsAdmin_Error(e,force)
 
     CmdLine := (A_IsCompiled? "": "`""  A_AhkPath "`" ") "`"" A_ScriptFullpath "`""
-   ,TaskName:= "[RunAsTask] " A_ScriptName " @" SubStr("000000000"
+   ,TaskName:= A_ScriptName " @" SubStr("000000000"
         DllCall("NTDLL\RtlComputeCrc32", "Int",0, "WStr",CmdLine, "UInt",StrLen(CmdLine)*2, "UInt"), -9)
 
-    try {
-        RunAsTask:=TaskRoot.GetTask(TaskName)
-        if !A_IsAdmin {
-            RunAsTask.Run("")
-            ExitApp
-        }
+    Try {
+        Try TaskRoot:= TaskSchd.GetFolder("\AHK-ReloadAsAdmin")
+        catch
+            TaskRoot:= TaskSchd.GetFolder("\"), TaskName:= "[AHK-ReloadAsAdmin]" TaskName
+        RunAsTask:= TaskRoot.GetTask( TaskName )
     }
     catch {
         if A_IsAdmin {
@@ -73,10 +66,16 @@ reloadAsAdmin_Task() { ;  By SKAN,  http://goo.gl/yG6A1F,  CD:19/Aug/2014 | MD:2
 
            ,TaskRoot.RegisterTask(TaskName, XML, TASK_CREATE, "", "", TASK_LOGON_INTERACTIVE_TOKEN)
         }
-        else {
-            Run("*RunAs " CmdLine, A_ScriptDir, "UseErrorLevel")
-            ExitApp
-        }
+        else reloadAsAdmin(force)
     }
     return 0
+}
+
+
+_reloadAsAdmin_Error(e,force){
+    if force {
+        MsgBox("Couldn't restart script!!`nError Code: " e, "FATAL ERROR!!", 0x1010)
+        ExitApp
+    }
+    return 1
 }

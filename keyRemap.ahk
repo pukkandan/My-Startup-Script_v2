@@ -151,7 +151,7 @@ return
 
 ;===================    Open MusicBee
 RETURN
-#F10::
+#F10::  ; F10 is also Media_Play_Pause
 A_DetectHiddenWindows:=True
 if !winExist("ahk_exe MusicBee.exe") {
     Toast.show("Starting MusicBee")
@@ -164,6 +164,10 @@ if !winExist("ahk_exe MusicBee.exe") {
 Toast.show("Play/Pause")
 ,Send("{Media_Play_Pause}")
 return
+
+#if ProcessExist("MusicBee.exe")
+;MusicBee doesnt respond to Media_Play_Pause sometimes. So I set it's global hotkey to #^{F10}
+Media_Play_Pause::send("#^{F10}")
 
 ;===================    Listary launcher
 ; RETURN
@@ -191,7 +195,7 @@ RETURN
 
 ;===================    DimScreen
 RETURN
-#F2:: dimScreen(+25)
+#F2:: dimScreen(+25)  ; F2,F3 are also Brightness_Down/Up keys
 #F3:: dimScreen(-25)
 
 ;===================    Calc/cmd/Notepad

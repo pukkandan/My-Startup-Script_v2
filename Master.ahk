@@ -58,10 +58,10 @@ DelayedTimer.set(Func("Transparent_TaskbarGlass").bind(4), 500)
 ;            ,{title:"ahk_exe calc1.exe"   , set:3   , maxheight:500     ,type:  "N"}     ])
 ;DelayedTimer.set(ObjbindMethod(PIP,"run"), 100)
 
-;tip("ToggleKeys")
-;#include ToggleKeys.ahk
-;DelayedTimer.set(Func("CapsLockOffTimer").bind(60000), 1000)
-;CaseMenu.__new()
+tip("ToggleKeys")
+#include ToggleKeys.ahk
+DelayedTimer.set(Func("CapsLockOffTimer").bind(60000), 1000)
+CaseMenu.init()
 
 ;tip("MicroWindows")
 ;#include MicroWindows.ahk
@@ -70,9 +70,8 @@ DelayedTimer.set(Func("Transparent_TaskbarGlass").bind(4), 500)
 ;#include WinAction.ahk ; Refactor
 ;winAction.__new("winAction.ini")    ; Multiple winaction can be created by using obj1:=new winaction("iniName.ini"), ...
 
-;tip("WinSizer")
-;#include WinSizer.ahk
-;WinSizer.__new()
+tip("WinSizer")
+#include WinSizer.ahk
 
 ;tip("WinProbe")
 ;#include WinProbe.ahk
@@ -82,9 +81,9 @@ DelayedTimer.set(Func("Transparent_TaskbarGlass").bind(4), 500)
 ;#include RunText.ahk  ;Needs serious Refactoring!!
 ;global runTextObj:=new runText("Runtext.ini")
 
-;tip("Internet")
-;#include Internet.ahk
-;DelayedTimer.set("netNotify", 5000, True)
+tip("Internet")
+#include Internet.ahk
+DelayedTimer.set("netNotify", 5000, True)
 
 
 tip("AutoUpdate")
@@ -111,25 +110,17 @@ RETURN
 ;==================================================
 /*  To convert
     ------------
+    toggleKeys  done
+    internet    done
     microWindows
-    toggleKeys
-    internet
     pip
     runText
     winAction
-    winProbe
-    winSizer
+    winProbe    discard
+    winSizer    done
  */
 
 ; Following are temporary lines designed to make the script run without errors till the rest is converted
-ToggleKeys_check(){
-    return {n:"",c:"",s:"",i:""}
-}
-netNotify(a:="",b:="",c:=""){
-    return {status:"", ipInfo:{ip:"", loc:"", ipl:""}}
-}
-class CaseMenu {
-}
 class RunText {
 }
 class WinProbe {

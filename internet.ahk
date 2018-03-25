@@ -5,22 +5,21 @@ getIPInfo(getLoc:=True){
         ; http://www.netikus.net/show_ip.html gives faster result, but no location
 
         start:=Instr(webpage, "<div class=""value"">")  ;Location
-        loc:=substr(webpage,start+19,Instr(webpage, "<",false,start+1)-start-19)
+        loc:=substr(webpage, start+19, Instr(webpage, "<",false,start+1)-start-19)
 
         start:=Instr(webpage, "<p>Your IP Address appears to be: <strong>",start) ;IP
-        public_ip:=substr(webpage,start+42,Instr(webpage, "</",false,start+42)-start-42)
+        public_ip:=substr(webpage,start+42, Instr(webpage, "</", false, start+42) -start-42 )
     } else
         regexMatch(download_toVar("http://www.netikus.net/show_ip.html"),"^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$",public_ip)
 
     adapter_count:=0, ipl:=""
-    loop, 4 {
+    loop 4 {
         if A_IPAddress%A_Index% != "0.0.0.0" and A_IPAddress%A_Index% != "127.0.0.1" {
             ipl.=A_IPAddress%A_Index% " | "
             adapter_count++
         }
     }
 
-    ; tooltip, location:%loc% count:%adapter_count% ip:%public_ip% ip1:%A_IPAddress1% ip2:%A_IPAddress2% ip3:%A_IPAddress3% ip4:%A_IPAddress4% ipl:%ipl%
     return { loc:loc, count:adapter_count, ip:public_ip
           , ip1:A_IPAddress1, ip2:A_IPAddress2, ip3:A_IPAddress3, ip4:A_IPAddress4, ipl:substr(ipl,1,-3)}
 }

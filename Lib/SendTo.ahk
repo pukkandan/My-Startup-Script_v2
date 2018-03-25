@@ -1,30 +1,30 @@
+#include Clip.ahk
+#include ReplaceList.ahk
+
 sendTo_pasteText(text:="", win:=0, controlName:="", opt:="") {
     if !text
         return False
 
-    static opt0:={resetClip:True, resetClipFull:False}
-    opt:=replaceList(opt0, opt)
-    opt.raw:=False
+    static opt0:={resetClip:True, resetClipFull:False, useOldClip:False, keepClip:False}
+    opt:=replaceList(this.opt0, opt), opt.raw:=False
 
-    if resetClip
-        clipOld:= resetClipFull? ClipboardAll: Clipboard
-    Clipboard:=text ,clipWait()
-   ,ret:=sendTo("^v", win, controlName, opt)
-    if resetClip
-        Clipboard:=clipOld
-
+    if opt.resetClip AND !opt.useOldClip
+        clip.save(opt.resetClipFull)
+   Clipboard:=text ,clipWait(), ret:=sendTo("^v", win, controlName, opt)
+    if opt.resetClip
+        clip.recover(!keepClip)
     return ret
 }
 
 
 sendTo(key, title:=" ", controlName:="", opt:=""){    ; Pass title:="" to use last found window, " " to not use any window
-    static opt0:={sendWithoutProg:True, raw:False, hiddenWindows:False, focusControl:True, activateWindow:False}
+    static opt0:={sendWithoutProg:True, raw:False, hiddenWindows:False, focusControl:True, activateWindow:False, sendToAll:False}
     opt:=replaceList(opt0, opt)
 
     A_DetectHiddenWindows:=opt.hiddenWindows
    ,returnValue:=(winList:= opt.sendToAll? WinGetList(title): title=" "?[WinExist(title)]:[] ).length()
 
-    for _,win in  winList{
+    for _,win in  winList {
         if win!=0 {
             win:="ahk_id " win
             if opt.activateWindow

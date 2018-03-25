@@ -9,6 +9,7 @@ setTimer(HotCorners.timer,100)
 */
 
 class HotCorners {
+    static f
     register(position, f, delay_count:=0){ ;Position: T,B,L,R,TL,TR,BL,BR
     ; The registered function can take position of mouse as parameters
     ; If delay_count<=0, the function is triggered only once. Else, it is triggered everytime the timer runs "delay_count" times

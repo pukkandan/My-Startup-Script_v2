@@ -1,3 +1,4 @@
+; Use compiled version
 class winProbe {
     activate(){
         Menu, Tray, Check, &Window Probe

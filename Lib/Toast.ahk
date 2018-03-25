@@ -11,6 +11,8 @@ sleep 200
 Toast.show(p) ;Show without creating a dedicated object. Will replace other instances without object, but not other objects
 */
 
+#include ReplaceList.ahk
+
 class Toast{
     __new(p:=""){
         static toastCount:=0

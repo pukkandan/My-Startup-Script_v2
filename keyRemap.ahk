@@ -24,10 +24,10 @@ if !winSizer.end()
     send("#{Tab}")
 return
 
-WheelUp::                   ; Switch Windows
+WheelUp::                             ; Switch Windows
 WheelDown::
 if A_ThisHotkey="WheelUp" {
-    ; if (taskView.GetCurrentDesktopNumber()=1)  ;Wrap
+    ; if (taskView.GetCurrentDesktopNumber()=1)  ; Uncomment this to Wrap
     ;     taskView.GoToDesktopNumber(0)
     send("#^{Left}")
 } else {
@@ -38,7 +38,7 @@ if A_ThisHotkey="WheelUp" {
 sleep(200)
 return
 
-#if getKeyState("MButton","P")                      ; Move window b/w desktops
+#if getKeyState("MButton","P")        ; Move window b/w desktops
 WheelUp::
 WheelDown::
 (A_ThisHotkey="WheelUp")? taskView.MoveToDesktopPrev(WinExist("A"),True): taskView.MoveToDesktopNext(WinExist("A"),False)
@@ -87,18 +87,17 @@ if !ErrorLevel {
 }
 return
 runListary(){
-  static key:="^#``"
+  static key  :="^#``"
         ,Win  :="ahk_class Listary_WidgetWin_0"
         ,Cntrl:="ListarySearchBox1"
         ,Path :="D:\Program Files\Listary"
         ,exe  :="Listary.exe"
-        ,opt  :={activateWindow:True, hiddenWindows:False, sendToAll:True}
+        ,opt  :={activateWindow:True, hiddenWindows:False, sendToAll:True, useOldClip:True}
 
     Toast.show("Listary")
-   ,text:=getSelectedText()
+   ,text:=getSelectedText({resetClip:False}) ;Clipboard will be restored later
    ,text:=text?text:Clipboard
-   ,text:=RegExReplace(RegExReplace(text, "[`t`n]| +"," "), "^ | $|``r")
-   ,text:=strlen(text)<100?text:""
+   ,text:=text<100? RegExReplace(RegExReplace(text, "[`t`n]| +"," "), "^ | $|``r") :""
 
     if !ProcessExist(exe) {
         Toast.show("Starting Listary")
@@ -115,7 +114,7 @@ runListary(){
     if ErrorLevel
         return False
     sleep(10)
-   ,sendTo_pasteText(text, Win " ahk_exe " Prs, Cntrl, opt)
+   ,sendTo_pasteText(text, Win " ahk_exe " Prs, Cntrl, opt) ;Clipboard is restored due to opt.useOldClip:=True
    ,sendTo("^a", Win "ahk_exe " exe, Cntrl, opt)
     return True
 }

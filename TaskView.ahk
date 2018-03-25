@@ -1,4 +1,5 @@
 class TaskView { ; There should only be one object for this
+    static proc:=[]
     init(){ ; SHOULD be called
         return this.__new()
     }
@@ -8,7 +9,7 @@ class TaskView { ; There should only be one object for this
                ,"IsWindowOnDesktopNumber","MoveWindowToDesktopNumber"
                ,"IsPinnedWindow","PinWindow","UnPinWindow","IsPinnedApp","PinApp","UnPinApp"
                ,"RegisterPostMessageHook","UnregisterPostMessageHook" ]
-       ,this.proc:=[]
+
         for _,fName in fList
             this.proc[fName]:= DllCall("GetProcAddress", "Ptr", hVirtualDesktopAccessor, "AStr", fName, "Ptr")
 

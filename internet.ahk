@@ -1,3 +1,5 @@
+; rewrite as a class!
+
 getIPInfo(getLoc:=True){
 
     if getLoc {

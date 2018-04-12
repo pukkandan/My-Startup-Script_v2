@@ -102,10 +102,16 @@ GroupAdd("right_drag", "ahk_exe mspaint1.exe" )
 GroupAdd("right_drag", "ahk_exe cmd.exe"      )
 GroupAdd("right_drag", "ahk_exe vivaldi.exe"  )
 
+;Required for HotStrings
+GroupAdd("AutoBracket", "ahk_exe notepad.exe"     )
+GroupAdd("AutoBracket", "ahk_exe mathematica.exe" )
+GroupAdd("AutoBracket", "ahk_exe chrome.exe"      )
+
 ;;============================== End of auto-execute
 RETURN
 #include KeyRemap.ahk
-#include *i HotStrings.ahk ;Has personal data in this file, so it is ignored from github
+#include HotStrings.ahk
+#include *i HotStringsPrivate.ahk ;Has personal data in this file, so it is ignored from github
 
 ;==================================================
 /*  To convert

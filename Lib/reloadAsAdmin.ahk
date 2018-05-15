@@ -1,12 +1,9 @@
-reloadAsAdmin(force:="True"){
+reloadAsAdmin(force:=True){
     if A_IsAdmin
         return 0
-    try{
-        Run("*RunAs " (A_IsCompiled? "": "`""  A_AhkPath "`" ") "`"" A_ScriptFullPath "`"")
-        ExitApp
-        } catch e
-            return _reloadAsAdmin_Error(e,force)
-    }
+    Run("*RunAs " (A_IsCompiled? "": "`""  A_AhkPath "`" ") "`"" A_ScriptFullPath "`"")
+    return _reloadAsAdmin_Error(e,force)
+}
 
 ;http://ahkscript.org/boards/viewtopic.php?t=4334
 reloadAsAdmin_Task(force:=True) { ;  By SKAN,  http://goo.gl/yG6A1F,  CD:19/Aug/2014 | MD:22/Aug/2014
@@ -31,6 +28,8 @@ reloadAsAdmin_Task(force:=True) { ;  By SKAN,  http://goo.gl/yG6A1F,  CD:19/Aug/
         catch
             TaskRoot:= TaskSchd.GetFolder("\"), TaskName:= "[AHK-ReloadAsAdmin]" TaskName
         RunAsTask:= TaskRoot.GetTask( TaskName )
+        if !A_IsAdmin
+            RunAsTask.Run("")
     }
     catch {
         if A_IsAdmin {

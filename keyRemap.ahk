@@ -2,20 +2,31 @@
 RETURN
 #if getKeyState("RButton","P")
 LButton::                   ; Switch to next window
+send("!{Tab}") ; In the latest builds of windows, Alt Tab does not show the TaskSwitcher Window when used quickly. Also, the other method behaves unexpectedly with sets
+/*
 sendWindowBack(){ ;Alt Tab is not used since it shows the TaskSwitcher Window
-    activeID:=WinGetID("A")
-    loop WinGetList() {
+    activeID:=WinGetID("A"), ids:=WinGetList()
+    loop ids.Length() {
+        msgbox(activeID "=?=" ids[A_Index])
         if activeID!=ids[A_Index]
             continue
-        win:="ahk_id " ids[A_Index+1]
-        ;Use next two lines to send active window one step back without activating the window behind
-       ;,WinSetAlwaysOnTop(True, win)
-       ;,WinSetAlwaysOnTop(False, win)
-       ,winActivate(win)
-       ,break
+        else i:=A_Index
+        loop ids.Length()-i {
+            win:="ahk_id " ids[A_Index+i]
+            msgbox(WinGetTitle(win))
+            if !WinGetTitle(win)
+                continue
+            ;Use next two lines to send active window one step back without activating the window behind
+           ;,WinSetAlwaysOnTop(True, win)
+           ;,WinSetAlwaysOnTop(False, win)
+            winActivate(win)
+            break
+        }
+        break
     }
     return
 }
+*/
 return
 
 MButton:: winSizer.start("RButton")   ; WinSizer
@@ -63,7 +74,7 @@ send(A_ThisHotkey="WheelUp" ? "^+!{Tab}" : "^!{Tab}")
 return
 MButton Up:: Send("+^{Esc}")    ; Task manager
 
-#if winActive("ahk_class MultitaskingViewFrame") AND isOver_mouse("ahk_class Shell_TrayWnd")        ; When Task Switching
+#if winActive("Task Switching ahk_class Windows.UI.Core.CoreWindow ahk_exe explorer.exe") AND isOver_mouse("ahk_class Shell_TrayWnd")        ; When Task Switching
 LButton::send("{Enter}")
 #if
 
@@ -114,7 +125,7 @@ runListary(){
     if ErrorLevel
         return False
     sleep(10)
-   ,sendTo_pasteText(text, Win " ahk_exe " Prs, Cntrl, opt) ;Clipboard is restored due to opt.useOldClip:=True
+   ,sendTo_pasteText(text, Win " ahk_exe " exe, Cntrl, opt) ;Clipboard is restored due to opt.useOldClip:=True
    ,sendTo("^a", Win "ahk_exe " exe, Cntrl, opt)
     return True
 }
@@ -169,30 +180,50 @@ return
 Media_Prev::      send("#{F9}")
 Media_Play_Pause::send("#{F10}")
 Media_Next::      send("#{F11}")
-
+#if
 ;===================    Listary launcher
 ; RETURN
 ; ~LWin & RWin::return    ;Prevents LWin from trigerring when #... (eg: #Tab) is used
 ; LWin UP:: Send("#``")
 ; return
 
-;===================    Toggglekeys and CaseMenu
+;===================    CaseMenu and »
 RETURN
 CapsLock::
 keywait("Capslock", "T0.2")
 if ErrorLevel {
     ^CapsLock:: caseMenu.show()
-    return
 }
-SendLevel 1
-sendEvent Â» ;Used to trigger my hotstrings
+else {
+    SendLevel(1)
+    sendEvent("»") ;Used to trigger some hotstrings
+}
 return
+
+;===================    Toggglekeys
 +CapsLock::CaseMenu.toggle("CapsLock")
 NumLock::
 ScrollLock::
 Insert::
 CaseMenu.toggle(A_ThisHotkey)
 return
+
+;===================    Calc/cmd/Notepad
+RETURN
+#+CapsLock:: Run("notepad.exe")
+#^CapsLock:: Run("calc1.exe")
+#CapsLock::  Run("cmd.exe")
+
+;===================    Sets
+RETURN
+!CapsLock:: Send("#^{Tab}")
+!+CapsLock:: Send("#^+{Tab}")
+/*
+;===================    Groupy
+RETURN
+!CapsLock:: Send("#{F12}")
+!+CapsLock:: Send("#^{F12}")
+*/
 
 ;===================    NetNotify
 RETURN
@@ -203,17 +234,6 @@ RETURN
 #F2:: dimScreen(+25)  ; F2,F3 are also Brightness_Down/Up keys
 #F3:: dimScreen(-25)
 
-;===================    Calc/cmd/Notepad
-RETURN
-#+CapsLock:: Run("notepad.exe")
-#^CapsLock:: Run("calc1.exe")
-#CapsLock::  Run("cmd.exe")
-
-;===================    Groupy
-RETURN
-!CapsLock:: Send("#{F12}")
-!+CapsLock:: Send("#^{F12}")
-
 ;===================    Fences Pages
 RETURN
 #if winActive("ahk_class WorkerW ahk_exe explorer.exe") AND getKeyState("LButton","P")
@@ -222,3 +242,7 @@ WheelDown::
 send("{LButton Up}!{" (A_ThisHotkey="WheelUp"?"WheelDown":"WheelUp") "}")
 return
 #if
+
+;===================    Send `n/`t in cases where enter/tab is used for other purposes
++Enter::Send "`n"
++Tab::Send "    "

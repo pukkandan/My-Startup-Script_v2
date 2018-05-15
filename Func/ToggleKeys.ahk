@@ -1,5 +1,5 @@
 CapsLockOffTimer(t:=60000){
-    if A_TimeIdleKeyboard>t) AND GetKeyState("CapsLock","T" {
+    if A_TimeIdleKeyboard>t AND GetKeyState("CapsLock","T") {
         SetCapsLockState(False)
         Toast.show("CapsLock Off")
         return True
@@ -28,34 +28,20 @@ class caseMenu {
         return
     }
 
-    caseChange(case){
-        text:=getSelectedText({resetClip:False})
-        static exceptions:= ["I","AHK","AutoHotkey","Dr","Mr","Ms","Mrs","AKJ"]
-                ;list of words that should not be modified for S,T
-        if case="S" { ;Sentence case.
-            text := RegExReplace(RegExReplace(text, "(.*)", "$L{1}"), "(?<=[^a-zA-Z0-9_-]\s|\n).|^.", "$U{0}")
-        } else if case="I" ;iNVERSE
-         text:=RegExReplace(text, "([A-Z])|([a-z])", "$L1$U2")
-        else text:=RegExReplace(text, "(.*)", "$" Type "{1}")
-
-        if case="S" OR case="T"
-            for _,word in exceptions ;Parse the exceptions
-                text:= RegExReplace(text,"i)\b" word "\b", word)
-
-        sendTo_pasteText(text,,, {useOldClip:True})
-        return
+    caseChange(type){ ; type: U=UPPER, L=Lower, T=Title, S=Sentence, I=Invert
+        return sendTo_pasteText(caseChange(getSelectedText({resetClip:False}), type),,, {useOldClip:True})
     }
 
     toggle(key){
         if key="Insert"
             Send("{Insert}")
         else if key="Capslock"
-            SetCapsLockState(GetKeyState("CapsLock","T"))
+            SetCapsLockState(!GetKeyState("CapsLock","T"))
         else if key="Numlock"
-            SetNumLockState(GetKeyState("NumLock","T"))
+            SetNumLockState(!GetKeyState("NumLock","T"))
         else if key="Scrolllock"
-            SetScrollLockState(GetKeyState("ScrollLock","T"))
-        return Toast.show(A_ThisHotkey (GetKeyState(A_ThisHotkey,"T")? " On":" Off"))
+            SetScrollLockState(!GetKeyState("ScrollLock","T"))
+        return Toast.Show(key (GetKeyState(key,"T")? " On":" Off"))
     }
 }
 

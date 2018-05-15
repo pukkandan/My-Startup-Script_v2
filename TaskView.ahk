@@ -8,7 +8,7 @@ class TaskView { ; There should only be one object for this
        ,fList:=[ "GetCurrentDesktopNumber","GetDesktopCount","GoToDesktopNumber"
                ,"IsWindowOnDesktopNumber","MoveWindowToDesktopNumber"
                ,"IsPinnedWindow","PinWindow","UnPinWindow","IsPinnedApp","PinApp","UnPinApp"
-               ,"RegisterPostMessageHook","UnregisterPostMessageHook" ]
+               ,"RegisterPostMessageHook","UnregisterPostMessageHook","RestartVirtualDesktopAccessor" ]
 
         for _,fName in fList
             this.proc[fName]:= DllCall("GetProcAddress", "Ptr", hVirtualDesktopAccessor, "AStr", fName, "Ptr")
@@ -16,8 +16,13 @@ class TaskView { ; There should only be one object for this
         this.toast:=new Toast({life:1000})
        ,DllCall(this.proc["RegisterPostMessageHook"], "Int", A_ScriptHwnd+(0x1000<<32), "Int", 0x1400 + 30)
        ,OnMessage(0x1400 + 30, ObjBindMethod(this,"_onDesktopSwitch"))
+       ,OnMessage(DllCall("user32\RegisterWindowMessage", "Str", "TaskbarCreated"), ObjBindMethod(this,"_onExplorerRestart"))
     }
 
+    _onExplorerRestart(wParam, lParam, msg, hwnd) {
+        global RestartVirtualDesktopAccessorProc
+        DllCall(this.proc["RestartVirtualDesktopAccessor"], "UInt", result)
+    }
     _onDesktopSwitch(wParam,lParam){
         return this.toast.show("Desktop " lParam+1)
     }

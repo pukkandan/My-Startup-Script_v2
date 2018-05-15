@@ -1,19 +1,19 @@
 ;===================    Sort chars
 RETURN
-::zÂ»::{U+0370} ;z' = Heta Í° :Succedes letters in sorting
-::0Â»::{U+263A} ;0' = Face â˜º :Precedes numbers in sorting
+::z»::{U+0370} ;z' = Heta :Succedes letters in sorting
+::0»::{U+263A} ;0' = Smiley :Precedes numbers in sorting
 return
 
 ;===================    Hot Strings
 RETURN
-::@Â»::@gmail.com
-::mÂ»::magnet:?xt=urn:btih:
+::@»::@gmail.com
+::m»::magnet:?xt=urn:btih:
 return
 
-;===================    Paste Trackers from Ditto
+;===================    Paste Tracker list from file
 RETURN
-::trÂ»::
-send("#+^t") ;My Ditto is set up to paste a tracker list on pressing #+^t
+::tr»::
+sendTo_pasteText(FileRead("trackers.txt")) ; A list of public trackers
 return
 
 ;===================    Brackets

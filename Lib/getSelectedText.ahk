@@ -4,11 +4,11 @@
 getSelectedText(opt:="")
 {
     static opt0:={resetClip:True, resetClipFull:False, useOldClip:False, keepClip:False}
-    opt:=replaceList(this.opt0, opt)
+    opt:=replaceList(opt0, opt)
 
     if opt.resetClip AND !opt.useOldClip
         clip.save(opt.resetClipFull)
-    Clipboard:="", Send("^c"), ClipWait(0.1, 1), clipNew:=Clipboard
+    Clipboard:="", Send("^{Insert}"), ClipWait(0.1, 1), clipNew:=Clipboard
     if opt.resetClip
         clip.recover(!keepClip)
 

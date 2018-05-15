@@ -1,20 +1,17 @@
 suspendOnFS(){
-    if isFullScreen()
-    {
+    if isFullScreen() {
         Suspend(True)
-       ,setTimer("hotcorners", "Off")
-       ,setTimer(, "Off")
-       ,setTimer("resumeOnWin", "100")
+        Timer.pauseAll()
+        if !Timer.resume("resumeOnWin")
+            Timer.set("resumeOnWin",100)
     }
     return
 }
 resumeOnWin(){
-    if !isFullScreen()
-    {
+    if !isFullScreen() {
         Suspend(False)
-       ,setTimer("hotcorners", "On")
-       ,setTimer(, "Off")
-       ,setTimer("suspendOnFS", "On")
+        Timer.resumeAll()
+        Timer.stop(A_ThisFunc)
     }
     return
 }

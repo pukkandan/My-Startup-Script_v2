@@ -6,7 +6,7 @@ getIPInfo(getLoc:=True){
         webpage:=download_toVar("https://www.whatismybrowser.com/detect/ip-address-location")
         ; http://www.netikus.net/show_ip.html gives faster result, but no location
 
-        start:=Instr(webpage, "<div class=""value"">")  ;Location
+        start:=Instr(webpage, "<div class=`"value`">")  ;Location
         loc:=substr(webpage, start+19, Instr(webpage, "<",false,start+1)-start-19)
 
         start:=Instr(webpage, "<p>Your IP Address appears to be: <strong>",start) ;IP
@@ -54,7 +54,7 @@ netNotify(refresh:=True,show:=True,life:=0) {
     if !show
         return refresh ? netStatus() : current     ; Static var are not updated when !show even if refresh=true
 
-    msg:=""
+    msg:="", highlight:={}
     if refresh {
         net:=netStatus()
 
@@ -79,7 +79,7 @@ netNotify(refresh:=True,show:=True,life:=0) {
         else if net.status=1 and old.status=2
             title:= "VPN disconnected"             , highlight:={2:True}
         else if net.status=2 and old.status<=0
-            title=Internet Connected (with VPN)    , highlight:={1:True, 2:True}
+            title:="Internet Connected (with VPN)" , highlight:={1:True, 2:True}
         else if net.status=2 and old.status=1
             title:= "VPN Connected"                , highlight:={2:True}
 

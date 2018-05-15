@@ -6,11 +6,11 @@ sendTo_pasteText(text:="", win:=0, controlName:="", opt:="") {
         return False
 
     static opt0:={resetClip:True, resetClipFull:False, useOldClip:False, keepClip:False}
-    opt:=replaceList(this.opt0, opt), opt.raw:=False
+    opt:=replaceList(opt0, opt), opt.raw:=False
 
     if opt.resetClip AND !opt.useOldClip
         clip.save(opt.resetClipFull)
-   Clipboard:=text ,clipWait(), ret:=sendTo("^v", win, controlName, opt)
+   Clipboard:=text ,clipWait(), ret:=sendTo("+{Insert}", win, controlName, opt)
     if opt.resetClip
         clip.recover(!keepClip)
     return ret

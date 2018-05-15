@@ -8,5 +8,8 @@ unwantedPopupBlocker(){
         winActivate()
        ,send("{esc}")
     }
+
+    if WinExist("Error ahk_class #32770 ahk_exe SdDisplay.exe") ;Groupy bug
+        winClose()
     return
 }

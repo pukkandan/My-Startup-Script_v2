@@ -3,16 +3,14 @@ Suspend(True)
 #include Directives.ahk
 
 ; These are called first so that they can do their cleanup operations
-;AutoUpdate()
-ReloadScriptOnEdit([A_ScriptDir "\*.ahk",A_ScriptDir "\*.ini"])
 
 #include <ini>
 #include <Toast>
-#include <DelayedTimer>
+#include <Timer>
 #include <ReloadScriptOnEdit>
 
 tip("ReloadScriptOnEdit")
-DelayedTimer.set(func("ReloadScriptOnEdit").bind([A_ScriptDir "\*.ahk", A_ScriptDir "\*.ini"]), 2000)
+DelayedTimer.set(func("ReloadScriptOnEdit").bind([A_ScriptDir "\*.ahk", A_ScriptDir "\*.ini"]), 2000, {runatStart:True})
 
 tip("Tray")
 #include Tray.ahk
@@ -23,7 +21,7 @@ tip("SuspendOnFS")
 DelayedTimer.set("SuspendOnFS", 100)
 
 tip("DimScreen")
-#include DimScreen.ahk
+#include Func\DimScreen.ahk
 ; dimScreen(120)
 
 tip("TaskView")
@@ -31,7 +29,7 @@ tip("TaskView")
 TaskView.init()
 
 tip("HotCorners")
-#include HotCorners.ahk
+#include Func\HotCorners.ahk
 HotCorners.register("TL",Func("send").bind("#{Tab}"))
 HotCorners.register("BL",Func("send").bind("#x"    ))
 HotCorners.register("BR",Func("send").bind("#a"    ))
@@ -59,7 +57,7 @@ DelayedTimer.set(Func("Transparent_TaskbarGlass").bind(4), 500)
 ;DelayedTimer.set(ObjbindMethod(PIP,"run"), 100)
 
 tip("ToggleKeys")
-#include ToggleKeys.ahk
+#include Func\ToggleKeys.ahk
 DelayedTimer.set(Func("CapsLockOffTimer").bind(60000), 1000)
 CaseMenu.init()
 
@@ -87,14 +85,15 @@ DelayedTimer.set("netNotify", 5000, True)
 
 
 tip("AutoUpdate")
-#include AutoUpdate.ahk
-DelayedTimer.set("AutoUpdate", 3600000)
+#include Func\AutoUpdateAHK.ahk
+DelayedTimer.set("AutoUpdateAHK", 3600000, {runatStart:True})
 
-
-DelayedTimer.start()
 Suspend(False)
-Toast.show("Script Loaded")
-DelayedTimer.firstRun()
+
+tip("Initializing all Timers")
+DelayedTimer.startAll()
+
+ToolTip()
 
 ;Required for KeyRemap
 GroupAdd("right_drag", "ahk_exe mspaint.exe"  )
@@ -107,6 +106,8 @@ GroupAdd("AutoBracket", "ahk_exe notepad.exe"     )
 GroupAdd("AutoBracket", "ahk_exe mathematica.exe" )
 GroupAdd("AutoBracket", "ahk_exe chrome.exe"      )
 
+Toast.show("Script Loaded")
+
 ;;============================== End of auto-execute
 RETURN
 #include KeyRemap.ahk
@@ -116,14 +117,12 @@ RETURN
 ;==================================================
 /*  To convert
     ------------
-    toggleKeys  done
-    internet    done
+    internet    redo
     microWindows
     pip
     runText
     winAction
     winProbe    discard
-    winSizer    done
  */
 
 ; Following are temporary lines designed to make the script run without errors till the rest is converted

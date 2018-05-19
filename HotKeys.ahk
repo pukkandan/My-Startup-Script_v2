@@ -37,22 +37,21 @@ return
 
 WheelUp::                             ; Switch Windows
 WheelDown::
+/* ; Uncomment this to Wrap
 if A_ThisHotkey="WheelUp" {
-    ; if (taskView.GetCurrentDesktopNumber()=1)  ; Uncomment this to Wrap
-    ;     taskView.GoToDesktopNumber(0)
-    send("#^{Left}")
-} else {
-    ; if (taskView.GetCurrentDesktopNumber()=taskView.GetDesktopCount())
-    ;     taskView.GoToDesktopNumber(1)
-    send("#^{Right}")
-}
+     if TaskView.GetCurrentDesktopNumber()=1
+         TaskView.GoToDesktopNumber(0)
+} else if TaskView.GetCurrentDesktopNumber()=TaskView.GetDesktopCount()
+    TaskView.GoToDesktopNumber(1)
+*/
+send( ThisHotkey="WheelUp"? "#^{Left}" : "#^{Right}" )
 sleep(200)
 return
 
 #if getKeyState("MButton","P")        ; Move window b/w desktops
 WheelUp::
 WheelDown::
-(A_ThisHotkey="WheelUp")? taskView.MoveToDesktopPrev(WinExist("A"),True): taskView.MoveToDesktopNext(WinExist("A"),False)
+(A_ThisHotkey="WheelUp")? TaskView.MoveToDesktopPrev(WinExist("A"),True): TaskView.MoveToDesktopNext(WinExist("A"),False)
 sleep(200)
 return
 
@@ -80,23 +79,26 @@ LButton::send("{Enter}")
 
 ;===================    Ditto & Listary
 RETURN
-XButton2::
-Keywait(A_ThisHotkey, "T0.5")
-if !ErrorLevel {
-    if !ProcessExist("Ditto.exe") {
+XButton2::hotkeyAssign(A_ThisHotkey, "runDitto", "runListary",, 0.5)
+
+runDitto(){
+    static key  :="^``"
+          ,Path :="D:\Program Files\Ditto"
+          ,exe  :="Ditto.exe"
+    if !ProcessExist(exe) {
         Toast.show("Starting Ditto")
-       ,Run("D:\Program Files\Ditto\Ditto.exe")
+       ,Run(Path "\" exe)
        ,A_DetectHiddenWindows:=True
-       ,WinWait("ahk_exe Ditto",,2)
+       ,WinWait("ahk_exe " exe,,2)
         if ErrorLevel
             return
     }
     Toast.show("Ditto")
-   ,Send("^``")
-} else {
-    !Space:: runListary()
+   ,Send(key)
+    return
 }
-return
+
+!Space::
 runListary(){
   static key  :="^#``"
         ,Win  :="ahk_class Listary_WidgetWin_0"
@@ -108,7 +110,7 @@ runListary(){
     Toast.show("Listary")
    ,text:=getSelectedText({resetClip:False}) ;Clipboard will be restored later
    ,text:=text?text:Clipboard
-   ,text:=text<100? RegExReplace(RegExReplace(text, "[`t`n]| +"," "), "^ | $|``r") :""
+   ,text:=text<200? RegExReplace(RegExReplace(text, "[`t`n]| +"," "), "^ | $|``r") :""
 
     if !ProcessExist(exe) {
         Toast.show("Starting Listary")
@@ -124,22 +126,25 @@ runListary(){
    ,Winwait("ahk_exe " exe,,2)
     if ErrorLevel
         return False
-    sleep(10)
-   ,sendTo_pasteText(text, Win " ahk_exe " exe, Cntrl, opt) ;Clipboard is restored due to opt.useOldClip:=True
+    /**
+   sendTo_pasteText(text, Win " ahk_exe " exe, Cntrl, opt) ;Clipboard is restored due to opt.useOldClip:=True
    ,sendTo("^a", Win "ahk_exe " exe, Cntrl, opt)
+    /**/
+    WinWaitActive("ahk_exe " exe,,2)
+    if ErrorLevel
+        return False
+    sleep(500)
+   ,sendTo_pasteText(text,,, opt) ;Clipboard is restored due to opt.useOldClip:=True
+   ,send("^a")
+   /**/
     return True
 }
 
 ;===================    winAction & RunText
 RETURN
-XButton1::
-Keywait(A_ThisHotkey, "T0.25")
-if !ErrorLevel {
-    #w:: winAction.show()
-} else {
-    !`:: runText.showGUI()
-}
-return
+XButton1::hotkeyAssign(A_ThisHotkey, ObjBindMethod(winAction,"show"), ObjBindMethod(runText,"showGUI"))
+#w:: winAction.show()
+!`:: runText.showGUI()
 
 ;===================    Tray Menu
 RETURN

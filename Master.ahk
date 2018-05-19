@@ -36,7 +36,7 @@ HotCorners.register("BR",Func("send").bind("#a"    ))
 DelayedTimer.set(HotCorners.timer,100)
 
 tip("UnwantedPopupBlocker")
-#include UnwantedPopupBlocker.ahk
+#include Func\UnwantedPopupBlocker.ahk
 DelayedTimer.set("UnwantedPopupBlocker", 100)
 
 tooltip("Transparent")
@@ -69,7 +69,7 @@ CaseMenu.init()
 ;winAction.__new("winAction.ini")    ; Multiple winaction can be created by using obj1:=new winaction("iniName.ini"), ...
 
 tip("WinSizer")
-#include WinSizer.ahk
+#include Func\WinSizer.ahk
 
 ;tip("WinProbe")
 ;#include WinProbe.ahk
@@ -95,7 +95,7 @@ DelayedTimer.startAll()
 
 ToolTip()
 
-;Required for KeyRemap
+;Required for HotKeys
 GroupAdd("right_drag", "ahk_exe mspaint.exe"  )
 GroupAdd("right_drag", "ahk_exe mspaint1.exe" )
 GroupAdd("right_drag", "ahk_exe cmd.exe"      )
@@ -110,7 +110,7 @@ Toast.show("Script Loaded")
 
 ;;============================== End of auto-execute
 RETURN
-#include KeyRemap.ahk
+#include HotKeys.ahk
 #include HotStrings.ahk
 #include *i HotStringsPrivate.ahk ;Has personal data in this file, so it is ignored from github
 
@@ -123,10 +123,18 @@ RETURN
     runText
     winAction
     winProbe    discard
+    hotkeys    expand
+    toast       improve hotkeys
  */
 
 ; Following are temporary lines designed to make the script run without errors till the rest is converted
 class RunText {
+    showGUI(){
+        return
+    }
 }
-class WinProbe {
+class winAction{
+    show(){
+        return
+    }
 }

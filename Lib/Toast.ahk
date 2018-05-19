@@ -77,7 +77,7 @@ class Toast{
             return
 
         for _,k in this.closekeys
-            Hotkey(k, "Off")
+            try Hotkey(k, "Off")
         try this.GUIObj.Destroy()
         return this.exist:=False
     }

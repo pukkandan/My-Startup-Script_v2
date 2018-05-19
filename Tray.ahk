@@ -19,7 +19,6 @@ trayMenu(){
    ,A_TrayMenu.Add("&TrayIt", trayIt)
 
    ,A_TrayMenu.Add()
-   ,A_TrayMenu.Add("&Window Probe", ObjBindMethod(winProbe, "toggle"))
    ,AHK:=MenuCreate(), A_AllowMainWindow:=True, AHK.Standard:=True
    ,A_TrayMenu.Add("&AHK", AHK)
    ,A_TrayMenu.Add("E&xit", "ExitApp")

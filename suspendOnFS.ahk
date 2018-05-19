@@ -2,8 +2,7 @@ suspendOnFS(){
     if isFullScreen() {
         Suspend(True)
         Timer.pauseAll()
-        if !Timer.resume("resumeOnWin")
-            Timer.set("resumeOnWin",100)
+        Timer.set("resumeOnWin",100)
     }
     return
 }

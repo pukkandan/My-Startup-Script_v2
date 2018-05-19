@@ -1,7 +1,7 @@
 class winSizer{
     __new(){
         this.action:=objBindmethod(this,"run"), this.running:=False
-        , this.toastObj:=new toast({life:0,margin:{x:1,y:1}, title:{size:10}, message:{def_size:8,offset:[4],def_offset:1}})
+       ,this.toastObj:=new toast({life:0,margin:{x:1,y:1}, title:{size:10}, message:{def_size:8,offset:[4],def_offset:1}})
     }
 
     start(endOnKeyRelease:=""){
@@ -15,17 +15,17 @@ class winSizer{
             return
         WinGetPos(wx, wy, w, h, "ahk_id " win)
         this.win:=win, this.mx:=mx, this.my:=my, this.wx:=wx, this.wy:=wy, this.ww:=w, this.wh:=h
-        , this.mode:={ x:3*(mx-wx)//w -1 , y:3*(my-wy)//h -1} ;, this.isMax:=isMax
+       ,this.mode:={ x:3*(mx-wx)//w -1 , y:3*(my-wy)//h -1} ;, this.isMax:=isMax
         ; | -1-1 dw dh dx dy |  0-1    dh dy    | +1-1 dw dh    dy |
         ; | -1 0 dw    dx    |  0 0       dx dy | +1 0 dw          |
         ; | -1+1 dw dh dx    |  0+1    dh       | +1+1 dw dh       |
-        setTimer(this.action, 100), setTimer(this.action, "On")
+        Timer.set(this.action, 100)
         ; this.show(mx,my,wx,wy,w,h)
         return
     }
     end(){
         r:=this.running, this.running:=False
-        try setTimer(this.action, "Off")
+        try Timer.stop(this.action, "Off")
         try this.toastObj.close()
         return r
     }
@@ -41,7 +41,7 @@ class winSizer{
             if mode.y<0 OR (!mode.x AND !mode.y)
                 dy:=dy0
             WinRestore(win) ;Fixes problem of window being detected as maximized, but causes a slight flickering
-            WinMove(win,, this.wx+dx, this.wy+dy, this.ww+dx0*mode.x, this.wh+dy0*mode.y)
+            WinMove(this.wx+dx, this.wy+dy, this.ww+dx0*mode.x, this.wh+dy0*mode.y, win)
             WinRedraw(win)
 
             WinGetPos(wx, wy, w, h, win)

@@ -1,69 +1,52 @@
 class Timer {
-    static opt0:={delay:False, runatStart:False, allowPause:True}
+    static opt0:={delay:False, runatStart:False, allowPause:True}, fList:={}
 
-    set(f,t,opt:=0){
+    set(f,t:=250,opt:=0){
         opt:=replaceList(this.opt0,opt)
         if !opt.delay {
             if opt.runatStart
                 %f%()
             setTimer(f, t)
         }
-        if !(this.list is "object")
-            this.list:=[]
-        this.list.push({f:f,t:t,opt:opt})
+        opt.t:=t, opt.running:=True, this.fList[f]:=opt
         return
     }
 
     startAllDelayed(){
-        for _,item in this.list {
-            if !item.opt.delay
+        for f,opt in this.fList {
+            if !opt.delay
                 continue
-            f:=item.f
-           ,setTimer(f, item.t)
-            if item.opt.runatStart
+            setTimer(f, opt.t)
+            if opt.runatStart
                 %f%()
         }
         return
     }
 
     pauseAll(){
-        for _,item in this.list {
-            if !item.opt.allowPause OR item.stopped
-                continue
-             f:=item.f
-            ,setTimer(f, "Off")
-        }
+        for f,opt in this.fList
+            if opt.allowPause AND opt.running
+                setTimer(f, "Off")
         return
     }
 
     resumeAll(){
-        for _,item in this.list {
-            if !item.opt.allowPause OR item.stopped
-                continue
-             f:=item.f
-            ,setTimer(f, "On")
-        }
+        for f,opt in this.fList
+            if opt.allowPause AND opt.running
+                setTimer(f, "On")
         return
     }
 
     stop(f){
-        for _,item in this.list {
-            if item.f!=f
-                continue
-            setTimer(f, "Off")
-            return item.stopped:=True
-        }
-        return false
+        SetTimer(f, "Off")
+       ,this.fList[f].running:=False
+        return
     }
 
-    resume(f){
-        for _,item in this.list {
-            if item.f!=f
-                continue
-            setTimer(f, "On")
-            return item.stopped:=False
-        }
-        return false
+    restart(f){
+        SetTimer(f, "On")
+       ,this.fList[f].running:=True
+        return
     }
 
 }

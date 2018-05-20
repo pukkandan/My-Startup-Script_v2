@@ -1,5 +1,5 @@
-suspendOnFS(){
-    if isFullScreen() {
+suspendOnFS(force:=False){
+    if force OR isFullScreen() {
         Suspend(True)
         loop 20 ;Remove all tooltips
             Tooltip(,,,A_Index)
@@ -8,11 +8,11 @@ suspendOnFS(){
     }
     return
 }
-resumeOnWin(){
-    if !isFullScreen() {
+resumeOnWin(force:=False){
+    if force OR !isFullScreen() {
         Suspend(False)
         Timer.resumeAll()
-        Timer.stop(A_ThisFunc)
+        try Timer.stop(A_ThisFunc)
     }
     return
 }

@@ -63,20 +63,30 @@ class TaskView { ; There should only be one object for this
         return this.currentDesktopNumber:=1
     }
 
+    _hideShow(hwnd){
+        win:="ahk_id " hwnd
+       ,minMax:=WinGetMinMax(win)
+       ,winHide(win)
+       ,winShow(win)
+        if minMax=1 {
+            WinRestore(win)
+           ,WinMaximize(win)
+        }
+        else if minMax:=-1
+            WinMinimize(win)
+        return
+    }
+
     _desktopChange(){
         static prevWindow:=0
         n:=this.getcurrentDesktopNumber(), A_DetectHiddenWindows:=False
         if prevWindow!=n AND prevWindow!=0 {
             this.toast.show("Desktop " n)
-            for hwnd in this.pinnedWindowList {
-                winHide("ahk_id " hwnd)
-               ,winShow("ahk_id " hwnd)
-            }
+            for hwnd in this.pinnedWindowList
+                this._hideShow(hwnd)
             for proc in this.pinnedAppList
-                for _,hwnd in wingetList("ahk_exe " proc) {
-                    winHide("ahk_id " hwnd)
-                   ,winShow("ahk_id " hwnd)
-                }
+                for _,hwnd in wingetList("ahk_exe " proc)
+                    this._hideShow(hwnd)
         }
         return prevWindow:=n
     }
@@ -138,10 +148,8 @@ class TaskView { ; There should only be one object for this
     }
     moveWindowToDesktopNumber(n, hwnd, wrap:=True){ ;And go there
         n:=this.goToDesktopNumber(n,wrap)
-        if n!=this.currentDesktopNumber {
-            winHide("ahk_id " hwnd)
-           ,winShow("ahk_id " hwnd)
-        }
+        if n!=this.currentDesktopNumber
+            this._hideShow(hwnd)
         return n
     }
 

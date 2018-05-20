@@ -13,6 +13,7 @@ trayMenu(){
    ,A_TrayMenu.Default:= "AHK &Help"
 
    ,A_TrayMenu.Add()
+   ,A_TrayMenu.Add("On Full&Screen", "SCR_AllowOnFS")
    ,A_TrayMenu.Add("&Net Status", func("netNotify").bind(False,,0))
    ,A_TrayMenu.Add("&Dim Screen", func("dimScreen").bind(0))
    ,trayIt:=MenuCreate()
@@ -20,7 +21,7 @@ trayMenu(){
 
    ,A_TrayMenu.Add()
    ,AHK:=MenuCreate(), A_AllowMainWindow:=True, AHK.Standard:=True
-   ,A_TrayMenu.Add("&AHK", AHK)
+   ,A_TrayMenu.Add("AH&K", AHK)
    ,A_TrayMenu.Add("E&xit", "ExitApp")
 
    Timer.set("trayMenuCheck",1000,{allowPause:False})
@@ -40,14 +41,23 @@ SCR_Edit(){
 SCR_Reload(){
     return Reload()
 }
-SCR_Pause(){
+SCR_Pause(itemName:="&Active"){
     Suspend()
-   ,A_TrayMenu.ToggleCheck("&Active")
+   ,A_TrayMenu.ToggleCheck(itemName)
     loop 20
         Tooltip(,,,A_Index)
     return Pause("Toggle", True) ;Pause all threads including timers with allowPause=False
 }
-
+SCR_AllowOnFS(itemName:="On Full&Screen"){
+    static allowed:=False
+    allowed:=!allowed
+    if allowed {
+        resumeOnWin(True)
+       ,Timer.stop("suspendOnFS")
+    }
+    else Timer.restart("suspendOnFS")
+    return A_TrayMenu.ToggleCheck(itemName)
+}
 ;==========================================
 trayMenuCheck(){
     if DimScreen().enabled ;DimScreen
@@ -78,8 +88,7 @@ updateTray(mx0:="",my0:=""){
 
     tip:=A_ScriptName " Script`n"
 
-   ,obj:=Togglekeys()
-   ,tip.="ToggleKeys: " (obj.n?"N":"") (obj.c?"C":"") (obj.s?"S":"") (obj.i?"I":"") "`n"
+   ,tip.="ToggleKeys: " (getkeyState("Numlock","T")?"N":"") (getkeyState("Capslock","T")?"C":"") (getkeyState("ScrollLock","T")?"S":"") (getkeyState("Insert","T")?"I":"") "`n"
 
    ,obj:=netNotify(False,False)
     if obj.status!="" {

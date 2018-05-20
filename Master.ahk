@@ -17,15 +17,15 @@ tip("Tray")
 trayMenu()
 
 tip("SuspendOnFS")
-#include SuspendOnFS.ahk
-DelayedTimer.set("SuspendOnFS", 100)
+#include <SuspendOnFS>
+DelayedTimer.set("suspendOnFS", 100)
 
 tip("DimScreen")
 #include <DimScreen>
 ; dimScreen(120)
 
 tip("TaskView")
-#include TaskView_Temp.ahk
+#include <TaskView_Temp>
 TaskView.init()
 
 tip("HotCorners")
@@ -33,16 +33,17 @@ tip("HotCorners")
 HotCorners.register("TL",Func("send").bind("#{Tab}"))
 HotCorners.register("BL",Func("send").bind("#x"    ))
 HotCorners.register("BR",Func("send").bind("#a"    ))
-DelayedTimer.set(HotCorners.timer,100)
+Timer.set(objbindMethod(HotCorners,"run"),100)
 
 tip("UnwantedPopupBlocker")
 #include UnwantedPopupBlocker.ahk
 DelayedTimer.set("UnwantedPopupBlocker", 100)
 
 tooltip("Transparent")
-#include Transparent.ahk
+#include <Transparent>
 DelayedTimer.set(Func("Transparent_TaskbarGlass").bind(4), 500)
-;DelayedTimer.set(Func("Transparent_Windows").bind(250), 500)
+Transparent_Windows.set("ahk_class CabinetWClass ahk_exe explorer.exe")
+DelayedTimer.set(ObjBindMethod(Transparent_Windows,"run"), 500)
 ;DelayedTimer.set(Func("Transparent_MaxBG").bind("ahk_exe ImageGlass.exe","3C3C3C"), 500)
 ;DelayedTimer.set(Func("Transparent_MaxBG").bind("ahk_exe nomacs.exe"    ,"F0F0F0"), 500)
 
@@ -126,18 +127,17 @@ RETURN
     runText
     winAction
     winProbe    discard
-    hotkeys    expand
     toast       improve hotkeys
  */
 
 ; Following are temporary lines designed to make the script run without errors till the rest is converted
 class RunText {
     showGUI(){
-        return
+        return tip("runtext")
     }
 }
 class winAction{
     show(){
-        return
+        return tip("winaction")
     }
 }

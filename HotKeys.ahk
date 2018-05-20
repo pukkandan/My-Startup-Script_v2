@@ -44,7 +44,7 @@ if A_ThisHotkey="WheelUp" {
 } else if TaskView.GetCurrentDesktopNumber()=TaskView.GetDesktopCount()
     TaskView.GoToDesktopNumber(1)
 */
-send( ThisHotkey="WheelUp"? "#^{Left}" : "#^{Right}" )
+send(A_ThisHotkey="WheelUp"? "#^{Left}" : "#^{Right}" )
 sleep(200)
 return
 
@@ -110,8 +110,7 @@ runListary(){
     Toast.show("Listary")
    ,text:=getSelectedText({resetClip:False}) ;Clipboard will be restored later
    ,text:=text?text:Clipboard
-   ,text:=text<200? RegExReplace(RegExReplace(text, "[`t`n]| +"," "), "^ | $|``r") :""
-
+   ,text:=strlen(text)<200? RegExReplace(RegExReplace(text, "[`t`n]| +"," "), "^ | $|``r") :""
     if !ProcessExist(exe) {
         Toast.show("Starting Listary")
        ,Run(Path "\" exe)
@@ -255,5 +254,6 @@ return
 ;===================    Kill switch
 #q::SCR_Pause() ;Defined in Tray.ahk
 #SuspendExempt True
+#f::SCR_AllowOnFS()
 #^q::ExitApp()
 #SuspendExempt False

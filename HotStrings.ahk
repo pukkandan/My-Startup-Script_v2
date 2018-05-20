@@ -10,12 +10,6 @@ RETURN
 ::m»::magnet:?xt=urn:btih:
 return
 
-;===================    Paste Tracker list from file
-RETURN
-::tr»::
-sendTo_pasteText(FileRead("trackers.txt")) ; A list of public trackers
-return
-
 ;===================    Brackets
 RETURN
 #If WinActive("ahk_group AutoBracket")

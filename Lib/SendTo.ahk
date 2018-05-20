@@ -10,9 +10,9 @@ sendTo_pasteText(text:="", win:=" ", controlName:="", opt:="") {
 
     if opt.resetClip AND !opt.useOldClip
         clip.save(opt.resetClipFull)
-   Clipboard:=text
-  ,clipWait()
-  ,ret:= win=" " ? send("+{Insert}") : sendTo("+{Insert}", win, controlName, opt)
+    clip.put(text)
+   ,ret:=( win=" " ? send("+{Insert}") : sendTo("+{Insert}", win, controlName, opt) )
+   ,sleep(10)
     if opt.resetClip
         clip.recover(!keepClip)
     return ret

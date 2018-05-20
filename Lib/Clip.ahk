@@ -11,4 +11,9 @@ class clip {
     empty(){
         this.clip:=""
     }
+    put(x){
+        Clipboard:=""
+       ,Clipboard:=x
+       ,clipWait(,1)
+    }
 }

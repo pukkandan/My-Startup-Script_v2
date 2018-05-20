@@ -11,7 +11,7 @@ HotCorners.register("TL",Func("send").bind("#{Tab}"        )        )
 HotCorners.register("BL",Func("send").bind("#x"            )        )
 HotCorners.register("BR",Func("send").bind("#a"            )        )
 
-Timer.set(HotCorners.timer,100)
+Timer.set(objbindMethod(HotCorners,"run"),100)
 /**/
 
 class HotCorners {
@@ -31,13 +31,7 @@ class HotCorners {
         return this.f[position][delay_count>0?False:True]:={f:f,t:delay_count}
     }
 
-    timer[] {
-        get {
-            return ObjBindMethod(this, "_run")
-        }
-    }
-
-    _run(){
+    run(){
         static margin:=2, counter:=0, trigger:=False, lastpos:=""
         MouseGetPos(mx, my)
        ,position:=(my<margin?"T":(my+margin>=A_ScreenHeight?"B":"")) (mx<margin?"L":(mx+margin>=A_ScreenWidth?"R":""))

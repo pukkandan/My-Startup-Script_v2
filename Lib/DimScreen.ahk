@@ -10,7 +10,8 @@ dimScreen(p:=""){
         t:= p OR t ? (t>-p? (t+p>250?250:t+p) :0) :75
        ,e:= t? (p?True:!e) :False
         if e {
-            WinSetTransparent(t, "ahk_id " DimScreenGUI.hwnd)
+            A_DetectHiddenWindows:=True
+           ,WinSetTransparent(t, "ahk_id " DimScreenGUI.hwnd)
            ,Toast.show("Dimscreen " t "/255")
            ,DimScreenGUI.Show("NoActivate")
         }

@@ -1,22 +1,35 @@
-Transparent_windows(tr){
-    GroupAdd("TransGroup", "ahk_class CabinetWClass ahk_exe explorer.exe")
-
-   ,GroupAdd("noTransGroup", "ahk_class SysShadow")
-   ,GroupAdd("noTransGroup", "ahk_class Dropdown")
-   ,GroupAdd("noTransGroup", "ahk_class SysDragImage")
-
-    for _,wid in WinGetList(windows) {
-        if !WinExist("ahk_group TransGroup ahk_id " wid)
-            continue
-        if WinExist("ahk_group noTransGroup ahk_id " wid)
-            continue
-
-        if winGetTransparent("ahk_id " wid)=255 {
-            winSetTransparent(tr, "ahk_id " wid)
-           ,onExit(Func("winsetTransparent").bind(255,"ahk_id " wid))
+class Transparent_Windows {
+    set(win,tr:=250,exclude:=""){
+    ;Remember to always exclude ["ahk_class SysShadow","ahk_class Dropdown","ahk_class SysDragImage"]
+        if !IsObject(exclude)
+            exclude:=[]
+        if !isObject(winList){
+           this.winlist:={}, this.transList:=[]
+           onExit(objBindMethod(this,"_remove"))
         }
+        return this.winList[win]:={trans:tr,excludeList:exclude}
     }
-    return
+
+    run(){
+
+        for win,prop in this.winList
+            for _,wid in winGetList(win) {
+                for _,exc in prop.excludeList
+                    if winExist(exc " ahk_id" wid)
+                        continue 2
+                if winGetTransparent("ahk_id " wid)=255 {
+                    winSetTransparent(prop.trans, "ahk_id " wid)
+                   ,this.transList.push(wid)
+                }
+            }
+        return
+    }
+
+    _remove(){
+        for _,wid in this.transList
+            winSetTransparent(255, "ahk_id " wid)
+        return
+    }
 }
 
 ;------------------------------------------------------------------------------------------------

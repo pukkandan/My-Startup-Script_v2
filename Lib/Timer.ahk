@@ -39,7 +39,7 @@ class Timer {
 
     stop(f){
         SetTimer(f, "Off")
-       ,this.fList[f].running:=False
+        this.fList[f].running:=False
         return
     }
 

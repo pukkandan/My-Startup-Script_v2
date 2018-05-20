@@ -18,5 +18,5 @@ getSelectedText(opt:="")
    ,GroupAdd("explorer", "ahk_class Explorer")
    ,GroupAdd("explorer", "ahk_class CabinetWClass")
 
-    return (winexist("A ahk_group explorer") AND clipnew2:=splitFilePath(clipNew).NameNoExt)?clipNew2:clipNew
+    return (winActive("ahk_group explorer") AND clipnew2:=splitFilePath(clipNew).NameNoExt)?clipNew2:clipNew
 }

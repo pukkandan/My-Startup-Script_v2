@@ -1,3 +1,33 @@
+; NOTE: Windows RS5 insider builds breaks virtual-desktop-accessor.dll
+
+/**                             ;SAMPLE
+#persistent
+#singleInstance
+#include <reloadAsAdmin>
+reloadAsAdmin()
+global A_ScriptPID := ProcessExist()
+#include <Timer>
+#include <Toast>
+Taskview.init()
+
+1::msgbox("Is Pinned Window? " Taskview.isPinnedWindow(winExist("A")) "`nIs Pinned App " Taskview.isPinnedApp(winExist("A")) "`nCurrent Desktop " Taskview.getCurrentDesktopNumber() "`nNo of Desktops " Taskview.getDesktopCount())
+
+2::TaskView.pinWindowToggle(winExist("A"))
++2::TaskView.pinWindow(winExist("A"))
+^2::TaskView.unPinWindow(winExist("A"))
+
+3::TaskView.pinAppToggle(winExist("A"))
++3::TaskView.pinApp(winExist("A"))
+^3::TaskView.unPinApp(winExist("A"))
+
+4::TaskView.goToDesktopNumber(2)
+5::TaskView.moveWindowToDesktopNumber(2,winExist("A"))
+6::TaskView.goToDesktopPrev()
+7::TaskView.goToDesktopNext()
+8::TaskView.moveToDesktopPrev(winExist("A"))
+9::TaskView.moveToDesktopNext(winExist("A"))
+/**/
+
 class TaskView { ; There should only be one object for this
     static proc:=[]
     init(){ ; SHOULD be called
@@ -91,7 +121,6 @@ class TaskView { ; There should only be one object for this
     }
 
     goToDesktopPrev(wrap:=True) {
-        max:=this.getDesktopCount()
         return this.goToDesktopNumber(this.getCurrentDesktopNumber()-1, wrap)
     }
     goToDesktopNext(wrap:=True) {

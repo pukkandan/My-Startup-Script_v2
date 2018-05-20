@@ -14,7 +14,7 @@ trayMenu(){
 
    ,A_TrayMenu.Add()
    ,A_TrayMenu.Add("&Net Status", func("netNotify").bind(False,,0))
-   ,A_TrayMenu.Add("&Dim Screen", "dimScreen")
+   ,A_TrayMenu.Add("&Dim Screen", func("dimScreen").bind(0))
    ,trayIt:=MenuCreate()
    ,A_TrayMenu.Add("&TrayIt", trayIt)
 
@@ -23,6 +23,7 @@ trayMenu(){
    ,A_TrayMenu.Add("&AHK", AHK)
    ,A_TrayMenu.Add("E&xit", "ExitApp")
 
+   Timer.set("trayMenuCheck",1000,{allowPause:False})
     return trayListen()
 }
 
@@ -44,7 +45,16 @@ SCR_Pause(){
    ,A_TrayMenu.ToggleCheck("&Active")
     loop 20
         Tooltip(,,,A_Index)
-    return Pause("Toggle", True)
+    return Pause("Toggle", True) ;Pause all threads including timers with allowPause=False
+}
+
+;==========================================
+trayMenuCheck(){
+    if DimScreen().enabled ;DimScreen
+        A_TrayMenu.Check("&Dim Screen")
+    else A_TrayMenu.UnCheck("&Dim Screen")
+
+    return
 }
 
 ;==========================================
@@ -68,7 +78,7 @@ updateTray(mx0:="",my0:=""){
 
     tip:=A_ScriptName " Script`n"
 
-   ,obj:=Togglekeys_check()
+   ,obj:=Togglekeys()
    ,tip.="ToggleKeys: " (obj.n?"N":"") (obj.c?"C":"") (obj.s?"S":"") (obj.i?"I":"") "`n"
 
    ,obj:=netNotify(False,False)

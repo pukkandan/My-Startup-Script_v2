@@ -7,13 +7,11 @@
 ; The windows API for moving windows b/w desktops can't be used. So, as a workaround, we winHide the window to be moved, move to the new desktop, and then winshow it causing it to appear in the new desktop. As a result, window cannot be moved without actually going to the new desktop.
 
 /**                             ;SAMPLE
-#persistent
-#singleInstance
-#include <reloadAsAdmin>
+#include reloadAsAdmin.ahk
 reloadAsAdmin()
 global A_ScriptPID := ProcessExist()
-#include <Timer>
-#include <Toast>
+#include Timer.ahk
+#include Toast.ahk
 Taskview.init()
 
 1::msgbox("Is Pinned Window? " Taskview.isPinnedWindow(winExist("A")) "`nIs Pinned App " Taskview.isPinnedApp(winExist("A")) "`nCurrent Desktop " Taskview.getCurrentDesktopNumber() "`nNo of Desktops " Taskview.getDesktopCount())

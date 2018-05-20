@@ -21,7 +21,7 @@ tip("SuspendOnFS")
 DelayedTimer.set("SuspendOnFS", 100)
 
 tip("DimScreen")
-#include Func\DimScreen.ahk
+#include <DimScreen>
 ; dimScreen(120)
 
 tip("TaskView")
@@ -29,14 +29,14 @@ tip("TaskView")
 TaskView.init()
 
 tip("HotCorners")
-#include Func\HotCorners.ahk
+#include <HotCorners>
 HotCorners.register("TL",Func("send").bind("#{Tab}"))
 HotCorners.register("BL",Func("send").bind("#x"    ))
 HotCorners.register("BR",Func("send").bind("#a"    ))
 DelayedTimer.set(HotCorners.timer,100)
 
 tip("UnwantedPopupBlocker")
-#include Func\UnwantedPopupBlocker.ahk
+#include UnwantedPopupBlocker.ahk
 DelayedTimer.set("UnwantedPopupBlocker", 100)
 
 tooltip("Transparent")
@@ -56,9 +56,12 @@ DelayedTimer.set(Func("Transparent_TaskbarGlass").bind(4), 500)
 ;            ,{title:"ahk_exe calc1.exe"   , set:3   , maxheight:500     ,type:  "N"}     ])
 ;DelayedTimer.set(ObjbindMethod(PIP,"run"), 100)
 
-tip("ToggleKeys")
-#include Func\ToggleKeys.ahk
+tip("CapsLockOffTimer")
+#include <CapsLockOffTimer>
 DelayedTimer.set(Func("CapsLockOffTimer").bind(60000), 1000)
+
+tip("CaseMenu")
+#include <CaseMenu>
 CaseMenu.init()
 
 ;tip("MicroWindows")
@@ -69,7 +72,7 @@ CaseMenu.init()
 ;winAction.__new("winAction.ini")    ; Multiple winaction can be created by using obj1:=new winaction("iniName.ini"), ...
 
 tip("WinSizer")
-#include Func\WinSizer.ahk
+#include <WinSizer>
 
 ;tip("WinProbe")
 ;#include WinProbe.ahk
@@ -85,7 +88,7 @@ DelayedTimer.set("netNotify", 5000, True)
 
 
 tip("AutoUpdate")
-#include Func\AutoUpdateAHK.ahk
+#include <AutoUpdateAHKv1>
 DelayedTimer.set("AutoUpdateAHK", 3600000, {runatStart:True})
 
 Suspend(False)

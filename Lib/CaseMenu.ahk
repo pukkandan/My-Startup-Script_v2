@@ -1,12 +1,3 @@
-CapsLockOffTimer(t:=60000){
-    if A_TimeIdleKeyboard>t AND GetKeyState("CapsLock","T") {
-        SetCapsLockState(False)
-        Toast.show("CapsLock Off")
-        return True
-    }
-    return False
-}
-
 class caseMenu {
     static menuObj:=MenuCreate()
     __new(){
@@ -43,8 +34,4 @@ class caseMenu {
             SetScrollLockState(!GetKeyState("ScrollLock","T"))
         return Toast.Show(key (GetKeyState(key,"T")? " On":" Off"))
     }
-}
-
-Togglekeys_check(){
-    return {c:getkeyState("Capslock","T"), n:getkeyState("Numlock","T"), s:getkeyState("ScrollLock","T"), i:getkeyState("Insert","T")}
 }

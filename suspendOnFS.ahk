@@ -1,6 +1,8 @@
 suspendOnFS(){
     if isFullScreen() {
         Suspend(True)
+        loop 20 ;Remove all tooltips
+            Tooltip(,,,A_Index)
         Timer.pauseAll()
         Timer.set("resumeOnWin",100)
     }

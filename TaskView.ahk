@@ -1,13 +1,11 @@
 ; NOTE: Windows RS5 insider builds breaks virtual-desktop-accessor.dll
 
 /**                             ;SAMPLE
-#persistent
-#singleInstance
-#include <reloadAsAdmin>
+#include reloadAsAdmin.ahk
 reloadAsAdmin()
 global A_ScriptPID := ProcessExist()
-#include <Timer>
-#include <Toast>
+#include Timer.ahk
+#include Toast.ahk
 Taskview.init()
 
 1::msgbox("Is Pinned Window? " Taskview.isPinnedWindow(winExist("A")) "`nIs Pinned App " Taskview.isPinnedApp(winExist("A")) "`nCurrent Desktop " Taskview.getCurrentDesktopNumber() "`nNo of Desktops " Taskview.getDesktopCount())

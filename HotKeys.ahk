@@ -251,3 +251,9 @@ return
 ;===================    Send `n/`t in cases where enter/tab is used for other purposes
 +Enter::Send "`n"
 +Tab::Send "    "
+
+;===================    Kill switch
+#q::SCR_Pause() ;Defined in Tray.ahk
+#SuspendExempt True
+#^q::ExitApp()
+#SuspendExempt False

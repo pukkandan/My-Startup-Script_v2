@@ -1,12 +1,18 @@
-/* ; Sample
+/**                             ;SAMPLE
+#include reloadAsAdmin.ahk
+reloadAsAdmin()
+global A_ScriptPID := ProcessExist()
+#include Timer.ahk
 A_CoordModeMouse:= "Screen"
+
 HotCorners.register( "R",Func("send").bind("#^{Right}"    ),10    )
 HotCorners.register( "L",Func("send").bind("#^{Left}"    ),10    )
 HotCorners.register("TL",Func("send").bind("#{Tab}"        )        )
 HotCorners.register("BL",Func("send").bind("#x"            )        )
 HotCorners.register("BR",Func("send").bind("#a"            )        )
-setTimer(HotCorners.timer,100)
-*/
+
+Timer.set(HotCorners.timer,100)
+/**/
 
 class HotCorners {
     static f

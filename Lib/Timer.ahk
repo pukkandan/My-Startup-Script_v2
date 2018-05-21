@@ -51,7 +51,7 @@ class Timer {
 
 }
 
-class delayedTimer {
+class DelayedTimer {
     set(f,t,opt:=0){
         if IsObject(opt)
             opt.delay:=True

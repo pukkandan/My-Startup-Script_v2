@@ -12,11 +12,12 @@ getSelectedText(opt:="")
     if opt.resetClip
         clip.recover(!keepClip)
 
-    ;Special for explorer
+    ;Remove path if copied from file explorer
     GroupAdd("explorer", "ahk_class Progman")
    ,GroupAdd("explorer", "ahk_class WorkerW")
    ,GroupAdd("explorer", "ahk_class Explorer")
    ,GroupAdd("explorer", "ahk_class CabinetWClass")
-
-    return (winActive("ahk_group explorer") AND clipnew2:=splitFilePath(clipNew).NameNoExt)?clipNew2:clipNew
+  if winActive("ahk_group explorer ahk_exe explorer.exe")
+      return path(clipNew).NameNoExt||clipNew  ;x||y <=> x?x:y in AHK
+  else return clipNew
 }

@@ -6,7 +6,7 @@ dimScreen(p:=""){
        ,DimScreenGUI.Show("Hide X0 Y0 W"  A_ScreenWidth " H"  A_ScreenHeight)
     }
 
-    if p is "Number" { ;If p is not a number, just return without doing anything
+    if p is "Number" { ;If p is not a number, return without doing anything
         t:= p OR t ? (t>-p? (t+p>250?250:t+p) :0) :75
        ,e:= t? (p?True:!e) :False
         if e {

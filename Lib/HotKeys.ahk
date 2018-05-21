@@ -17,7 +17,7 @@ class Hotkeys{
 
         ;creates hotkey if it doesn't exist
         if !this.keyList.hasKey(cndn) OR !this.keyList[cndn].hasKey(keyName) {
-            Hotkey("If", cndn?cndn:"")
+            Hotkey("If", cndn||"") ;x||y <=> x?x:y in AHK
            ,Hotkey(keyName, objbindMethod(this, "pressed", keyName, cndn), opt)
            ,Hotkey("If")
             if !this.keyList.hasKey(cndn)
@@ -38,16 +38,14 @@ class Hotkeys{
 
     pressed(keyName,cndn){
         fList:=this.keyList[cndn][keyName], state:="Single", key:=fList[0].key[2]
-        key:=strLen(key)>1? StringReplace(key,["{":"","}":""]) :key ;Removes {} except when key is actually { or }
+        key:=strLen(key)>1? regExReplace(key,"[{}]") :key ;Removes {} except when key is actually { or }
 
         ;Determines the mode
         if fList[0].mode!="Single" {
-            KeyWait(key,"T0.2")
-            if ErrorLevel
+            if !keyWait(key,"T0.2")
                 state:="Long"
             else if fList[0].mode!="Double" {
-                KeyWait(key,"D T0.2")
-                if !ErrorLevel
+                if keyWait(key,"D T0.2")
                     state:="Double"
             }
         }
@@ -70,7 +68,7 @@ class Hotkeys{
         if cndn:="All" {
         ;Pass cndn="All" to remove entire key removing associated hotkeys. name is irrelevent in this case
             for cndn in this.keyList {
-                Hotkey("If", cndn?cndn:"")
+                Hotkey("If", cndn||"") ;x||y <=> x?x:y in AHK
                ,Hotkey(keyName, "Off")
                ,Hotkey("If")
                ,retVal+=this.keyList[cndn].delete(keyName)
@@ -82,7 +80,7 @@ class Hotkeys{
             return 0
 
         else if keyName="" { ; No key is given. Delete the entire cndn removing associated hotkeys
-            Hotkey("If", cndn?cndn:"")
+            Hotkey("If", cndn||"") ;x||y <=> x?x:y in AHK
             for keyName in this.keyList[cndn]
                Hotkey(keyName, "Off")
             Hotkey("If")
@@ -93,7 +91,7 @@ class Hotkeys{
             return 0
 
         else if !name { ; No name is given. Delete the entire "cndn.key" removing associated hotkey
-            Hotkey("If", cndn?cndn:"")
+            Hotkey("If", cndn||"") ;x||y <=> x?x:y in AHK
            ,Hotkey(keyName, "Off")
            ,Hotkey("If")
             return this.keyList[cndn].delete(keyname)
@@ -103,7 +101,7 @@ class Hotkeys{
         for _ in this.keyList[cndn][keyName]
             return retVal ; If there are still elements in "cndn.key", return
 
-        Hotkey("If", cndn?cndn:"")  ; else delete "cndn.key" removing associated hotkey
+        Hotkey("If", cndn||"")  ; else delete "cndn.key" removing associated hotkey ;x||y <=> x?x:y in AHK
        ,Hotkey(keyName, "Off")
        ,Hotkey("If")
        ,this.keyList[cndn].delete(keyName)

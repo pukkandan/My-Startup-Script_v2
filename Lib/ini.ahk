@@ -1,4 +1,4 @@
-class ini{
+class INI{
     __new(file:="Settings.ini"){
         this.file:=file
     }

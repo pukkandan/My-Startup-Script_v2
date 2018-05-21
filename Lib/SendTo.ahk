@@ -34,13 +34,13 @@ sendTo(key, title:=" ", controlName:="", opt:=""){    ; Pass title:="" to use la
                 WinActivate(win)
             if opt.focusControl
                 ControlFocus(controlName, win)
-            opt.raw? ControlSendRaw(key, controlName, win): ControlSend(key, controlName, win)
+            opt.raw? ControlSendText(key, controlName, win): ControlSend(key, controlName, win)
         }
         else returnValue--
     }
 
     if (opt.SendWithoutProg OR title=" ") AND !returnValue++
-        opt.raw? sendRaw(key): send(key)
+        opt.raw? sendText(key): send(key)
 
     return returnValue
 }

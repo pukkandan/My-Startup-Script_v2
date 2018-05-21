@@ -94,7 +94,7 @@ netNotify(refresh:=True,show:=True,life:=0) {
              , "Internet = " (current.status>0?"True":"False")
              , "VPN = " (current.status=2?"True":"False")
              , "Public IP = " current.ipInfo.ip
-             , "IP Location = " (current.ipInfo.loc?current.ipInfo.loc :"?")
+             , "IP Location = " (current.ipInfo.loc||"?") ;x||y <=> x?x:y in AHK
              , "Local IP = " current.ipInfo.ipl       ]
 
         color:= [ current.status!=-1, current.status>0, current.status==2, current.ipInfo.ip, current.ipInfo.loc, current.ipInfo.ipl]

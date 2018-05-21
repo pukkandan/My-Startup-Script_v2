@@ -5,3 +5,5 @@ backup\*
 temp\*
 *.bak
 *.ahk2
+ahk.zip
+ahk.exe

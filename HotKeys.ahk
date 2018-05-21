@@ -89,8 +89,7 @@ runDitto(){
         Toast.show("Starting Ditto")
        ,Run(Path "\" exe)
        ,A_DetectHiddenWindows:=True
-       ,WinWait("ahk_exe " exe,,2)
-        if ErrorLevel
+        if !WinWait("ahk_exe " exe,,2)
             return
     }
     Toast.show("Ditto")
@@ -109,28 +108,25 @@ runListary(){
 
     Toast.show("Listary")
    ,text:=getSelectedText({resetClip:False}) ;Clipboard will be restored later
-   ,text:=text?text:Clipboard
+   ,text:=text||Clipboard ; x||y <=> x?x:y in AHK
    ,text:=strlen(text)<200? RegExReplace(RegExReplace(text, "[`t`n]| +"," "), "^ | $|``r") :""
     if !ProcessExist(exe) {
         Toast.show("Starting Listary")
        ,Run(Path "\" exe)
        ,A_DetectHiddenWindows:=True
-       ,Winwait("ahk_exe " exe,, 2)
-        if ErrorLevel
+        if !Winwait("ahk_exe " exe,, 2)
             return False
     }
     Toast.show("Listary")
    ,send(key)
    ,A_DetectHiddenWindows:=False
-   ,Winwait("ahk_exe " exe,,2)
-    if ErrorLevel
+    if !Winwait("ahk_exe " exe,,2)
         return False
     /**
    sendTo_pasteText(text, Win " ahk_exe " exe, Cntrl, opt) ;Clipboard is restored due to opt.useOldClip:=True
    ,sendTo("^a", Win "ahk_exe " exe, Cntrl, opt)
     /**/
-    WinWaitActive("ahk_exe " exe,,2)
-    if ErrorLevel
+    if !WinWaitActive("ahk_exe " exe,,2)
         return False
     sleep(500)
    ,sendTo_pasteText(text,,, opt) ;Clipboard is restored due to opt.useOldClip:=True
@@ -152,9 +148,9 @@ updateTray(0,A_ScreenHeight-200)
 ,sleep(300)
 ,A_TrayMenu.Show()
 return
-;===================    Invert F1
+;===================    Convert fn+F1 which sends #F1 to F1
 RETURN
-#F1::Send("{F1}")
+#F1::F1
 return
 ;===================    Open Potplayer
 RETURN
@@ -170,8 +166,7 @@ A_DetectHiddenWindows:=True
 if !winExist("ahk_exe MusicBee.exe") {
     Toast.show("Starting MusicBee")
    ,Run("D:\Program Files\MusicBee\MusicBee.exe")
-   ,WinWait("ahk_exe MusicBee.exe",,2)
-    if ErrorLevel
+    if !WinWait("ahk_exe MusicBee.exe",,2)
         return
     Sleep(100)
 }
@@ -193,16 +188,12 @@ Media_Next::      send("#{F11}")
 
 ;===================    CaseMenu and »
 RETURN
-CapsLock::
-keywait("Capslock", "T0.2")
-if ErrorLevel {
-    ^CapsLock:: caseMenu.show()
-}
-else {
+CapsLock::hotKeyAssign(A_ThisHotkey, "sendSuffix", ObjBindMethod(caseMenu, "show"))
+^CapsLock:: CaseMenu.show()
+sendSuffix() {
     SendLevel(1)
     sendEvent("»") ;Used to trigger some hotstrings
 }
-return
 
 ;===================    Toggglekeys
 +CapsLock::CaseMenu.toggle("CapsLock")

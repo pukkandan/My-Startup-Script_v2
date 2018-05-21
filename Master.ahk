@@ -2,15 +2,10 @@ Suspend(True)
 ;#include %A_ScriptDir%  ;Sets dir for includes. No longer needed in v2
 #include Directives.ahk
 
-; These are called first so that they can do their cleanup operations
-
 #include <ini>
 #include <Toast>
 #include <Timer>
 #include <ReloadScriptOnEdit>
-
-tip("ReloadScriptOnEdit")
-DelayedTimer.set(func("ReloadScriptOnEdit").bind([A_ScriptDir "\*.ahk", A_ScriptDir "\*.ini"]), 2000, {runatStart:True})
 
 tip("Tray")
 #include Tray.ahk
@@ -43,6 +38,7 @@ tooltip("Transparent")
 #include <Transparent>
 DelayedTimer.set(Func("Transparent_TaskbarGlass").bind(4), 500)
 Transparent_Windows.set("ahk_class CabinetWClass ahk_exe explorer.exe")
+Transparent_Windows.set("ahk_class PX_WINDOW_CLASS ahk_exe sublime_text.exe",250)
 DelayedTimer.set(ObjBindMethod(Transparent_Windows,"run"), 500)
 ;DelayedTimer.set(Func("Transparent_MaxBG").bind("ahk_exe ImageGlass.exe","3C3C3C"), 500)
 ;DelayedTimer.set(Func("Transparent_MaxBG").bind("ahk_exe nomacs.exe"    ,"F0F0F0"), 500)
@@ -87,9 +83,11 @@ tip("Internet")
 #include Internet.ahk
 DelayedTimer.set("netNotify", 5000, True)
 
+tip("ReloadScriptOnEdit")
+DelayedTimer.set(func("ReloadScriptOnEdit").bind([A_ScriptDir "\*.ahk", A_ScriptDir "\*.ini"]), 2000, {runatStart:True})
 
-tip("AutoUpdate")
-#include <AutoUpdateAHKv1>
+tip("AutoUpdatev2a")
+#include <AutoUpdateAHKv2a>
 DelayedTimer.set("AutoUpdateAHK", 3600000, {runatStart:True})
 
 Suspend(False)
@@ -115,8 +113,8 @@ Toast.show("Script Loaded")
 ;;============================== End of auto-execute
 RETURN
 #include HotKeys.ahk
-#include HotStrings.ahk
 #include *i HotStringsPrivate.ahk ;Has personal data in this file, so it is ignored from github
+#include HotStrings.ahk
 
 ;==================================================
 /*  To convert

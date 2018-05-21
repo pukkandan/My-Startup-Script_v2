@@ -3,7 +3,7 @@ trayMenu(){
         TraySetIcon(A_ScriptName ".ico")
     A_IconTip:= ""  ;Tray tip is shown using tooltip 20
 
-   ,A_TrayMenu.Standard:= False    ;No standard menu
+   ,A_TrayMenu.Delete()    ;Delete standard menu
    ,A_TrayMenu.Add("&Reload Script", "SCR_Reload")
    ,A_TrayMenu.Add("&Active", "SCR_Pause")
    ,A_TrayMenu.Check("&Active")
@@ -20,7 +20,7 @@ trayMenu(){
    ,A_TrayMenu.Add("&TrayIt", trayIt)
 
    ,A_TrayMenu.Add()
-   ,AHK:=MenuCreate(), A_AllowMainWindow:=True, AHK.Standard:=True
+   ,AHK:=MenuCreate(), A_AllowMainWindow:=True, AHK.AddStandard()
    ,A_TrayMenu.Add("AH&K", AHK)
    ,A_TrayMenu.Add("E&xit", "ExitApp")
 
@@ -29,8 +29,7 @@ trayMenu(){
 }
 
 AHK_Help(){
-    SplitPath(A_AhkPath,, path)
-    return Run(path "\AutoHotkey.chm")
+    return Run(path(A_AhkPath).Dir "\AutoHotkey.chm")
 }
 SCR_OpenFolder(){
     return Run(A_ScriptDir)

@@ -1,5 +1,5 @@
 isFullScreen(title:="A", pseudo:=0) {
-    if (! win:=winExist(title))
+    if !(win:=winExist(title))
         return false
     win:="ahk_id " win
    ,WinGetPos(x, y, w, h, win)

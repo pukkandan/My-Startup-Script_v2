@@ -1,9 +1,9 @@
 class Transparent_Windows {
-    set(win,tr:=250,exclude:=""){
+    set(win,tr:=240,exclude:=""){
     ;Remember to always exclude ["ahk_class SysShadow","ahk_class Dropdown","ahk_class SysDragImage"]
         if !IsObject(exclude)
             exclude:=[]
-        if !isObject(winList){
+        if !isObject(this.winList){
            this.winlist:={}, this.transList:=[]
            onExit(objBindMethod(this,"_remove"))
         }
@@ -11,16 +11,13 @@ class Transparent_Windows {
     }
 
     run(){
-
         for win,prop in this.winList
             for _,wid in winGetList(win) {
                 for _,exc in prop.excludeList
                     if winExist(exc " ahk_id" wid)
                         continue 2
-                if winGetTransparent("ahk_id " wid)=255 {
-                    winSetTransparent(prop.trans, "ahk_id " wid)
-                   ,this.transList.push(wid)
-                }
+                winSetTransparent(prop.trans, "ahk_id " wid)
+               ,this.transList.push(wid)
             }
         return
     }

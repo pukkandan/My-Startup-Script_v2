@@ -10,8 +10,8 @@ URI_Decode(URI) {
     Pos := 1
     While(Pos:= RegExMatch(URI, "i)(%[\da-f]{2})+", code, Pos))
     {
-        VarSetCapacity(v, StrLen(code) // 3, 0)
-       ,code:= SubStr(code.0,2)
+        VarSetCapacity(v, StrLen(code.value()) // 3, 0)
+       ,code:= SubStr(code.value(),2)
         Loop Parse, code, "%"
             NumPut("0x" A_LoopField, &v, A_Index-1, "UChar")
         Decoded:= StrGet(&v, "UTF-8")

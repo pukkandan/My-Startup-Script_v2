@@ -1,4 +1,4 @@
-CapsLockOffTimer(t:=60000){
+capsLockOffTimer(t:=60000){
     if A_TimeIdleKeyboard>t AND GetKeyState("CapsLock","T") {
         SetCapsLockState(False)
         Toast.show("CapsLock Off")

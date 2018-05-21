@@ -1,11 +1,11 @@
-class caseMenu {
+class CaseMenu {
     static menuObj:=MenuCreate()
     __new(){
         for i,j in {U:"&UPPER CASE", L:"&lower case", T:"&Title Case", S:"&Sentence case.", I:"&iNVERT cASE"}
-            this.menuObj.add(j, ObjBindMethod(this,"caseChange",i))
+            this.menuObj.add(j, ObjBindMethod(this,"_caseChange",i))
         this.menuObj.add()
         for _,j in ["&Capslock","&Numlock","Sc&rollLock","I&nsert"]
-            this.menuObj.add(j, ObjBindMethod(this,"toggle",strReplace(j,"&")))
+            this.menuObj.add(j, ObjBindMethod(this,"_toggle",strReplace(j,"&")))
     }
     init(){
         return this.__new()
@@ -19,11 +19,11 @@ class caseMenu {
         return
     }
 
-    caseChange(type){ ; type: U=UPPER, L=Lower, T=Title, S=Sentence, I=Invert
+    _caseChange(type){ ; type: U=UPPER, L=Lower, T=Title, S=Sentence, I=Invert
         return sendTo_pasteText(caseChange(getSelectedText({resetClip:False}), type),,, {useOldClip:True})
     }
 
-    toggle(key){
+    _toggle(key){
         if key="Insert"
             Send("{Insert}")
         else if key="Capslock"

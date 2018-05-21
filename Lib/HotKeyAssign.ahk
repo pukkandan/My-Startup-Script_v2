@@ -1,13 +1,11 @@
- hotkeyAssign(key,single:="",long:="",double:="",t:=0.25) { ;Can't use labels
-    if isFunc(long) OR isFunc(double) {
-        KeyWait(key,"T" t)
-        if ErrorLevel
+ hotKeyAssign(key,single:="",long:="",double:="",t:=0.25) { ;Can't use labels
+    if long OR double {
+        if !keyWait(key,"T" t)
             return %long%()
-        else if isFunc(double) {
-            KeyWait(key,"D T" t)
-            if !ErrorLevel
+        else if func(double) {
+            if keyWait(key,"D T" t)
                 return %double%()
         }
     }
-    return isFunc(single)? %single%() :0
+    return %single%()
 }

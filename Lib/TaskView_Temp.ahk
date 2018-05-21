@@ -54,7 +54,7 @@ class TaskView { ; There should only be one object for this
         else idLength:=32 ;It should always be 32, but we check just in case
 
         if desktopList:=RegRead(reg_list, "VirtualDesktopIDs")
-            this.desktopCount := StrLen(desktopList) / idLength
+            this.desktopCount := StrLen(desktopList)//idLength
         else this.desktopCount := 1
 
         loop this.desktopCount
@@ -72,13 +72,15 @@ class TaskView { ; There should only be one object for this
             WinRestore(win)
            ,WinMaximize(win)
         }
-        else if minMax:=-1
+        else if minMax=-1
             WinMinimize(win)
         return
     }
 
     _desktopChange(){
         static prevWindow:=0
+        if winActive("Task View ahk_class Windows.UI.Core.CoreWindow ahk_exe explorer.exe")
+            return prevWindow
         n:=this.getcurrentDesktopNumber(), A_DetectHiddenWindows:=False
         if prevWindow!=n AND prevWindow!=0 {
             this.toast.show("Desktop " n)

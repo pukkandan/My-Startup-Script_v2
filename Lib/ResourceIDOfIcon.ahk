@@ -1,10 +1,10 @@
-ResourceIdOfIcon(Filename, IconIndex)
+resourceIdOfIcon(Filename, IconIndex)
 {
     loaded := !DllCall("GetModuleHandle", "str", Filename) ; If the DLL isn't already loaded, load it as a data file.
     if !hmod := DllCall("LoadLibraryEx", "str", Filename, "uint", 0, "uint", 0x2)
         return
 
-    enumproc := RegisterCallback("_EnumIconResources","F")
+    enumproc := RegisterCallback("_enumIconResources","F")
    ,VarSetCapacity(param,12,0)
    ,NumPut(IconIndex,param,0)
     ; Enumerate the icon group resources. (RT_GROUP_ICON=14)
@@ -18,7 +18,7 @@ ResourceIdOfIcon(Filename, IconIndex)
     return NumGet(param,8) ? NumGet(param,4) : ""
 }
 
-_EnumIconResources(hModule, lpszType, lpszName, lParam)
+_enumIconResources(hModule, lpszType, lpszName, lParam)
 {
     index := NumGet(lParam+4)
     if index = NumGet(lParam+0) {

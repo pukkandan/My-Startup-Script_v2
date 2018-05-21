@@ -1,4 +1,4 @@
-class winSizer{
+class WinSizer{
     __new(){
         this.action:=objBindmethod(this,"run"), this.running:=False
        ,this.toastObj:=new toast({life:0,margin:{x:1,y:1}, title:{size:10}, message:{def_size:8,offset:[4],def_offset:1}})
@@ -29,6 +29,7 @@ class winSizer{
         try this.toastObj.close()
         return r
     }
+
     run(){
         MouseGetPos(x, y)
         mode:=this.mode, dx0:=x-this.mx, dy0:=y-this.my, win:= "ahk_id " this.win

@@ -5,11 +5,11 @@ global A_ScriptPID := ProcessExist()
 #include Timer.ahk
 A_CoordModeMouse:= "Screen"
 
-HotCorners.register( "R",Func("send").bind("#^{Right}"    ),10    )
-HotCorners.register( "L",Func("send").bind("#^{Left}"    ),10    )
-HotCorners.register("TL",Func("send").bind("#{Tab}"        )        )
-HotCorners.register("BL",Func("send").bind("#x"            )        )
-HotCorners.register("BR",Func("send").bind("#a"            )        )
+HotCorners.register( "R",Func("send").bind("#^{Right}"  ),10    )
+HotCorners.register( "L",Func("send").bind("#^{Left}"   ),10    )
+HotCorners.register("TL",Func("send").bind("#{Tab}"     )        )
+HotCorners.register("BL",Func("send").bind("#x"         )        )
+HotCorners.register("BR",Func("send").bind("#a"         )        )
 
 Timer.set(objbindMethod(HotCorners,"run"),100)
 /**/
@@ -28,7 +28,7 @@ class HotCorners {
         ; Alternative to if !(position in ["L","R","T","B","TL","TR","BL","BR"])
         if !{"L":0,"R":0,"T":0,"B":0,"TL":0,"TR":0,"BL":0,"BR":0}.haskey(position)
             return False
-        return this.f[position][delay_count>0?False:True]:={f:f,t:delay_count}
+        return this.f[position][!(delay_count>0)]:={f:f,t:delay_count}
     }
 
     run(){

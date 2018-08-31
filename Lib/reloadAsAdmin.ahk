@@ -1,8 +1,10 @@
 reloadAsAdmin(force:=True){
     if A_IsAdmin
         return 0
-    Run("*RunAs " (A_IsCompiled? "": "`""  A_AhkPath "`" ") "`"" A_ScriptFullPath "`"")
-    return _reloadAsAdmin_Error(e,force)
+    try Run('*RunAs ' (A_IsCompiled? '': '"'  A_AhkPath '" ') '"' A_ScriptFullPath '" ' Args())
+    catch e
+      return _reloadAsAdmin_Error(e,force)
+    ExitApp()
 }
 
 ;http://ahkscript.org/boards/viewtopic.php?t=4334
@@ -16,10 +18,10 @@ reloadAsAdmin_Task(force:=True) { ;  By SKAN,  http://goo.gl/yG6A1F,  CD:19/Aug/
         TaskSchd := ComObjCreate("Schedule.Service")
        ,TaskSchd.Connect()
     }
-   catch e
+    catch e
       return _reloadAsAdmin_Error(e,force)
 
-    CmdLine := (A_IsCompiled? "": "`""  A_AhkPath "`" ") "`"" A_ScriptFullpath "`""
+    CmdLine := (A_IsCompiled? "": '"'  A_AhkPath '" ') '"' A_ScriptFullpath '"'
    ,TaskName:= A_ScriptName " @" SubStr("000000000"
         DllCall("NTDLL\RtlComputeCrc32", "Int",0, "WStr",CmdLine, "UInt",StrLen(CmdLine)*2, "UInt"), -9)
 
@@ -28,8 +30,10 @@ reloadAsAdmin_Task(force:=True) { ;  By SKAN,  http://goo.gl/yG6A1F,  CD:19/Aug/
         catch
             TaskRoot:= TaskSchd.GetFolder("\"), TaskName:= "[AHK-ReloadAsAdmin]" TaskName
         RunAsTask:= TaskRoot.GetTask( TaskName )
-        if !A_IsAdmin
+        if !A_IsAdmin {
             RunAsTask.Run("")
+            ExitApp()
+        }
     }
     catch {
         if A_IsAdmin {
@@ -59,8 +63,8 @@ reloadAsAdmin_Task(force:=True) { ;  By SKAN,  http://goo.gl/yG6A1F,  CD:19/Aug/
                 </Settings>
                 <Actions Context="Author"> <Exec> <Command>
             )"
-           ,XML.= (A_IsCompiled? A_ScriptFullpath: A_AhkPath) "</Command>"
-           ,XML.="<Arguments>" (!A_IsCompiled? "`"" A_ScriptFullpath "`"" :"") "</Arguments>"
+           ,XML.= (A_IsCompiled? '"' A_ScriptFullpath '"' : '"' A_AhkPath '"') "</Command>"
+           ,XML.="<Arguments>" (!A_IsCompiled? '"' A_ScriptFullPath '"' ' ' Args() :"") "</Arguments>"
            ,XML.="<WorkingDirectory>" A_ScriptDir "</WorkingDirectory></Exec></Actions></Task>"
 
            ,TaskRoot.RegisterTask(TaskName, XML, TASK_CREATE, "", "", TASK_LOGON_INTERACTIVE_TOKEN)

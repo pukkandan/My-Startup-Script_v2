@@ -1,7 +1,7 @@
 isOver_mouse(WinTitle:="A"){ ;If ahk_id is passed, dont use ahk_id prefix or any other options
     MouseGetPos(,, Win)
     if WinTitle is "number"
-        return (win==WinTitle)
+        return (win=WinTitle)
     else return WinExist(WinTitle " ahk_id " Win)
 }
 

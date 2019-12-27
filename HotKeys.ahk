@@ -148,10 +148,12 @@ updateTray(0,A_ScreenHeight-200)
 ,sleep(300)
 ,A_TrayMenu.Show()
 return
+
 ;===================    Convert fn+F1 which sends #F1 to F1
 RETURN
 #F1::F1
 return
+
 ;===================    Open Potplayer
 RETURN
 #v::
@@ -180,6 +182,7 @@ Media_Prev::      send("#{F9}")
 Media_Play_Pause::send("#{F10}")
 Media_Next::      send("#{F11}")
 #if
+
 ;===================    Listary launcher
 ; RETURN
 ; ~LWin & RWin::return    ;Prevents LWin from trigerring when #... (eg: #Tab) is used
@@ -213,6 +216,7 @@ RETURN
 RETURN
 !CapsLock:: Send("#^{Tab}")
 !+CapsLock:: Send("#^+{Tab}")
+
 /*
 ;===================    Groupy
 RETURN
@@ -239,8 +243,39 @@ return
 #if
 
 ;===================    Send `n/`t in cases where enter/tab is used for other purposes
+RETURN
+#if !winActive("ahk_exe Mathematica.exe")
 +Enter::Send "`n"
-+Tab::Send "    "
+;#if !winActive("ahk_exe sublime_text.exe")
+;+Tab::Send "    "
+
+;===================
+RETURN
+#c::
+makeMicroWindow(){
+    hwnd:=WinExist("A")
+    win:="ahk_id " hwnd
+    WinGetClass, winclass, % this.win
+    if (winclass="WorkerW" OR winclass="Shell_TrayWnd" OR !winexist(win))
+        Toast.show("No Window")
+    else {
+        new microWindow(hwnd)
+        Toast.show("microWindow")
+    }
+    return
+}
+
+;===================    TrayIt
+RETURN
+#m::
+if winAction.bind_Window() ;Returns false if no window
+    winAction.trayIt()
+return
+
+RETURN
+#t::
+Menu, trayIt, show
+return
 
 ;===================    Kill switch
 #q::SCR_Pause() ;Defined in Tray.ahk

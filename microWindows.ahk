@@ -93,6 +93,17 @@ class microWindow{
     }
 
     update(){
+        if WinActive("ahk_id " this.wid) {           ; Hide if parent is in focus
+            if !this.hidden
+                winhide "ahk_id " this.hwnd
+            this.hidden:=true
+            return
+        } else if this.hidden {
+            winshow "ahk_id " this.hwnd
+            this.hidden:=false
+        }
+
+
         M_wasOver:=this.M_over, this.M_over:=this.mouseOver(), n:=this.id
         wingetpos,x,y,w,, % "ahk_id " this.hwnd
         if !w   ;Closed

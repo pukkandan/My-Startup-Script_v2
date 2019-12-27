@@ -13,7 +13,12 @@ trayMenu()
 
 tip("SuspendOnFS")
 #include <SuspendOnFS>
-DelayedTimer.set("suspendOnFS", 100)
+DelayedTimer.set(Func("suspendOnFS").bind(False,[
+        ,"ahk_exe PotPlayerMini64.exe"
+        ,"ahk_exe PotPlayer.exe"
+        ,"ahk_exe chrome.exe"
+        ,"ahk_exe vivaldi.exe"                  ]), 100)
+
 
 tip("DimScreen")
 #include <DimScreen>
@@ -43,15 +48,17 @@ DelayedTimer.set(ObjBindMethod(Transparent_Windows,"run"), 500)
 ;DelayedTimer.set(Func("Transparent_MaxBG").bind("ahk_exe ImageGlass.exe","3C3C3C"), 500)
 ;DelayedTimer.set(Func("Transparent_MaxBG").bind("ahk_exe nomacs.exe"    ,"F0F0F0"), 500)
 
-;tip("PIP")
-;#include PIP.ahk
-;PIP.__new([  {title:"ahk_exe PotPlayerMini64.exe ahk_class PotPlayer64" ,type:"VJT"}
-;            ,{title:"ahk_exe PotPlayer.exe ahk_class PotPlayer64"       ,type:"VJT"}
-;            ,{title:"ahk_exe chrome.exe"                                ,type:"CJT"}
-;            ,{title:"ahk_exe cmd.exe"     , set:2                       ,type:  "T"}
-;            ,{title:"ahk_exe calc.exe"    , set:3   , maxheight:500     ,type:  "N"}
-;            ,{title:"ahk_exe calc1.exe"   , set:3   , maxheight:500     ,type:  "N"}     ])
-;DelayedTimer.set(ObjbindMethod(PIP,"run"), 100)
+tip("PIP")
+#include <PIP>
+PIP.__new([  {title:"ahk_exe PotPlayerMini64.exe ahk_class PotPlayer64" ,type:"VJT"}
+            ,{title:"ahk_exe PotPlayer.exe ahk_class PotPlayer64"       ,type:"VJT"}
+            ,{title:"ahk_exe chrome.exe"                                ,type:"CJT"}
+            ,{title:"ahk_exe vivaldi.exe"                                ,type:"CJT"}
+            ,{title:"ahk_exe cmd.exe"     , set:"cmd"                   ,type:  "T"}
+            ,{title:"ahk_exe calc.exe"    , set:"calc"   , maxheight:500,type:  "N"}
+            ,{title:"ahk_exe calc1.exe"   , set:"calc"   , maxheight:500,type:  "N"}
+            ])
+DelayedTimer.set(ObjbindMethod(PIP,"run"), 100)
 
 tip("CapsLockOffTimer")
 #include <CapsLockOffTimer>
@@ -86,7 +93,7 @@ DelayedTimer.set("netNotify", 5000, True)
 tip("ReloadScriptOnEdit")
 DelayedTimer.set(func("ReloadScriptOnEdit").bind([A_ScriptDir "\*.ahk", A_ScriptDir "\*.ini"]), 2000, {runatStart:True})
 
-tip("AutoUpdatev2a")
+tip("AutoUpdate (v2a)")
 #include <AutoUpdateAHKv2a>
 DelayedTimer.set("AutoUpdateAHK", 3600000, {runatStart:True})
 
@@ -121,11 +128,11 @@ RETURN
     ------------
     internet    redo
     microWindows
-    pip
     runText
     winAction
     winProbe    discard
     toast       improve hotkeys
+    TaskView    Update
  */
 
 ; Following are temporary lines designed to make the script run without errors till the rest is converted

@@ -1,3 +1,6 @@
+;OUTDATED!!!
+
+
 ; Windows RS5 builds broke virtual-desktop-accessor.dll used in TaskView.ahk. This is a workaround to get the same functionality.
 
 ; This script may work in slightly unexpected ways when used with sets.

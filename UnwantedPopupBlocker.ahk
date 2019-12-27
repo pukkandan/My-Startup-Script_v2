@@ -11,5 +11,8 @@ unwantedPopupBlocker(){
 
     if WinExist("Error ahk_class #32770 ahk_exe SdDisplay.exe") ;Groupy bug
         winClose()
+
+    if WinExist("ahk_class AvIPMDialog ahk_exe ipmGui.exe") ;Avira Ads
+        winClose()
     return
 }

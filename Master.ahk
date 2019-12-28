@@ -25,7 +25,8 @@ tip("DimScreen")
 ; dimScreen(120)
 
 tip("TaskView")
-#include <TaskView_Temp>
+#include <TaskView>
+;#include <TaskView_Temp>
 TaskView.init()
 
 tip("HotCorners")

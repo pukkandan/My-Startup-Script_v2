@@ -1,13 +1,16 @@
-;OUTDATED!!!
-
-
-; Windows RS5 builds broke virtual-desktop-accessor.dll used in TaskView.ahk. This is a workaround to get the same functionality.
+; Windows RS5 builds broke VirtualDesktopAccessor.dll used in TaskView.ahk. This is a workaround to get the same functionality.
 
 ; This script may work in slightly unexpected ways when used with sets.
 
-; The windows/apps are not actually pinned. The script moves them to the current desktop each time desktop is changed. As a result, the windows option "Show this windows/app on all desktop" work independently of the "pin app/window" feature of this script.
+; The windows/apps are not actually pinned. The script moves them to the current desktop each time desktop is changed. As a result, the windows option "Show this windows/app on all desktop" work independently of the "pin app/window" feature of this script (except for modern apps).
 
 ; The windows API for moving windows b/w desktops can't be used. So, as a workaround, we winHide the window to be moved, move to the new desktop, and then winshow it causing it to appear in the new desktop. As a result, window cannot be moved without actually going to the new desktop.
+
+; For modern apps, pinning/moving is done by opening TaskView using #Tab pressing the relevent keys. I havent tested pinning modern apps extensively. Expect it to fail sometimes.
+
+; PinApp() of any modern app makes the script think all modern apps are pinned since they all use same process. Same for unpinning.
+
+; Functions starting with _ are not expected to be called from outside the class. Also, make sure to use getDesktopCount() and getCurrentDesktopNumber() instead of desktopCount and currentDesktopNumber
 
 /**                             ;SAMPLE
 #include reloadAsAdmin.ahk
@@ -68,6 +71,7 @@ class TaskView { ; There should only be one object for this
 
     _hideShow(hwnd){
         win:="ahk_id " hwnd
+       ,DetectHiddenWindows(True)
        ,minMax:=WinGetMinMax(win)
        ,winHide(win)
        ,winShow(win)
@@ -96,6 +100,24 @@ class TaskView { ; There should only be one object for this
         return prevWindow:=n
     }
 
+    _isModernApp(hwnd){
+        return winExist("ahk_class ApplicationFrameWindow ahk_id" hwnd) ; true if it is a modern app
+    }
+    _modernAppsWorkaround(keys){
+        static tv:="Task View ahk_class Windows.UI.Core.CoreWindow ahk_exe explorer.exe"
+        WinActivate("ahk_id " hwnd)
+        send("#{Tab}")
+        winwaitActive(tv)
+        sleep(500) ; Tweak this if context menu disappears too fast
+
+        SetKeyDelay(200) ; Tweak this if some clicks dont register
+        sendEvent("{AppsKey}" keys "{space}")
+        if winActive(tv)
+            send("#{Tab}")
+        WinWaitNotActive(tv)
+        return
+    }
+
     isPinnedWindow(hwnd){
         return this.pinnedWindowList.hasKey(hwnd)
     }
@@ -103,16 +125,28 @@ class TaskView { ; There should only be one object for this
         return this.pinnedAppList.hasKey(winGetProcessName("ahk_id " hwnd))
     }
     pinWindow(hwnd){
+        if this._isModernApp(hwnd) && !this.isPinnedWindow(hwnd)
+                this._modernAppsWorkaround("{down 3}")
         return this.pinnedWindowList[hwnd]:=True ; The hwnd are stored as the key for easier access
     }
     unPinWindow(hwnd){
+        if this._isModernApp(hwnd) && this.isPinnedWindow(hwnd)
+                this._modernAppsWorkaround("{down 2}")
         return this.pinnedWindowList.Delete(hwnd)
     }
     pinApp(hwnd){
-        return this.pinnedAppList[winGetProcessName("ahk_id " hwnd)]:=True
+        p:=winGetProcessName("ahk_id " hwnd)
+        if this._isModernApp(hwnd) && !this.isPinnedApp(p){
+                this._modernAppsWorkaround("{down 4}")
+                p.=" " ; I dont remember why :/
+        }
+        return this.pinnedAppList[p]:=True
     }
     unPinApp(hwnd){
-        return this.pinnedAppList.Delete(winGetProcessName("ahk_id " hwnd))
+        p:=winGetProcessName("ahk_id " hwnd)
+        if this._isModernApp(hwnd) && this.isPinnedApp(p)
+                this._modernAppsWorkaround("{down 3}")
+        return this.pinnedAppList.Delete(p)
     }
 
     getDesktopCount(){

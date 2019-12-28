@@ -1,9 +1,11 @@
-; NOTE: Windows RS5 insider builds breaks virtual-desktop-accessor.dll
+; Uses https://github.com/Ciantic/VirtualDesktopAccessor
+; This script may work in slightly unexpected ways when used with sets.
+; Functions starting with _ are not expected to be called from outside the class.
 
 /**                             ;SAMPLE
 #include reloadAsAdmin.ahk
 reloadAsAdmin()
-global A_ScriptPID := ProcessExist()
+global A_ScriptPID := fListessExist()
 #include Timer.ahk
 #include Toast.ahk
 Taskview.init()
@@ -27,65 +29,117 @@ Taskview.init()
 /**/
 
 class TaskView { ; There should only be one object for this
-    static proc:=[]
+    static fList:=[]
     init(){ ; SHOULD be called
         return this.__new()
     }
     __new(){
-        hVirtualDesktopAccessor := DllCall("LoadLibrary", "Str", A_ScriptDir . "\Lib\virtual-desktop-accessor.dll", "Ptr")
-       ,fList:=[ "GetCurrentDesktopNumber","GetDesktopCount","GoToDesktopNumber"
-               ,"IsWindowOnDesktopNumber","MoveWindowToDesktopNumber"
-               ,"IsPinnedWindow","PinWindow","UnPinWindow","IsPinnedApp","PinApp","UnPinApp"
-               ,"RegisterPostMessageHook","UnregisterPostMessageHook","RestartVirtualDesktopAccessor" ]
+        this.base:={__call:ObjBindMethod(this,"_call")}
+        this.dll := DllCall("LoadLibrary", "Str", A_ScriptDir . "\Lib\VirtualDesktopAccessor.dll", "Ptr")
+       ,this.toast:=new Toast({life:1000})
 
-        for _,fName in fList
-            this.proc[fName]:= DllCall("GetProcAddress", "Ptr", hVirtualDesktopAccessor, "AStr", fName, "Ptr")
-
-        this.toast:=new Toast({life:1000})
-       ,DllCall(this.proc["RegisterPostMessageHook"], "Int", A_ScriptHwnd+(0x1000<<32), "Int", 0x1400 + 30)
+        ; Windows 10 desktop changes listener
+       ,DllCall(this.fList["RegisterPostMessageHook"], "Int", A_ScriptHwnd+(0x1000<<32), "Int", 0x1400 + 30)
        ,OnMessage(0x1400 + 30, ObjBindMethod(this,"_onDesktopSwitch"))
+        ; Restart the virtual desktop accessor when explorer.exe restarts
        ,OnMessage(DllCall("user32\RegisterWindowMessage", "Str", "TaskbarCreated"), ObjBindMethod(this,"_onExplorerRestart"))
     }
 
+    fList[fName]{
+        get {
+
+            ; GetProcAddress is case-sensitive. So known functions are predefined to avoid errors when function call is made with wrong case
+            if !isObject(this._fList) {
+                l:=[ "GetCurrentDesktopNumber","GetDesktopCount","GoToDesktopNumber"
+                    ,"IsWindowOnDesktopNumber","IsWindowOnCurrentVirtualDesktop"
+                    ,"GetWindowDesktopNumber","MoveWindowToDesktopNumber"
+                    ,"IsPinnedWindow","PinWindow","UnPinWindow","IsPinnedApp","PinApp","UnPinApp"
+                    ,"RegisterPostMessageHook","UnregisterPostMessageHook" ]
+                for _,f in l
+                    this._fList[StrLower(f)]:= DllCall("GetProcAddress", "Ptr", this.dll, "AStr", f, "Ptr")
+            }
+
+            g:=StrLower(fName) ; The keys are stored in lowercase to avoid case issues
+            if !this._fList[g] { ; Try to create function if it doesnt exist
+                this._fList[g]:= DllCall("GetProcAddress", "Ptr", this.dll, "AStr", fName, "Ptr")
+                msgbox("New function '" fName "'was created in TaskView.fList`nfList[" g "] = " this._fList[g])
+            }
+            return this._fList[g]
+
+            /* ------------- Functions exported by DLL ; * = Usable ** = Explicitly Defined
+            > Desktop
+            **  int GetCurrentDesktopNumber()
+            *   int GetDesktopCount()
+            **  void GoToDesktopNumber(int number)
+
+            > Window
+            **  int IsWindowOnDesktopNumber(HWND window, int number)
+            *   int IsWindowOnCurrentVirtualDesktop(HWND window)
+            **  int GetWindowDesktopNumber(HWND window)
+            **  BOOL MoveWindowToDesktopNumber(HWND window, int number)
+
+            > Pinning
+            *   int IsPinnedWindow(HWND hwnd) // Returns 1 if pinned, 0 if not pinned, -1 if not valid
+            *   void PinWindow(HWND hwnd)
+            *   void UnPinWindow(HWND hwnd)
+            *   int IsPinnedApp(HWND hwnd) // Returns 1 if pinned, 0 if not pinned, -1 if not valid
+            *   void PinApp(HWND hwnd)
+            *   void UnPinApp(HWND hwnd)
+
+            > Register/Unregister
+            *   void RegisterPostMessageHook(HWND listener, int messageOffset)
+            *   void UnregisterPostMessageHook(HWND hwnd)
+            *   void RestartVirtualDesktopAccessor() // Shouldn't use pointer. So pointer is not defined in "fList"
+
+            > GUID
+                int GetDesktopNumber(IVirtualDesktop *pDesktop)
+                GUID GetDesktopIdByNumber(int number) // Returns zeroed GUID with invalid number found
+                int GetDesktopNumberById(GUID desktopId)
+                GUID GetWindowDesktopId(HWND window)
+
+            > Window Properties
+                int ViewIsShownInSwitchers(HWND hwnd) // Is the window shown in Alt+Tab list?
+                int ViewIsVisible(HWND hwnd) // Is the window visible?
+                uint ViewGetLastActivationTimestamp(HWND) // Get last activation timestamp
+
+            > AltTab
+                void ViewSetFocus(HWND hwnd) // Set focus like Alt+Tab switcher
+                void ViewSwitchTo(HWND hwnd) // Switch to window like Alt+Tab switcher
+
+            > Thumbnail
+                HWND ViewGetThumbnailHwnd(HWND hwnd) // Get thumbnail handle for a window, possibly peek preview of Alt+Tab
+                HWND ViewGetFocused() // Get focused window thumbnail handle
+
+            > View Order
+                uint ViewGetByZOrder(HWND *windows, UINT count, BOOL onlySwitcherWindows, BOOL onlyCurrentDesktop) // Get windows in Z-order (NOT alt-tab order)
+                uint ViewGetByLastActivationOrder(HWND *windows, UINT count, BOOL onlySwitcherWindows, BOOL onlyCurrentDesktop) // Get windows in alt tab order
+
+             */
+        }
+
+        set { ;Never used
+            msgbox("TaskView.fList is never supposed to be set. Mistake??")
+            return this._fList[StrLower(fName)]:=value
+        }
+    }
+
+    ; Functions of the form "fName()" or "fName(win_hwnd)" doesnt have to be seperately defined
+    _Call(obj,fName,win_hwnd:=""){ ; obj will always be "this"
+            ;msgbox fName "(" win_hwnd ")=" ( win_hwnd=""? DllCall(this.fList[fName]) . " noHwnd": DllCall(this.fList[fName], "UInt", win_hwnd) )
+            return win_hwnd=""? DllCall(this.fList[fName]): DllCall(this.fList[fName], "UInt", win_hwnd)
+        }
+    }
+    ;===========================================================
+
     _onExplorerRestart(wParam, lParam, msg, hwnd) {
-        global RestartVirtualDesktopAccessorProc
-        DllCall(this.proc["RestartVirtualDesktopAccessor"], "UInt", result)
+        global RestartVirtualDesktopAccessorfList
+        DllCall(this.fList["RestartVirtualDesktopAccessor"], "UInt", result)
     }
     _onDesktopSwitch(wParam,lParam){
         return this.toast.show("Desktop " lParam+1)
     }
 
-    __Call(fname,hwnd:=""){
-        if hwnd
-             return DllCall(this.proc[fName], "UInt", hwnd)
-        else return DllCall(this.proc[fName])
-    }
-    /* ; Same as
-    isPinnedWindow(hwnd){
-        return DllCall(this.proc["IsPinnedWindow"], "UInt", hwnd)
-    }
-    isPinnedApp(hwnd){
-        return DllCall(this.proc["IsPinnedApp"], "UInt", hwnd)
-    }
-    pinWindow(hwnd){
-        return DllCall(this.proc["PinWindow"], "UInt", hwnd)
-    }
-    unPinWindow(hwnd){
-        return DllCall(this.proc["UnPinWindow"], "UInt", hwnd)
-    }
-    pinApp(hwnd){
-        return DllCall(this.proc["PinApp"], "UInt", hwnd)
-    }
-    unPinApp(hwnd){
-        return DllCall(this.proc["UnPinApp"], "UInt", hwnd)
-    }
-    getDesktopCount(){
-        return DllCall(this.proc["GetDesktopCount"])
-    } */
-    getCurrentDesktopNumber(){
-        return DllCall(this.proc["GetCurrentDesktopNumber"]) + 1
-    }
-
+    ;===========================================================
     _desktopNumber(n, wrap:=True){
         max:=this.getDesktopCount()
         if wrap {
@@ -103,20 +157,64 @@ class TaskView { ; There should only be one object for this
         }
         return n
     }
+    ;===========================================================
+
+
+    /* ; Defined by _call
+    isPinnedWindow(win_hwnd){
+        return DllCall(this.fList["IsPinnedWindow"], "UInt", win_hwnd)
+    }
+    isPinnedApp(win_hwnd){
+        return DllCall(this.fList["IsPinnedApp"], "UInt", win_hwnd)
+    }
+    pinWindow(win_hwnd){
+        return DllCall(this.fList["PinWindow"], "UInt", win_hwnd)
+    }
+    unPinWindow(win_hwnd){
+        return DllCall(this.fList["UnPinWindow"], "UInt", win_hwnd)
+    }
+    pinApp(win_hwnd){
+        return DllCall(this.fList["PinApp"], "UInt", win_hwnd)
+    }
+    unPinApp(win_hwnd){
+        return DllCall(this.fList["UnPinApp"], "UInt", win_hwnd)
+    }
+    getDesktopCount(){
+        return DllCall(this.fList["GetDesktopCount"])
+    }
+    IsWindowOnCurrentVirtualDesktop(win_hwnd){
+        return DllCall(this.fList["IsWindowOnCurrentVirtualDesktop"], "UInt", win_hwnd)
+    }
+    */
+
+    getCurrentDesktopNumber(){
+        return DllCall(this.fList["GetCurrentDesktopNumber"]) + 1
+    }
+    getWindowDesktopNumber(win_hwnd){
+        return DllCall(this.fList["GetWindowDesktopNumber"], "UInt", win_hwnd) + 1
+    }
+    isWindowOnDesktopNumber(win_hwnd, n, wrap:=True){
+        if !(n is "number")
+            return 0
+        return DllCall(this.fList["IsWindowOnDesktopNumber"], "UInt", win_hwnd, "UInt", this._desktopNumber(n,wrap)-1)
+    }
+
+
     goToDesktopNumber(n, wrap:=True) {
-        if (! n is "number")
+        if !(n is "number")
             return 0
         n:=this._desktopNumber(n, wrap)
-       ,DllCall(this.proc["GoToDesktopNumber"], "Int", n-1)
+       ,DllCall(this.fList["GoToDesktopNumber"], "Int", n-1)
         return n
     }
     moveWindowToDesktopNumber(n, win_hwnd, wrap:=True){
-        if (! n is "number")
+        if !(n is "number")
             return 0
         n:=this._desktopNumber(n,wrap)
-       ,DllCall(this.proc["MoveWindowToDesktopNumber"], "UInt", win_hwnd, "UInt", n-1)
+       ,DllCall(this.fList["MoveWindowToDesktopNumber"], "UInt", win_hwnd, "UInt", n-1)
         return n
     }
+    ;===========================================================
 
     goToDesktopPrev(wrap:=True) {
         return this.goToDesktopNumber(this.getCurrentDesktopNumber()-1, wrap)
@@ -141,18 +239,18 @@ class TaskView { ; There should only be one object for this
         } else return 0
     }
 
-    pinWindowToggle(hwnd){
-        if this.isPinnedWindow(hwnd)
-            this.unPinWindow(hwnd)
+    pinWindowToggle(win_hwnd){
+        if this.isPinnedWindow(win_hwnd)
+            this.unPinWindow(win_hwnd)
         else
-            this.pinWindow(hwnd)
-        return this.isPinnedWindow(hwnd)
+            this.pinWindow(win_hwnd)
+        return this.isPinnedWindow(win_hwnd)
     }
-    pinAppToggle(hwnd){
-        if this.isPinnedApp(hwnd)
-            this.unPinApp(hwnd)
+    pinAppToggle(win_hwnd){
+        if this.isPinnedApp(win_hwnd)
+            this.unPinApp(win_hwnd)
         else
-            this.pinApp(hwnd)
-        return this.isPinnedApp(hwnd)
+            this.pinApp(win_hwnd)
+        return this.isPinnedApp(win_hwnd)
     }
 }

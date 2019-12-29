@@ -9,6 +9,11 @@ ReloadAsAdmin_Task()
 A_ScriptName:=path(A_ScriptName).NameNoExt ; Name of file without extension
 global A_ScriptPID := ProcessExist()        ; Script's PID
 
+
+global A_hookTimeOut:=regRead("HKEY_CURRENT_USER\Control Panel\Desktop", "LowLevelHooksTimeout")
+A_hookTimeOut:=A_hookTimeOut?A_hookTimeOut:300
+
+#IfTimeout SCR_hookTimeOut//3 ;A timeout is implemented to prevent long-running expressions from stalling keyboard input processing. If the timeout value is exceeded, the expression continues to evaluate, but the keyboard hook continues as if the expression had already returned false.
 DetectHiddenWindows(False)      ;Detect Windows that are hidden? Recommended to set true only when needed
 ;;#ClipboardTimeout 1000        ;Time before unresponsive clipboard timesout and gives error
 ;;;#ErrorStdOut                 ;Pipes errors to stdout.

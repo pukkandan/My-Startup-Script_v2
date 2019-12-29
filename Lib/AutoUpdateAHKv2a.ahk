@@ -10,10 +10,10 @@ autoUpdateAHK(path:="", dl:=True, install:=True, openCLog:=False){
            ,updatePath:=path(A_AhkPath).Dir, installPath:=path(updatePath).Dir, exe:=path(A_AhkPath).FileName
            ,path:=FileExist(path)?path: A_ScriptDir "\..\.." ;If path doesnt exist, go back 2 directories of the scriptdir (.../AHK/Scripts/This_Script -> .../AHK)
 
-           ,A_DetectHiddenWindows:=True
-            if winExist("ahk_exe " installPath "\" exe)
+           ;,A_DetectHiddenWindows:=True
+            if ProcessExist(installPath "\" exe)
                 Msgbox("Please close all other scripts for updating AHK",, 0x1040)
-            if winExist("ahk_exe " installPath "\" exe) {
+            if ProcessExist(installPath "\" exe) {
                 return 2
             }
             FileMove("ahk.zip", path "\AutoHotkey_" v "_setup.zip", True)

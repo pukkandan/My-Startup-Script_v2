@@ -125,9 +125,8 @@ class TaskView { ; There should only be one object for this
 
     ; Functions of the form "fName()" or "fName(win_hwnd)" doesnt have to be seperately defined
     _Call(obj,fName,win_hwnd:=""){ ; obj will always be "this"
-            ;msgbox fName "(" win_hwnd ")=" ( win_hwnd=""? DllCall(this.fList[fName]) . " noHwnd": DllCall(this.fList[fName], "UInt", win_hwnd) )
-            return win_hwnd=""? DllCall(this.fList[fName]): DllCall(this.fList[fName], "UInt", win_hwnd)
-        }
+        ;msgbox fName "(" win_hwnd ")=" ( win_hwnd=""? DllCall(this.fList[fName]) . " noHwnd": DllCall(this.fList[fName], "UInt", win_hwnd) )
+        return win_hwnd=""? DllCall(this.fList[fName]): DllCall(this.fList[fName], "UInt", win_hwnd)
     }
     ;===========================================================
 

@@ -255,7 +255,7 @@ RETURN
 makeMicroWindow(){
     hwnd:=WinExist("A")
     win:="ahk_id " hwnd
-    WinGetClass, winclass, % this.win
+    winclass:=WinGetClass(this.win)
     if (winclass="WorkerW" OR winclass="Shell_TrayWnd" OR !winexist(win))
         Toast.show("No Window")
     else {
@@ -274,7 +274,7 @@ return
 
 RETURN
 #t::
-Menu, trayIt, show
+winAction.trayIt.show()
 return
 
 ;===================    Kill switch

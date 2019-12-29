@@ -7,7 +7,7 @@ zip(files,zip:="") {
     if !FileExist(zip)
         zip_createFile(zip)
 
-    zip:=_getFullPath(zip), files:=_getFullPath(files)
+    zip:=zip__getFullPath(zip), files:=zip__getFullPath(files)
    ,pzip:=ComObjCreate("Shell.Application").Namespace(zip)
 
     loop Files, inStr(fileExist(file), "D") ? files "\*.*" :files, "DF" {
@@ -33,7 +33,7 @@ zip_unZip(zip, folder:="") {
     folder:=substr(folder,-1)="\" ? substr(folder,1,-1) :folder
     If !DirExist(folder)
        dirCreate(folder)
-    zip:=_getFullPath(zip), folder:=_getFullPath(folder)
+    zip:=zip__getFullPath(zip), folder:=zip__getFullPath(folder)
    ,SA:=ComObjCreate("Shell.Application"), pzip:=SA.Namespace(zip), pfol:=SA.Namespace(folder)
 
    ,zippedItems:=pzip.items().count
@@ -43,7 +43,7 @@ zip_unZip(zip, folder:="") {
     return zippedItems
 }
 
-_getFullPath(f){
+zip__getFullPath(f){
     loop Files, f, "FD"
         return A_LoopFileFullPath
 }

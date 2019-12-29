@@ -2,22 +2,22 @@
 RETURN
 #if getKeyState("RButton","P")
 LButton::                   ; Switch to next window
-send("!{Tab}") ; In the latest builds of windows, Alt Tab does not show the TaskSwitcher Window when used quickly. Also, the other method behaves unexpectedly with sets
-/*
+;send("!{Tab}") ; From rs5, Alt Tab does not show the TaskSwitcher Window when used quickly. Also, the other method behaves unexpectedly with sets
+/**/
 sendWindowBack(){ ;Alt Tab is not used since it shows the TaskSwitcher Window
     activeID:=WinGetID("A"), ids:=WinGetList()
     loop ids.Length() {
-        msgbox(activeID "=?=" ids[A_Index])
+        ;msgbox(activeID "=?=" ids[A_Index])
         if activeID!=ids[A_Index]
             continue
         else i:=A_Index
         loop ids.Length()-i {
             win:="ahk_id " ids[A_Index+i]
-            msgbox(WinGetTitle(win))
+            ;msgbox(WinGetTitle(win))
             if !WinGetTitle(win)
                 continue
             ;Use next two lines to send active window one step back without activating the window behind
-           ;,WinSetAlwaysOnTop(True, win)
+           ;WinSetAlwaysOnTop(True, win)
            ;,WinSetAlwaysOnTop(False, win)
             winActivate(win)
             break
@@ -26,7 +26,7 @@ sendWindowBack(){ ;Alt Tab is not used since it shows the TaskSwitcher Window
     }
     return
 }
-*/
+/**/
 return
 
 MButton:: winSizer.start("RButton")   ; WinSizer
@@ -45,13 +45,14 @@ if A_ThisHotkey="WheelUp" {
     TaskView.GoToDesktopNumber(1)
 */
 send(A_ThisHotkey="WheelUp"? "#^{Left}" : "#^{Right}" )
+silentKeyRelease_Mouse("R",200)
 sleep(200)
 return
 
 #if getKeyState("MButton","P")        ; Move window b/w desktops
-WheelUp::
-WheelDown::
-(A_ThisHotkey="WheelUp")? TaskView.MoveToDesktopPrev(WinExist("A"),True): TaskView.MoveToDesktopNext(WinExist("A"),False)
+WheelUp:: TaskView.MoveToDesktopPrev(WinExist("A"),True)
+WheelDown:: TaskView.MoveToDesktopNext(WinExist("A"),False)
+silentKeyRelease_Mouse("M",200)
 sleep(200)
 return
 
@@ -64,17 +65,25 @@ if !{"MButton":0,"MButton Up":0,"WheelUp":0,"WheelDown":0}.haskey(A_PriorKey)
 return
 #If
 
+
+;===================    Move Windows to different Desktop using Keyboard (Same as MButton+Scroll)
+return
++#Left::TaskView.MoveToDesktopPrev(WinExist("A"),True)
++#Right::TaskView.MoveToDesktopNext(WinExist("A"),False)
+return
+
 ;===================    Over Taskbar
+
 RETURN
 #if isOver_mouse("ahk_class Shell_TrayWnd")   ; Alt tab over taskbar
-WheelUp::
-WheelDown::
-send(A_ThisHotkey="WheelUp" ? "^+!{Tab}" : "^!{Tab}")
-return
-MButton Up:: Send("+^{Esc}")    ; Task manager
+~MButton::send("^!{Tab}^+!{Tab}")
+WheelUp::send("^+!{Tab}")
+WheelDown::send("^!{Tab}")
+#if
 
-#if winActive("Task Switching ahk_class Windows.UI.Core.CoreWindow ahk_exe explorer.exe") AND isOver_mouse("ahk_class Shell_TrayWnd")        ; When Task Switching
+#if winActive("Task Switching ahk_class MultitaskingViewFrame ahk_exe explorer.exe") AND isOver_mouse("ahk_class Shell_TrayWnd ahk_exe Explorer.exe")        ; When Task Switching
 LButton::send("{Enter}")
+MButton::send("{Alt Up}{Esc}")
 #if
 
 ;===================    Ditto & Listary
@@ -177,17 +186,20 @@ Toast.show("Play/Pause")
 return
 
 #if ProcessExist("MusicBee.exe")
+#F9::Media_Prev
+#F11::Media_Next
+
 ; MusicBee sometimes doesnt respond to Media buttons. So I set it's global hotkey to #{F9/10/11}
-Media_Prev::      send("#{F9}")
-Media_Play_Pause::send("#{F10}")
-Media_Next::      send("#{F11}")
+;Media_Prev::      send("#{F9}")
+;Media_Play_Pause::send("#{F10}")
+;Media_Next::      send("#{F11}")
 #if
 
 ;===================    Listary launcher
-; RETURN
-; ~LWin & RWin::return    ;Prevents LWin from trigerring when #... (eg: #Tab) is used
-; LWin UP:: Send("#``")
-; return
+RETURN
+~LWin & RWin::return    ;Prevents LWin from trigerring when #... (eg: #Tab) is used
+LWin UP:: Send("#``")
+return
 
 ;===================    CaseMenu and »
 RETURN
@@ -208,15 +220,24 @@ return
 
 ;===================    Calc/cmd/Notepad
 RETURN
-#+CapsLock:: Run("notepad.exe")
-#^CapsLock:: Run("calc1.exe")
-#CapsLock::  Run("cmd.exe")
-
+#+CapsLock:: ShellRun("notepad.exe")
+#^CapsLock:: ShellRun("calc1.exe")
+#CapsLock::  ShellRun("cmd.exe",,,"RunAs")
+#!CapsLock:: ShellRun("wsl.exe",,,"RunAs")
+^!CapsLock::
+runSHH(){
+    param:=InputBox("parameters?", "SHH", "H128", "-CX 14173002@10.2.60.11")
+    if !errorlevel
+      ShellRun("ssh.exe",param,,,"RunAs")
+    return
+}
+return
+/*
 ;===================    Sets
 RETURN
 !CapsLock:: Send("#^{Tab}")
 !+CapsLock:: Send("#^+{Tab}")
-
+*/
 /*
 ;===================    Groupy
 RETURN
@@ -248,6 +269,7 @@ RETURN
 +Enter::Send "`n"
 ;#if !winActive("ahk_exe sublime_text.exe")
 ;+Tab::Send "    "
+#if
 
 ;===================
 RETURN

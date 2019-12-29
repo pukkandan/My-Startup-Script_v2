@@ -1,3 +1,5 @@
+;Use AutoHotkey_2.0-a100-52515e2
+
 Suspend(True)
 ;#include %A_ScriptDir%  ;Sets dir for includes. No longer needed in v2
 #include Directives.ahk

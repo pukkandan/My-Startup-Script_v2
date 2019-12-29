@@ -29,13 +29,10 @@ tip_remove(time:=1,WhichToolTip:=1){
     static act:=[]
     if (!act.haskey(Whichtooltip))
         act[WhichToolTip]:=Func("_tip_remove").bind(WhichToolTip)
-    obj:=act[WhichToolTip]
-    setTimer(obj, -time)
-    return
+    return setTimer(act[WhichToolTip], -time)
 }
 _tip_remove(no:=1){
-    Tooltip(,,,no)
-    return
+    return Tooltip(,,,no)
 }
 
 /* Still in ahk v1.*

@@ -26,19 +26,20 @@ class Toast{
 
         replaceList(this.def, p, 2, True)
     }
-    _setParam(p){
-        if A_IsPaused
-            return
-        if !this.def
-            this.__new()
 
-        for i,x in replaceList(this.def, IsObject(p)?p: {title:{text:p}}, 2)
-            this[i]:=x
-        this.x:=this.pos.x, this.y:=this.pos.y, this.pos:="", this.closekeys:=this.closekeys[1]
-        return
-    }
     show(param){
-        this._setParam(param)
+        setParam(p){
+            if A_IsPaused
+                return
+            if !this.def
+                this.__new()
+
+            for i,x in replaceList(this.def, IsObject(p)?p: {title:{text:p}}, 2)
+                this[i]:=x
+            this.x:=this.pos.x, this.y:=this.pos.y, this.pos:="", this.closekeys:=this.closekeys[1]
+            return
+        }
+        setParam(param)
 
         GUIOld:=this.GUIObj
        ,this.GUIObj:=GUICreate("-Caption +ToolWindow +AlwaysOnTop")

@@ -96,7 +96,7 @@ DelayedTimer.set(func("ReloadScriptOnEdit").bind([A_ScriptDir "\*.ahk", A_Script
 
 tip("AutoUpdate (v2a)")
 #include <AutoUpdateAHKv2a>
-DelayedTimer.set("AutoUpdateAHK", 3600000, {runatStart:True})
+;DelayedTimer.set("AutoUpdateAHK", 3600000, {runatStart:True})
 
 Suspend(False)
 

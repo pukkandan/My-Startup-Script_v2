@@ -1,6 +1,6 @@
 ; rewrite as a class!
 
-getIPInfo(getLoc:=True){
+getIPInfo(getLoc:=False){
 
     if getLoc {
         webpage:=download_toVar("https://www.whatismybrowser.com/detect/ip-address-location")

@@ -29,7 +29,6 @@ Taskview.init()
 /**/
 
 class TaskView { ; There should only be one object for this
-    static fList:=[]
     init(){ ; SHOULD be called
         return this.__new()
     }
@@ -50,6 +49,7 @@ class TaskView { ; There should only be one object for this
 
             ; GetProcAddress is case-sensitive. So known functions are predefined to avoid errors when function call is made with wrong case
             if !isObject(this._fList) {
+                _fList:={}
                 l:=[ "GetCurrentDesktopNumber","GetDesktopCount","GoToDesktopNumber"
                     ,"IsWindowOnDesktopNumber","IsWindowOnCurrentVirtualDesktop"
                     ,"GetWindowDesktopNumber","MoveWindowToDesktopNumber"

@@ -10,6 +10,9 @@
 ;================================================================================
 
 class PIP {
+    init(p:=""){
+        return this.__new(p)
+    }
     __new(p:=""){
         this.list:={}, this.sets:=0, this.topListOld:=[], this.topList:=[], mouseAllowed:=[]
        ,this.def:={set:1, type:"J", maxwidth:A_ScreenWidth//2.1, maxheight:A_ScreenHeight//2}

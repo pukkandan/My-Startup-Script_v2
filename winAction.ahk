@@ -178,20 +178,7 @@ class winAction{
     }
 
     trayit(){
-        static title_len:=90
-        WinGetTitle, title , % this.win
-        WinGet, exe, ProcessName, % this.win
-        WinGet, path, ProcessPath, % this.win
-        if (exe="hh.exe") ; hh.exe is the name of chm reader
-            exe:="CHM"
-        else if (exe="Applicationframehost.exe") ; Metro App
-        {
-            path:="C:\Windows\System32\consent.exe" ; For Icon
-            exe:="X"
-        }
-        exe:=Format("{:T}",strreplace(strreplace(exe, ".exe"),"_"," ")) ; "sublime_text.exe" to "Sublime Text" etc
-        title:="[" exe "]> " StrReplace(title, " - " exe) ; Remove " - Sublime Text" etc
-        title:=(strLen(title)>title_len? substr(title, 1, title_len-3) "..." :title) " " this.win_hwnd ; Limit Size. win_hwnd is added for uniqueness
+        title:=cleanWinTitle(this.win)
 
         ; winget, s, style, % this.win
         ; winget, es, exstyle, % this.win

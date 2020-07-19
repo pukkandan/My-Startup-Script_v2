@@ -53,7 +53,7 @@ DelayedTimer.set(ObjBindMethod(Transparent_Windows,"run"), 500)
 
 tip("PIP")
 #include <PIP>
-PIP.__new([  {title:"ahk_exe PotPlayerMini64.exe ahk_class PotPlayer64" ,type:"VJT"}
+PIP.init([  {title:"ahk_exe PotPlayerMini64.exe ahk_class PotPlayer64" ,type:"VJT"}
             ,{title:"ahk_exe PotPlayer.exe ahk_class PotPlayer64"       ,type:"VJT"}
             ,{title:"ahk_exe chrome.exe"                                ,type:"CJT"}
             ,{title:"ahk_exe vivaldi.exe"                                ,type:"CJT"}

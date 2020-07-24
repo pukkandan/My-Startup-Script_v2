@@ -1,5 +1,5 @@
 class CaseMenu {
-    static menuObj:=MenuCreate()
+    static menuObj:=Menu.new()
     __new(){
         for i,j in {U:"&UPPER CASE", L:"&lower case", T:"&Title Case", S:"&Sentence case.", I:"&iNVERT cASE"}
             this.menuObj.add(j, ObjBindMethod(this,"_caseChange",i))

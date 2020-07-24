@@ -1,7 +1,7 @@
 class WinSizer{
     __new(){
         this.action:=objBindmethod(this,"run"), this.running:=False
-       ,this.toastObj:=new toast({life:0,margin:{x:1,y:1}, title:{size:10}, message:{def_size:8,offset:[4],def_offset:1}})
+       ,this.toastObj:=toast.new({life:0,margin:{x:1,y:1}, title:{size:10}, message:{def_size:8,offset:[4],def_offset:1}})
     }
 
     start(endOnKeyRelease:=""){

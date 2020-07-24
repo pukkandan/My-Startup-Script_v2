@@ -16,11 +16,11 @@ trayMenu(){
    ,A_TrayMenu.Add("On Full&Screen", "SCR_AllowOnFS")
    ,A_TrayMenu.Add("&Net Status", func("netNotify").bind(False,,0))
    ,A_TrayMenu.Add("&Dim Screen", func("dimScreen").bind(0))
-   ,trayIt:=MenuCreate()
+   ,trayIt:=Menu.New()
    ,A_TrayMenu.Add("&TrayIt", trayIt)
 
    ,A_TrayMenu.Add()
-   ,AHK:=MenuCreate(), A_AllowMainWindow:=True, AHK.AddStandard()
+   ,AHK:=Menu.New(), A_AllowMainWindow:=True, AHK.AddStandard()
    ,A_TrayMenu.Add("AH&K", AHK)
    ,A_TrayMenu.Add("E&xit", "ExitApp")
 
@@ -78,7 +78,7 @@ mouseOverTray(wParam,lParam){
     return
 }
 updateTray(mx0:="",my0:=""){
-    static mx, my, timer:=0
+    static mx:=0, my:=0, timer:=0
     if mx0="" or my0="" {
         if A_TickCount-timer>1000
             MouseGetPos(mx, my)

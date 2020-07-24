@@ -5,7 +5,7 @@ resourceIdOfIcon(Filename, IconIndex)
         return
 
     enumproc := RegisterCallback("_enumIconResources","F")
-   ,VarSetCapacity(param,12,0)
+   ,VarSetStrCapacity(param,12,0)
    ,NumPut(IconIndex,param,0)
     ; Enumerate the icon group resources. (RT_GROUP_ICON=14)
    ,DllCall("EnumResourceNames", "uint", hmod, "uint", 14, "uint", enumproc, "uint", ¶m)

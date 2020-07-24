@@ -1,6 +1,6 @@
 ; Modified by GeekDude from http://goo.gl/0a0iJq
 URI_Encode(URI, RE:="[0-9A-Za-z]") {
-    VarSetCapacity(v, StrPut(URI, "UTF-8"), 0), StrPut(URI, &v, "UTF-8")
+    VarSetStrCapacity(v, StrPut(URI, "UTF-8"), 0), StrPut(URI, &v, "UTF-8")
     While Code := NumGet(v, A_Index - 1, "UChar")
         Res .= (Chr:=Chr(Code)) ~= RE ? Chr : Format("%{:02X}", Code)
     Return Res
@@ -10,7 +10,7 @@ URI_Decode(URI) {
     Pos := 1
     While(Pos:= RegExMatch(URI, "i)(%[\da-f]{2})+", code, Pos))
     {
-        VarSetCapacity(v, StrLen(code.value()) // 3, 0)
+        VarSetStrCapacity(v, StrLen(code.value()) // 3, 0)
        ,code:= SubStr(code.value(),2)
         Loop Parse, code, "%"
             NumPut("0x" A_LoopField, &v, A_Index-1, "UChar")

@@ -1,10 +1,13 @@
+; COMPLETELY REWRITE
+
 ;===================    R/M Button
 RETURN
-#if getKeyState("RButton","P")
-LButton::                   ; Switch to next window
+#hotIf getKeyState("RButton","P")
+LButton:: sendWindowBack()                  ; Switch to next window
 ;send("!{Tab}") ; From rs5, Alt Tab does not show the TaskSwitcher Window when used quickly. Also, the other method behaves unexpectedly with sets
-/**/
-sendWindowBack(){ ;Alt Tab is not used since it shows the TaskSwitcher Window
+/*
+*
+sendWindowBack() { ;Alt Tab is not used since it shows the TaskSwitcher Window
     activeID:=WinGetID("A"), ids:=WinGetList()
     loop ids.Length() {
         ;msgbox(activeID "=?=" ids[A_Index])
@@ -26,30 +29,34 @@ sendWindowBack(){ ;Alt Tab is not used since it shows the TaskSwitcher Window
     }
     return
 }
-/**/
+/*
+*/
 return
 
 MButton:: winSizer.start("RButton")   ; WinSizer
-MButton Up::
-if !winSizer.end()
-    send("#{Tab}")
-return
+MButton Up:: {
+    if !winSizer.end()
+        send("#{Tab}")
+    return
+}
 
 WheelUp::                             ; Switch Windows
 WheelDown::
-/* ; Uncomment this to Wrap
-if A_ThisHotkey="WheelUp" {
-     if TaskView.GetCurrentDesktopNumber()=1
-         TaskView.GoToDesktopNumber(0)
-} else if TaskView.GetCurrentDesktopNumber()=TaskView.GetDesktopCount()
-    TaskView.GoToDesktopNumber(1)
-*/
-send(A_ThisHotkey="WheelUp"? "#^{Left}" : "#^{Right}" )
-silentKeyRelease_Mouse("R",200)
-sleep(200)
-return
+{
+    /* ; Uncomment this to Wrap
+    if A_ThisHotkey="WheelUp" {
+         if TaskView.GetCurrentDesktopNumber()=1
+             TaskView.GoToDesktopNumber(0)
+    } else if TaskView.GetCurrentDesktopNumber()=TaskView.GetDesktopCount()
+        TaskView.GoToDesktopNumber(1)
+    */
+    send(A_ThisHotkey="WheelUp"? "#^{Left}" : "#^{Right}" )
+    silentKeyRelease_Mouse("R",200)
+    sleep(200)
+    return
+}
 
-#if getKeyState("MButton","P")        ; Move window b/w desktops
+#hotIf getKeyState("MButton","P")        ; Move window b/w desktops
 WheelUp:: TaskView.MoveToDesktopPrev(WinExist("A"),True)
 WheelDown:: TaskView.MoveToDesktopNext(WinExist("A"),False)
 silentKeyRelease_Mouse("M",200)
@@ -57,13 +64,13 @@ sleep(200)
 return
 
 
-#if !winActive("ahk_group right_drag")
+#hotIf !winActive("ahk_group right_drag")
 *RButton up::
 Critical()
 if !{"MButton":0,"MButton Up":0,"WheelUp":0,"WheelDown":0}.haskey(A_PriorKey)
     send("{Blind}{RButton}")
 return
-#If
+#hotIf
 
 
 ;===================    Move Windows to different Desktop using Keyboard (Same as MButton+Scroll)
@@ -75,16 +82,16 @@ return
 ;===================    Over Taskbar
 
 RETURN
-#if isOver_mouse("ahk_class Shell_TrayWnd")   ; Alt tab over taskbar
+#hotIf isOver_mouse("ahk_class Shell_TrayWnd")   ; Alt tab over taskbar
 ~MButton::send("^!{Tab}^+!{Tab}")
 WheelUp::send("^+!{Tab}")
 WheelDown::send("^!{Tab}")
-#if
+#hotIf
 
-#if winActive("Task Switching ahk_class MultitaskingViewFrame ahk_exe explorer.exe") AND isOver_mouse("ahk_class Shell_TrayWnd ahk_exe Explorer.exe")        ; When Task Switching
+#hotIf winActive("Task Switching ahk_class MultitaskingViewFrame ahk_exe explorer.exe") AND isOver_mouse("ahk_class Shell_TrayWnd ahk_exe Explorer.exe")        ; When Task Switching
 LButton::send("{Enter}")
 MButton::send("{Alt Up}{Esc}")
-#if
+#hotIf
 
 ;===================    Ditto & Listary
 RETURN
@@ -134,13 +141,13 @@ runListary(){
     /**
    sendTo_pasteText(text, Win " ahk_exe " exe, Cntrl, opt) ;Clipboard is restored due to opt.useOldClip:=True
    ,sendTo("^a", Win "ahk_exe " exe, Cntrl, opt)
-    /**/
+    /*
+    */
     if !WinWaitActive("ahk_exe " exe,,2)
         return False
     sleep(500)
    ,sendTo_pasteText(text,,, opt) ;Clipboard is restored due to opt.useOldClip:=True
    ,send("^a")
-   /**/
     return True
 }
 
@@ -185,7 +192,7 @@ Toast.show("Play/Pause")
 ,Send("#{F10}")  ; The same key is set as global play/pause in MusicBee
 return
 
-#if ProcessExist("MusicBee.exe")
+#hotIf ProcessExist("MusicBee.exe")
 #F9::Media_Prev
 #F11::Media_Next
 
@@ -193,7 +200,7 @@ return
 ;Media_Prev::      send("#{F9}")
 ;Media_Play_Pause::send("#{F10}")
 ;Media_Next::      send("#{F11}")
-#if
+#hotIf
 
 ;===================    Listary launcher
 RETURN
@@ -256,20 +263,20 @@ RETURN
 
 ;===================    Fences Pages
 RETURN
-#if winActive("ahk_class WorkerW ahk_exe explorer.exe") AND getKeyState("LButton","P")
+#hotIf winActive("ahk_class WorkerW ahk_exe explorer.exe") AND getKeyState("LButton","P")
 WheelUp::
 WheelDown::
 send("{LButton Up}!{" (A_ThisHotkey="WheelUp"?"WheelDown":"WheelUp") "}")
 return
-#if
+#hotIf
 
 ;===================    Send `n/`t in cases where enter/tab is used for other purposes
 RETURN
-#if !winActive("ahk_exe Mathematica.exe")
+#hotIf !winActive("ahk_exe Mathematica.exe")
 +Enter::Send "`n"
-;#if !winActive("ahk_exe sublime_text.exe")
+;#hotIf !winActive("ahk_exe sublime_text.exe")
 ;+Tab::Send "    "
-#if
+#hotIf
 
 ;===================
 RETURN
@@ -281,7 +288,7 @@ makeMicroWindow(){
     if (winclass="WorkerW" OR winclass="Shell_TrayWnd" OR !winexist(win))
         Toast.show("No Window")
     else {
-        new microWindow(hwnd)
+        microWindow.new(hwnd)
         Toast.show("microWindow")
     }
     return

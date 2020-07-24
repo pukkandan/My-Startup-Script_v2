@@ -42,7 +42,7 @@ class Toast{
         setParam(param)
 
         GUIOld:=this.GUIObj
-       ,this.GUIObj:=GUICreate("-Caption +ToolWindow +AlwaysOnTop")
+       ,this.GUIObj:=GUI.new("-Caption +ToolWindow +AlwaysOnTop")
        ,this.GUIObj.title:="Toast" this.id, this.GUIObj.backColor:=this.bgColor
        ,this.GUIObj.marginX:=this.margin.x, this.GUIObj.marginY:=this.margin.y
        ,WinSetTransparent(this.trans, this.GUIObj.hwnd)

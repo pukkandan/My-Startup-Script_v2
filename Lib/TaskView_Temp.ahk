@@ -1,3 +1,6 @@
+; THIS IS NO LONGER MAINTAINED
+;--------------------------------------------------
+
 ; Windows RS5 builds broke VirtualDesktopAccessor.dll used in TaskView.ahk. This is a workaround to get the same functionality.
 
 ; This script may work in slightly unexpected ways when used with sets.
@@ -36,7 +39,8 @@ Taskview.init()
 7::TaskView.goToDesktopNext()
 8::TaskView.moveToDesktopPrev(winExist("A"))
 9::TaskView.moveToDesktopNext(winExist("A"))
-/**/
+/*
+*/
 
 class TaskView { ; There should only be one object for this
     static pinnedWindowList:={}, pinnedAppList:={}

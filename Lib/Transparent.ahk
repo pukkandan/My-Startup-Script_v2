@@ -48,7 +48,7 @@ Transparent_TaskbarGlass(state:=-4, color:=0x40000000) { ;ABGR color
    <0   0 when on desktop and |state| otherwise
 */
     static ACCENT_POLICY, WINCOMPATTRDATA, state_old, color_old
-   ,pad := (A_PtrSize=8?4:0), WCA_ACCENT_POLICY := 19, ACCENT_SIZE := VarSetCapacity(ACCENT_POLICY, 16, 0)
+   ,pad := (A_PtrSize=8?4:0), WCA_ACCENT_POLICY := 19, ACCENT_SIZE := VarSetStrCapacity(ACCENT_POLICY, 16, 0)
    ,SWCA:= DllCall("GetProcAddress", "Ptr", DllCall("LoadLibrary", "Str", "user32.dll", "Ptr"), "AStr", "SetWindowCompositionAttribute", "Ptr")
 
     if state<0 {
@@ -62,7 +62,7 @@ Transparent_TaskbarGlass(state:=-4, color:=0x40000000) { ;ABGR color
         state_old:=state, color_old:=color
        ,NumPut(state, ACCENT_POLICY, 0, "int")
        ,NumPut(color, ACCENT_POLICY, 8, "int")
-       ,VarSetCapacity(WINCOMPATTRDATA, 8 + 2*pad + A_PtrSize, 0)
+       ,VarSetStrCapacity(WINCOMPATTRDATA, 8 + 2*pad + A_PtrSize, 0)
        ,NumPut(WCA_ACCENT_POLICY, WINCOMPATTRDATA, 0, "int")
        ,NumPut(&ACCENT_POLICY, WINCOMPATTRDATA, 4 + pad, "ptr")
        ,NumPut(ACCENT_SIZE, WINCOMPATTRDATA, 4 + pad + A_PtrSize, "uint")

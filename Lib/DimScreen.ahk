@@ -1,7 +1,7 @@
 dimScreen(p:=""){
-    static DimScreenGUI, t:=0, e:=False
+    static DimScreenGUI:="", t:=0, e:=False
     if !DimScreenGUI {
-        DimScreenGUI:=GuiCreate("+ToolWindow -Disabled -SysMenu -Caption +E0x20 +AlwaysOnTop","DimScreen")
+        DimScreenGUI:=Gui.New("+ToolWindow -Disabled -SysMenu -Caption +E0x20 +AlwaysOnTop","DimScreen")
        ,DimScreenGUI.title:="DimScreen", DimScreenGUI.BackColor:= 0x000000
        ,DimScreenGUI.Show("Hide X0 Y0 W"  A_ScreenWidth " H"  A_ScreenHeight)
     }

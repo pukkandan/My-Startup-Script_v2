@@ -1,4 +1,4 @@
-;Use AutoHotkey_2.0-a100-52515e2
+; Partly updated to 2.0-a118-1e6cd8a1
 
 Suspend(True)
 ;#include %A_ScriptDir%  ;Sets dir for includes. No longer needed in v2
@@ -122,7 +122,7 @@ Toast.show("Script Loaded")
 
 ;;============================== End of auto-execute
 RETURN
-#include HotKeys.ahk
+;#include HotKeys.ahk
 #include *i HotStringsPrivate.ahk ;Has personal data in this file, so it is ignored from github
 #include HotStrings.ahk
 

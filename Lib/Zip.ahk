@@ -20,7 +20,7 @@ zip(files,zip:="") {
 
 zip_createFile(zip) {
     Header1:="PK" Chr(5) Chr(6)
-   ,VarSetCapacity(Header2, 18, 0)
+   ,VarSetStrCapacity(Header2, 18, 0)
    ,file:=FileOpen(zip,"w")
    ,file.Write(Header1)
    ,file.RawWrite(Header2,18)

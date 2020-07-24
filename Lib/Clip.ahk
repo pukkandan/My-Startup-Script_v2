@@ -1,5 +1,5 @@
 class clip {
-    static clip
+    static clip:=""
     save(full:=False){
         this.clip:= full? ClipboardAll: Clipboard
     }

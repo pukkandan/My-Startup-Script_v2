@@ -12,10 +12,11 @@ HotCorners.register("BL",Func("send").bind("#x"         )        )
 HotCorners.register("BR",Func("send").bind("#a"         )        )
 
 Timer.set(objbindMethod(HotCorners,"run"),100)
-/**/
+/*
+*/
 
 class HotCorners {
-    static f
+    static f:=""
     register(position, f, delay_count:=0){ ;Position: T,B,L,R,TL,TR,BL,BR
     ; The registered function can take position of mouse as parameters
     ; If delay_count<=0, the function is triggered only once. Else, it is triggered everytime the timer runs "delay_count" times

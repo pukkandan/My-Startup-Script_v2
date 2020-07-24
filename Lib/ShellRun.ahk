@@ -37,7 +37,7 @@ ShellRun(prms*)
         if DllCall(NumGet(NumGet(ptlb+0)+15*A_PtrSize), "ptr", ptlb, "ptr*", psv:=0) = 0
         {
             ; Define IID_IDispatch.
-            VarSetCapacity(IID_IDispatch, 16)
+            VarSetStrCapacity(IID_IDispatch, 16)
             NumPut(0x46000000000000C0, NumPut(0x20400, IID_IDispatch, "int64"), "int64")
 
             ; IShellView.GetItemObject -> IDispatch (object which implements IShellFolderViewDual)

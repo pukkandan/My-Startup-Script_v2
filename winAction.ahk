@@ -49,7 +49,7 @@ class winAction{
                 IniRead, lines, % txt, % submenu
                 loop, parse, lines, `n
                 {
-                    it:=new this.item(this,A_LoopField,submenu="winAction"?"winAction":"winAction " submenu)
+                    it:=this.item.new(this,A_LoopField,submenu="winAction"?"winAction":"winAction " submenu)
                     if (it.exist)
                         this.itemList.Push(it)
                 }
@@ -131,7 +131,7 @@ class winAction{
     }
 
     microWindows(){
-        return new microWindow(this.win_hwnd)
+        return microWindow.new(this.win_hwnd)
     }
 
     TaskView_Goto(){

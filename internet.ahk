@@ -27,7 +27,7 @@ getIPInfo(getLoc:=False){
 }
 
 netStatus(){
-    static VPN_prefix:="10.3.", n, time_start, old_status:=""
+    static VPN_prefix:="10.3.", n:="", time_start:=0, old_status:=""
     if !n
         n:=strlen(VPN_prefix)
 
@@ -103,10 +103,10 @@ netNotify(refresh:=True,show:=True,life:=0) {
     return current
 }
 netNotifyShow(title,msg,col,h,t,s){
-    static netNotifyToast
+    static netNotifyToast:=""
    ,active_color:="0xffffff", inactive_color:="0x505050", active_hcolor:="0x107C10", inactive_hcolor:="0xFF1010"
     if !netNotifyToast
-        netNotifyToast:=new toast({ life:0, title:{size:14,opt:"bold underline"}, message:{size:12}, margin:{x:20,y:20} })
+        netNotifyToast:=toast.new({ life:0, title:{size:14,opt:"bold underline"}, message:{size:12}, margin:{x:20,y:20} })
     c:=[], o:=[]
     for i,ci in col
         c[i]:=ci?(h[i-1]?active_hcolor:active_color):(h[i-1]?inactive_hcolor:inactive_color)

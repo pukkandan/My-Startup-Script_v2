@@ -1,4 +1,4 @@
-; new microWindow(WinExist("My Script 2 ahk_exe explorer.exe"))
+; microWindow.new(WinExist("My Script 2 ahk_exe explorer.exe"))
 
 class microWindow{
     __new(){
@@ -38,7 +38,6 @@ class microWindow{
 
         this.prepare(wid), this.update(wid)
 
-        ;static
         ;static n:=0
         ;local ww, wh
        ; this.id:=n, this.wid:=wid, this.pos1:=pos1, this.pos2:=pos2, this.mx:=16, this.my:=39
@@ -60,14 +59,14 @@ class microWindow{
 
     prepare(wid){
         obj:=this.list[wid]
-        VarSetCapacity(thumbnail, 4, 0)
+        VarSetStrCapacity(thumbnail, 4, 0)
         DllCall(this.dll.DRT , "UInt", obj.gui.hwnd, "UInt", wid, "UInt", &thumbnail)
         this.hThumb:=NumGet(thumbnail)
         return this.putThumb(obj)
     }
     putThumb(wid){
         obj:=this.list[wid]
-        VarSetCapacity(dskThumbProps, 45, 0)
+        VarSetStrCapacity(dskThumbProps, 45, 0)
         NumPut(3, dskThumbProps, 0, "UInt")
         NumPut(0, dskThumbProps, 4, "Int")
         NumPut(0, dskThumbProps, 8, "Int")
@@ -79,7 +78,7 @@ class microWindow{
         NumPut(obj.pos2[2], dskThumbProps, 32, "Int")
         DllCall(this.dll.DUTP, "UInt", this.hThumb, "UInt", &dskThumbProps)
 
-        VarSetCapacity(dskThumbProps, 45, 0)
+        VarSetStrCapacity(dskThumbProps, 45, 0)
         NumPut(8, dskThumbProps,  0, "UInt")
         NumPut(1, dskThumbProps, 37,  "Int")
         return DllCall(this.dll.DUTP, "UInt", this.hThumb, "UInt", &dskThumbProps)
@@ -103,7 +102,7 @@ class microWindow{
     }
 
     getWinSize(){ ; Why???
-        VarSetCapacity(Size, 8, 0)
+        VarSetStrCapacity(Size, 8, 0)
         DllCall(this.dll.DQTSS, "Uint", this.hThumb, "Uint", &Size)
         ww:= NumGet(&Size, 0, "int"), wh:= NumGet(&Size, 4, "int")
        ,rw:=ww/this.win_width, rh:=wh/this.win_height

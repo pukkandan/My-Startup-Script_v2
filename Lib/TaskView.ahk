@@ -5,7 +5,7 @@
 /**                             ;SAMPLE
 #include reloadAsAdmin.ahk
 reloadAsAdmin()
-global A_ScriptPID := fListessExist()
+global A_ScriptPID := processExist()
 #include Timer.ahk
 #include Toast.ahk
 Taskview.init()
@@ -26,7 +26,8 @@ Taskview.init()
 7::TaskView.goToDesktopNext()
 8::TaskView.moveToDesktopPrev(winExist("A"))
 9::TaskView.moveToDesktopNext(winExist("A"))
-/**/
+/*
+*/
 
 class TaskView { ; There should only be one object for this
     init(){ ; SHOULD be called
@@ -34,8 +35,8 @@ class TaskView { ; There should only be one object for this
     }
     __new(){
         this.base:={__call:ObjBindMethod(this,"_call")}
-        this.dll := DllCall("LoadLibrary", "Str", A_ScriptDir . "\Lib\VirtualDesktopAccessor.dll", "Ptr")
-       ,this.toast:=new Toast({life:1000})
+       ,this.dll := DllCall("LoadLibrary", "Str", A_ScriptDir . "\Lib\VirtualDesktopAccessor.dll", "Ptr")
+       ,this.toast:=Toast.new({life:1000})
 
         ; Windows 10 desktop changes listener
        ,DllCall(this.fList["RegisterPostMessageHook"], "Int", A_ScriptHwnd+(0x1000<<32), "Int", 0x1400 + 30)

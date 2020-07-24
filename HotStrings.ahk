@@ -12,7 +12,7 @@ return
 
 ;===================    Brackets
 RETURN
-#If WinActive("ahk_group AutoBracket")
+#hotIf WinActive("ahk_group AutoBracket")
 :*B0O0:{}::
 :*B0O0:[]::
 :*B0O0:()::
@@ -20,28 +20,28 @@ RETURN
 :*B0O0:''::
 :*B0O0:````::
 :*B0O0:%%::
-:*B0O0:$$::
-Send("{Left}")
-return
+:*B0O0:$$:: {
+	Send("{Left}")
+}
 
-:*B0O0:<>::
-if !winActive("ahk_exe Mathematica.exe")
-    Send("{Left}")
-return
+:*B0O0:<>:: {
+	if !winActive("ahk_exe Mathematica.exe")
+	    Send("{Left}")
+}
 
 ; :B0O0:`n`n::
 ; Send("{Up}{Tab}")
 ; return
-#If
+#hotIf
 
 ;===================    Paste Trackers
 RETURN
-::tr»::
+::tr»:: pasteTrackers(file:="trackers.txt")
+
 pasteTrackers(file:="trackers.txt"){
     clip.save(True)
    ,clip.put(FileRead(file))
    ,send("^v")
    ,sleep 100
    ,clip.recover(True)
-    return
 }

@@ -56,7 +56,7 @@ tip_Color(Background := "", Text := "", hwnd := "") {
             tc := Text="Default" ? "" : _TTG("Color", Text)
         _TTHook()
     } else {
-        VarSetCapacity(empty, 2, 0)
+        VarSetStrCapacity(empty, 2, 0)
         DllCall("UxTheme.dll\SetWindowTheme", "ptr", hwnd, "ptr", 0
            , "ptr", (bc != "" && tc != "") ? &empty : 0)
         if bc != ""
